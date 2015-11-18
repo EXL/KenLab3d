@@ -6360,6 +6360,18 @@ void quit() {
     if (joystat==0)
 	SDL_JoystickClose(joystick);
 
+#ifdef USE_SDL2
+    fprintf(stderr, "1. Delete gamma Ramp.\n");
+    SDL_free(gammaRamp);
+    gammaRamp = NULL;
+    fprintf(stderr, "2. Delete GL contex.\n");
+    SDL_GL_DeleteContext(glContext);
+    glContext = NULL;
+    fprintf(stderr, "3. Destroy SDL Window.\n");
+    SDL_DestroyWindow(globalWindow);
+    globalWindow = NULL;
+#endif // USE_SDL2
+
     SDL_Quit();
     
     exit(0);

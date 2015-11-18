@@ -1236,11 +1236,15 @@ void setup(void) {
 
     // Calculate gamma ramp
     /* Zap gamma correction. */
-    Uint16 ramp;
-    SDL_CalculateGammaRamp(1.0, &ramp);
+    if (!gammaRamp) {
+        gammaRamp = (Uint16 *)SDL_malloc(256 * sizeof(Uint16));
+        SDL_CalculateGammaRamp(1.0, gammaRamp);
 
-    if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
-        fprintf(stderr, "setup.c: Can't set gamma ramp.\n");
+        if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
+            fprintf(stderr, "setup.c: Can't set gamma ramp.\n");
+        }
+    } else {
+        fprintf(stderr, "Warning: gammaRump is null!\n");
     }
 
     int _screen_w, _screen_h;
@@ -1248,9 +1252,6 @@ void setup(void) {
 
     screenwidth = _screen_w;
     screenheight = _screen_h;
-
-    // TODO: delete all
-    // Delete icon too
 #endif // !USE_SDL2
 
     virtualscreenwidth=360;
@@ -1390,6 +1391,19 @@ void setup(void) {
     setupmenu();
   
     savesettings();
+
+#ifdef USE_SDL2
+    fprintf(stderr, "1. Delete gamma Ramp.\n");
+    SDL_free(gammaRamp);
+    gammaRamp = NULL;
+    fprintf(stderr, "2. Delete GL contex.\n");
+    SDL_GL_DeleteContext(glContext);
+    glContext = NULL;
+    fprintf(stderr, "3. Destroy SDL Window.\n");
+    SDL_DestroyWindow(globalWindow);
+    globalWindow = NULL;
+#endif // USE_SDL2
+
     SDL_Quit();
     exit(0);
 }

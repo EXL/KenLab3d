@@ -21,6 +21,8 @@
 
 SDL_Window *globalWindow;
 SDL_GLContext *glContext;
+
+extern Uint16 *gammaRamp;
 #else
 #include <SDL/SDL.h>
 #endif // USE_SDL2

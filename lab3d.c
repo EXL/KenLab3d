@@ -3,6 +3,10 @@
 #include "adlibemu.h"
 #include "math.h"
 
+#ifdef USE_SDL2
+Uint16 *gammaRamp = NULL;
+#endif // USE_SDL2
+
 unsigned char slotable[3][16] =
 {
     {5,2,4,5,3,0,4,1,2,4,5,3,5,4,1,3},
@@ -3493,12 +3497,15 @@ int main(int argc,char **argv)
 	  if (SDL_SetGamma(gammalevel,gammalevel,gammalevel)==-1)
 	    fprintf(stderr,"Gamma not supported.\n");
 #else
-        Uint16 ramp;
-        SDL_CalculateGammaRamp(gammalevel, &ramp);
+      if (gammaRamp) {
+          SDL_CalculateGammaRamp(gammalevel, gammaRamp);
 
-        if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
-            fprintf(stderr, "lab3d.c, 1: Gamma ramp not supported.\n");
-        }
+          if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
+              fprintf(stderr, "lab3d.c, 1: Gamma ramp not supported.\n");
+          }
+      } else {
+          fprintf(stderr, "Warning: gammaRump is null!\n");
+      }
 #endif // !USE_SDL2
 	}
 #ifndef USE_SDL2
@@ -3513,12 +3520,15 @@ int main(int argc,char **argv)
 	  if (SDL_SetGamma(gammalevel,gammalevel,gammalevel)==-1)
         fprintf(stderr,"Gamma not supported.\n");
 #else
-        Uint16 ramp;
-        SDL_CalculateGammaRamp(gammalevel, &ramp);
+      if (gammaRamp) {
+            SDL_CalculateGammaRamp(gammalevel, gammaRamp);
 
-        if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
-            fprintf(stderr, "lab3d.c, 2: Gamma ramp not supported.\n");
-        }
+            if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
+                fprintf(stderr, "lab3d.c, 2: Gamma ramp not supported.\n");
+            }
+      } else {
+          fprintf(stderr, "Warning: gammaRump is null!\n");
+      }
 #endif // !USE_SDL2
 	}
 	if (soundvolumevisible) {

@@ -83,7 +83,7 @@ void initialize()
                                        screenwidth, screenheight,
                                        fullscreen?
                                        (SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN):SDL_WINDOW_OPENGL))==
-            NULL) { // TODO: Check this fullscreen.
+            NULL) {
         fprintf(stderr, "True colour failed; taking whatever is available.\n");
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
@@ -114,8 +114,6 @@ void initialize()
     }
 
     SDL_SetWindowIcon(globalWindow, icon);
-    // TODO: delete context and windows after exit
-    // Free Icon
 #endif // !USE_SDL2
 
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE,&realr);
@@ -149,11 +147,16 @@ void initialize()
     SDL_SetGamma(gammalevel,gammalevel,gammalevel);
 #else
     // Calculate gamma ramp
-    Uint16 ramp = 0;
-    SDL_CalculateGammaRamp(gammalevel, &ramp);
+    if (!gammaRamp) {
+        gammaRamp = (Uint16 *)SDL_malloc(256 * sizeof(Uint16));
 
-    if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
-        fprintf(stderr, "init.c: Can't set gamma ramp.\n");
+        SDL_CalculateGammaRamp(gammalevel, gammaRamp);
+        if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
+            fprintf(stderr, "init.c: Can't set gamma ramp.\n");
+        }
+
+    } else {
+        fprintf(stderr, "Error: gammaRamp isn't null!\n");
     }
 #endif // !USE_SDL2
 
@@ -455,7 +458,7 @@ void initialize()
 #ifndef USE_SDL2
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 #else
-    // TODO: ?
+    // TODO: ??
 #endif // !USE_SDL2
     SetVisibleScreenOffset(0);
 #ifndef USE_SDL2
