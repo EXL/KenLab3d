@@ -1780,7 +1780,11 @@ void oldmain(void)
 		{
 		    kgif(n);	
 		    SetVisibleScreenOffset(0);
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		    newkeystatus[SDLK_ESCAPE] = 0;
 		    newkeystatus[SDLK_SPACE] = 0;
 		    newkeystatus[SDLK_RETURN] = 0;
@@ -1838,7 +1842,11 @@ void oldmain(void)
 		pageoffset = lastpageoffset;
 		picrot(posx,posy,posz,ang);
 		spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)79);
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		m = 0;
 		n = 0;
 		ototclock = totalclock;
@@ -1906,7 +1914,11 @@ void oldmain(void)
 		pageoffset = lastpageoffset;
 		picrot(posx,posy,posz,ang);
 		spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)78);
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		pageoffset = j;
 		m = 0;
 		ototclock = totalclock;
@@ -1999,7 +2011,11 @@ void oldmain(void)
 		pageoffset = j;
 		ototclock = totalclock;
 		mixing=0;
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0)) {
 		    PollInputs();
 		    if (moustat == 0)
@@ -2063,7 +2079,11 @@ void oldmain(void)
 	
 		fade(27);
 
-		SDL_GL_SwapBuffers( );
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		SDL_LockMutex(timermutex);
 		while(clockspeed<4) {
 		    SDL_UnlockMutex(timermutex);
@@ -2101,7 +2121,11 @@ void oldmain(void)
 		SDL_UnlockMutex(timermutex);
 		fade(i);
 		picrot(posx,posy,posz,ang);
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    }
 	    clockspd = 0;
 	    totalclock = ototclock;
@@ -2129,7 +2153,11 @@ void oldmain(void)
 		mixing=1;
 		oldtextprint(200-(strlen(textbuf)<<2),28,0);
 		mixing=0;
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		pageoffset = j;
 		j = 0;
 		ototclock = totalclock;
@@ -2170,7 +2198,11 @@ void oldmain(void)
 	scoreclock += clockspd;
 	if ((scoreclock%240) < clockspd)
 	    olddrawtime(scoreclock);
-	SDL_GL_SwapBuffers( );
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     }
     musicoff();
 }
@@ -2584,7 +2616,11 @@ K_INT16 oldintroduction(void)
 	{
 	    pageoffset = plc;
 	    spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)78);
-	    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    m = 0;
 	    while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
 	    {
@@ -2673,7 +2709,11 @@ K_INT16 oldintroduction(void)
 	    lastshoot = 1;
 	    lastbarchange = 1;
 	}
-	SDL_GL_SwapBuffers( );
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     }
     musicoff();
 
@@ -2905,7 +2945,11 @@ void oldwingame(K_UINT16 mxpos, K_UINT16 mypos)
 	revtotalclock += clockspeed;
 	clockspeed = 0;
 	SDL_UnlockMutex(timermutex);
-	SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     }
     musicoff();
     ksay(23);

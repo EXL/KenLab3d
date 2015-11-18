@@ -377,7 +377,9 @@ int getnumber(void) {
     j = 0;
     buf[0]=0;
     ch = 0;
+#ifndef USE_SDL2
     SDL_EnableUNICODE(1);
+#endif // !USE_SDL2
     while ((ch != 13) && (ch != 27))
     {
 	while ((ch=getkeypress()) == 0)
@@ -422,7 +424,9 @@ int getnumber(void) {
 		j++;
 	}
     }
+#ifndef USE_SDL2
     SDL_EnableUNICODE(0);
+#endif // !USE_SDL2
     for(i=0;i<256;i++)
 	keystatus[i] = 0;
     if (ch==27) return -1;
@@ -469,7 +473,13 @@ void setupsetresolution(void) {
 
     switch(a) {
         case 0:
-	    modes=umodes=SDL_ListModes(NULL,SDL_FULLSCREEN);
+#ifndef USE_SDL2
+        modes=umodes=SDL_ListModes(NULL,SDL_FULLSCREEN);
+#else
+        // TODO: Rewrite here all
+        // SDL_GetDisplayMode(NULL, NULL, SDL_WINDOW_FULLSCREEN);
+        // modes=umodes=SDL_ListModes(NULL,SDL_WINDOW_FULLSCREEN);
+#endif // !USE_SDL2
 	    if ((modes==NULL)||(modes==(SDL_Rect **)-1))
 		return;
 	    m=0;
@@ -1000,7 +1010,12 @@ void loadsettings(void) {
     SDL_Rect **modes;
 
     channels=2; musicvolume=64; soundvolume=64; gammalevel=1.0;
-    modes=SDL_ListModes(NULL,SDL_FULLSCREEN);
+#ifndef USE_SDL2
+        modes=SDL_ListModes(NULL,SDL_FULLSCREEN);
+#else
+        // TODO: Rewrite here all
+        // modes=SDL_ListModes(NULL,SDL_WINDOW_FULLSCREEN);
+#endif // !USE_SDL2
     i=0;
     if ((modes!=NULL)&&(modes!=(SDL_Rect **)-1)&&(modes[0]!=NULL))
 	resolutionnumber=modes[0]->w*10000+modes[0]->h;
@@ -1100,7 +1115,11 @@ void setup(void) {
     K_INT16 i, j, k, walcounter;
     K_UINT16 l;
     char *v;
+#ifndef USE_SDL2
     SDL_Surface *screen, *icon;
+#else
+    SDL_Surface *icon;
+#endif // !USE_SDL2
 
     configure();
     statusbaryoffset=250;
@@ -1127,7 +1146,9 @@ void setup(void) {
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,0);
     SDL_ShowCursor(0);
 
+#ifndef USE_SDL2
     SDL_EnableKeyRepeat(200,30);
+#endif // !USE_SDL2
 
     fprintf(stderr,"Activating video...\n");
 
@@ -1137,7 +1158,10 @@ void setup(void) {
     if (icon==NULL) {
 	fprintf(stderr,"Warning: ken.bmp (icon file) not found.\n");
     }
+#ifndef USE_SDL2
     SDL_WM_SetIcon(icon,NULL);
+
+
     if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32, 
 				 SDL_OPENGL))==
 	NULL) {
@@ -1150,6 +1174,45 @@ void setup(void) {
 
     screenwidth=screen->w;
     screenheight=screen->h;
+#else
+    if ((globalWindow=SDL_CreateWindow("Ken's Labyrinth", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                       screenwidth, screenheight, SDL_WINDOW_OPENGL))==
+            NULL) {
+        fprintf(stderr, "Video mode set failed: %s.\n", SDL_GetError());
+        SDL_DestroyWindow(globalWindow);
+        SDL_Quit();
+        exit(-1);
+    }
+
+    // Create GL Context
+    if ((glContext=SDL_GL_CreateContext(globalWindow))==NULL) {
+        fprintf(stderr, "Can't create GL Context: %s.\n", SDL_GetError());
+        SDL_GL_DeleteContext(glContext);
+        SDL_DestroyWindow(globalWindow);
+        SDL_Quit();
+        exit(-1);
+    }
+
+    SDL_SetWindowIcon(globalWindow, icon);
+
+    // Calculate gamma ramp
+    /* Zap gamma correction. */
+    Uint16 ramp;
+    SDL_CalculateGammaRamp(1.0, &ramp);
+
+    if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
+        fprintf(stderr, "setup.c: Can't set gamma ramp.\n");
+    }
+
+    int _screen_w, _screen_h;
+    SDL_GetWindowSize(globalWindow, _screen_w, _screen_h);
+
+    screenwidth = _screen_w;
+    screenheight = _screen_h;
+
+    // TODO: delete all
+    // Delete icon too
+#endif // !USE_SDL2
 
     virtualscreenwidth=360;
     virtualscreenheight=240;
@@ -1170,7 +1233,10 @@ void setup(void) {
 
     screenbuffer=malloc(screenbufferwidth*screenbufferheight);    
     screenbuffer32=malloc(screenbufferwidth*screenbufferheight*4);
+
+#ifndef USE_SDL2
     SDL_WM_SetCaption("Ken's Labyrinth", "Ken's Labyrinth");
+#endif // !USE_SDL2
 
     linecompare(479);
 

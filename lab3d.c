@@ -264,7 +264,11 @@ int main(int argc,char **argv)
 		    ingame=0;
 		    fade(fadewarpval);
 		    pictur(180,halfheight,144<<2,0,gameover);
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 
 		    SDL_Delay(1000);
 
@@ -273,7 +277,11 @@ int main(int argc,char **argv)
 			glClear(GL_COLOR_BUFFER_BIT);
 			fade(i);
 			pictur(180,halfheight,144<<2,0,gameover);
-			SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 			SDL_Delay(20);
 		    }
 		    fade(63);
@@ -3106,7 +3114,11 @@ int main(int argc,char **argv)
 
 		    mixing=0;
 
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		}
 	    x = getkeydefstat(15);
 	    y = 1;
@@ -3132,7 +3144,11 @@ int main(int argc,char **argv)
 		    SDL_Delay(10); /* Close enough. */
 		    fade(i+64);
 		    picrot(posx,posy,posz,ang);
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		}
 	    wipeoverlay(0,0,361,statusbaryoffset);
 	    picrot(posx,posy,posz,ang);
@@ -3207,7 +3223,11 @@ int main(int argc,char **argv)
 		
 		fade(27);
 
-		SDL_GL_SwapBuffers( );
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 
 		SDL_LockMutex(timermutex);
 		while(clockspeed<4) {
@@ -3246,7 +3266,11 @@ int main(int argc,char **argv)
 		SDL_UnlockMutex(timermutex);
 		fade(i);
 		picrot(posx,posy,posz,ang);
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    }
 	    SDL_LockMutex(timermutex);
 	    clockspeed = 0;
@@ -3284,7 +3308,11 @@ int main(int argc,char **argv)
 	    if (ototclock > 1)
 	    {
 		picrot(posx,posy,posz,ang);
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		j = mainmenu();
 		picrot(posx,posy,posz,ang);
 		if (j < 7)
@@ -3426,15 +3454,33 @@ int main(int argc,char **argv)
 	if (newkeystatus[SDLK_F10]) {
 	  gammalevel*=pow(1.01,clockspd);
 	  if (gammalevel>10.0) gammalevel=10.0;
+#ifndef USE_SDL2
 	  if (SDL_SetGamma(gammalevel,gammalevel,gammalevel)==-1)
 	    fprintf(stderr,"Gamma not supported.\n");
+#else
+        Uint16 ramp;
+        SDL_CalculateGammaRamp(gammalevel, &ramp);
+
+        if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
+            fprintf(stderr, "lab3d.c, 1: Gamma ramp not supported.\n");
+        }
+#endif // !USE_SDL2
 	}
 	if (newkeystatus[SDLK_F9]) {
 	  gammalevel*=pow(1.01,-clockspd);
 	  if (gammalevel<0.1) gammalevel=0.1;
+#ifndef USE_SDL2
 	  SDL_SetGamma(gammalevel,gammalevel,gammalevel);
 	  if (SDL_SetGamma(gammalevel,gammalevel,gammalevel)==-1)
-	    fprintf(stderr,"Gamma not supported.\n");
+        fprintf(stderr,"Gamma not supported.\n");
+#else
+        Uint16 ramp;
+        SDL_CalculateGammaRamp(gammalevel, &ramp);
+
+        if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
+            fprintf(stderr, "lab3d.c, 2: Gamma ramp not supported.\n");
+        }
+#endif // !USE_SDL2
 	}
 	if (soundvolumevisible) {
 	    drawvolumebar(soundvolume,0,soundvolumevisible/240.0);
@@ -3458,7 +3504,11 @@ int main(int argc,char **argv)
 	if ((scoreclock%240) < clockspd)
 	    drawtime(scoreclock);
 
-	SDL_GL_SwapBuffers( );
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     }
     
     /* End of main loop. End of game. Tidy up things... */

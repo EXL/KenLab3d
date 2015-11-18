@@ -2,8 +2,14 @@
 #include "adlibemu.h"
 #include <math.h>
 #include <ctype.h>
-#include "SDL_endian.h"
-#include "SDL_image.h"
+
+#ifdef USE_SDL2
+#include <SDL2/SDL_endian.h>
+#include <SDL2/SDL_image.h>
+#else
+#include <SDL/SDL_endian.h>
+#include <SDL/SDL_image.h>
+#endif // USE_SDL2
 
 /* Various constants that really should be stored in the data files... */
 
@@ -1148,11 +1154,19 @@ imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfil
     
     glGenTextures (1, &new->texnum);
 
+#ifndef USE_SDL2
     SDL_SetAlpha(tsurf,0,255);
+#else
+    SDL_SetSurfaceAlphaMod(tsurf, 255);
+#endif // !USE_SDL2
     SDL_Surface* conv=SDL_CreateRGBSurface(SDL_SWSURFACE,tsurf->w,tsurf->h,32,0x000000FF,0x0000FF00,0x00FF0000,0xFF000000);
     Uint32* temptex=(Uint32*)malloc(tsurf->w*tsurf->h*4);
 
+#ifndef USE_SDL2
     SDL_SetAlpha(conv,0,255);
+#else
+    SDL_SetSurfaceAlphaMod(conv, 255);
+#endif // !USE_SDL2
     SDL_BlitSurface(tsurf,NULL,conv,NULL);
     int xx,yy;
     Uint32* temp=(Uint32*)temptex;
@@ -1510,7 +1524,11 @@ void loadwalls(int replace)
 	       Yes, I know I'm too clever for my own good. */
 
 	    if ((i<127) && ((i&1)==0))
-		SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    else
 		glFlush();
 	    cwparam=&wparams[i];
@@ -1638,8 +1656,8 @@ printf("\n");*/
     for(i=0;i<rnumwalls;i++) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	printf("Texture number %d.\n",i);
-	spridraw(180,50,512,i+1);
-//	SDL_GL_SwapBuffers();
+    spridraw(180,50,512,i+1);
+    SDL_GL_SwapBuffers();
 	pressakey();
     }
 */
@@ -2497,7 +2515,11 @@ void introduction(K_INT16 songnum)
 	if ((dai >= 128) && (dalasti < 128))
 	    fade(63);
 	drawintroduction();
-	SDL_GL_SwapBuffers( );
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     }
 
     spriteyoffset=0;
@@ -3300,7 +3322,11 @@ void wingame(K_INT16 episode)
 	    else
 		posy = starty+16384+512;
 	    picrot(posx,posy,posz,ang);
-	    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    sortcnt = 0;
 	    SDL_LockMutex(soundmutex);
 	    SDL_LockMutex(timermutex);
@@ -3393,7 +3419,11 @@ void wingame(K_INT16 episode)
 		    finalisemenu();
 
 		    ksay(23);
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		    pressakey();
 		    glClear(GL_COLOR_BUFFER_BIT);
 		    drawmenu(304,192,menu);
@@ -3407,7 +3437,11 @@ void wingame(K_INT16 episode)
 		    if (episode == 2) loadstory(-18);
 		    finalisemenu();
 		    settransferpalette();
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		    pressakey();
 		}
 	    }
@@ -3497,7 +3531,11 @@ void winallgame()
 	    glClearColor( 0,0,0,0 );
 	    glClear(GL_COLOR_BUFFER_BIT);
 	    pictur(180,halfheight,4+(((int)revtotalclock)>>2),((int)((revtotalclock<<2))&2047)^2047,earth);
-	    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	}
 	else
 	{
@@ -3511,7 +3549,11 @@ void winallgame()
 	    loadstory(-17);
 	    finalisemenu();
 	    ksay(23);
-	    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    pressakey();
 	    glClear(GL_COLOR_BUFFER_BIT);
 	    drawmenu(304,192,menu);
@@ -3524,7 +3566,11 @@ void winallgame()
 	    loadstory(-16);
 	    finalisemenu();
 	    settransferpalette();
-	    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    pressakey();
 	    leavewin = 1;
 	}
@@ -4857,7 +4903,9 @@ void getname()
 
     textprint(180-(strlen(textbuf)<<2),135+1,(char)161);
     ch = 0;
+#ifndef USE_SDL2
     SDL_EnableUNICODE(1);
+#endif // !USE_SDL2
     while ((ch != 13) && (ch != 27))
     {
 	while ((ch=getkeypress()) == 0)
@@ -4902,7 +4950,9 @@ void getname()
 		j++;
 	}
     }
+#ifndef USE_SDL2
     SDL_EnableUNICODE(0);
+#endif // !USE_SDL2
     for(i=0;i<256;i++)
 	keystatus[i] = 0;
     hiscorenam[j] = 0;
@@ -5094,7 +5144,11 @@ K_INT16 mainmenu()
 	spriteyoffset=20;
 	drawintroduction();
 	spriteyoffset=0;
-	SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     } else {
 	glDrawBuffer(GL_FRONT);
 	ShowStatusBar();
@@ -5167,7 +5221,11 @@ K_INT16 mainmenu()
 		    spriteyoffset=0;
 		    drawmainmenu();
 		    checkGLStatus();
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		    glDrawBuffer(GL_FRONT);
 		}
 		else {
@@ -5179,7 +5237,11 @@ K_INT16 mainmenu()
 		    picrot(posx,posy,posz,ang);
 		    drawmainmenu();
 		    checkGLStatus();
-		    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 		    glDrawBuffer(GL_FRONT);
 		}
 	    }
@@ -5223,7 +5285,11 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     newkeystatus[SDLK_ESCAPE]=0;
     newkeystatus[SDLK_UP]=newkeystatus[SDLK_DOWN]=newkeystatus[SDLK_LEFT]=
 	newkeystatus[SDLK_RIGHT]=0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_KP2]=newkeystatus[SDLK_KP8]=0;
+#else
+    newkeystatus[SDLK_KP_2]=newkeystatus[SDLK_KP_8]=0;
+#endif // !USE_SDL2
     animater6 = 0;
     esckeystate = 0;
     bstatus = 1;
@@ -5264,7 +5330,11 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 	    if (nowselector < 0)
 		nowselector = totselectors-1;
 	    keystatus[0x48] = 0, keystatus[0xc8] = 0, keystatus[0xcb] = 0;
+#ifndef USE_SDL2
 	    newkeystatus[SDLK_UP]=newkeystatus[SDLK_KP8]=
+#else
+        newkeystatus[SDLK_UP]=newkeystatus[SDLK_KP_8]=
+#endif // !USE_SDL2
 		newkeystatus[SDLK_LEFT]=0;
 	}
 	if (((keystatus[0xd0]|keystatus[0x50]|keystatus[0xcd]) != 0) || (mousy > 128))
@@ -5280,7 +5350,11 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 	    if (nowselector == totselectors)
 		nowselector = 0;
 	    keystatus[0xd0] = 0, keystatus[0x50] = 0, keystatus[0xcd] = 0;
+#ifndef USE_SDL2
 	    newkeystatus[SDLK_DOWN]=newkeystatus[SDLK_KP2]=
+#else
+        newkeystatus[SDLK_DOWN]=newkeystatus[SDLK_KP_2]=
+#endif // !USE_SDL2
 		newkeystatus[SDLK_RIGHT]=0;
 	}
 	esckeystate = (keystatus[1]|(keystatus[0x1c]<<1)|(keystatus[0x9c]<<1)|(keystatus[0x39]<<1));
@@ -6037,7 +6111,11 @@ Uint16 getkeypress() {
 		}
 		if (sk<SDLKEYS)
 		    newkeystatus[sk]=1;
+#ifndef USE_SDL2
 		sk=event.key.keysym.unicode;
+#else
+        sk=event.key.keysym.sym;
+#endif // !USE_SDL2
 		return sk;
 	    case SDL_KEYUP:
 		sk=event.key.keysym.sym;

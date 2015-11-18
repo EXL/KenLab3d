@@ -14,7 +14,15 @@
 #endif
 #endif
 
-#include "SDL.h"
+#ifdef USE_SDL2
+#include <SDL2/SDL.h>
+
+SDL_Window *globalWindow;
+SDL_GLContext *glContext;
+#else
+#include <SDL/SDL.h>
+#endif // USE_SDL2
+
 #include <GL/gl.h>
 #include <GL/glu.h>
 #ifndef GL_BGR
@@ -40,7 +48,11 @@
 #ifdef DEBUG_BUFFERS
 #ifdef MAIN
 void SDL_GL_SwapBuffersDebug() {
+#ifndef USE_SDL2
     SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     glClearColor(255,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
 }

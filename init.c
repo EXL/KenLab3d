@@ -12,7 +12,9 @@ void initialize()
     K_UINT16 l;
     char *v;
     time_t tnow;
+#ifndef USE_SDL2
     SDL_Surface *screen;
+#endif // !USE_SDL2
     SDL_Surface *icon;
 
     SDL_AudioSpec want;
@@ -54,7 +56,10 @@ void initialize()
     if (icon==NULL) {
 	fprintf(stderr,"Warning: ken.bmp (icon file) not found.\n");
     }
+#ifndef USE_SDL2
     SDL_WM_SetIcon(icon,NULL);
+
+
     if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32, 
 				 fullscreen?
 				 (SDL_OPENGL|SDL_FULLSCREEN):SDL_OPENGL))==
@@ -72,7 +77,46 @@ void initialize()
 	    SDL_Quit();
 	    exit(-1);
 	}
-    }	
+    }
+#else
+    if ((globalWindow=SDL_CreateWindow("Ken's Labyrinth", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                       screenwidth, screenheight,
+                                       fullscreen?
+                                       (SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN):SDL_WINDOW_OPENGL))==
+            NULL) { // TODO: Check this fullscreen.
+        fprintf(stderr, "True colour failed; taking whatever is available.\n");
+        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
+
+        SDL_DestroyWindow(globalWindow); // Don't needed, but...
+
+        if ((globalWindow=SDL_CreateWindow("Ken's Labyrinth", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                                           screenwidth, screenheight,
+                                           fullscreen?
+                                           (SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN):SDL_WINDOW_OPENGL))==
+                NULL) {
+            fprintf(stderr, "Video mode set failed: %s.\n", SDL_GetError());
+            SDL_DestroyWindow(globalWindow);
+            SDL_Quit();
+            exit(-1);
+        }
+    }
+
+    // Create OpenGL Context
+    if ((glContext=SDL_GL_CreateContext(globalWindow))==NULL) {
+        fprintf(stderr, "Can't make GL Context: %s.\n", SDL_GetError());
+        SDL_GL_DeleteContext(glContext);
+        SDL_DestroyWindow(globalWindow);
+        SDL_Quit();
+        exit(-1);
+    }
+
+    SDL_SetWindowIcon(globalWindow, icon);
+    // TODO: delete context and windows after exit
+    // Free Icon
+#endif // !USE_SDL2
 
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE,&realr);
     SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE,&realg);
@@ -101,7 +145,17 @@ void initialize()
 	exit(-1);
     }
 
+#ifndef USE_SDL2
     SDL_SetGamma(gammalevel,gammalevel,gammalevel);
+#else
+    // Calculate gamma ramp
+    Uint16 ramp = 0;
+    SDL_CalculateGammaRamp(gammalevel, &ramp);
+
+    if ((SDL_SetWindowGammaRamp(globalWindow, &ramp, &ramp, &ramp))==-1) {
+        fprintf(stderr, "init.c: Can't set gamma ramp.\n");
+    }
+#endif // !USE_SDL2
 
     if (realz<24) {
 	walltol=256; neardist=128;
@@ -117,7 +171,7 @@ void initialize()
        fullscreen resolution is invalid. SDL on X fakes it seamlessly. The
        documentation doesn't mention anything about this, so I assume that this
        aspect of SDL is undefined. */
-
+#ifndef USE_SDL2
     if ((screenwidth!=screen->w)||(screenheight!=screen->h)) {
 	fprintf(stderr,"Warning: screen resolution is actually %dx%d.\n",
 		screen->w,screen->h);
@@ -132,6 +186,24 @@ void initialize()
 	    fprintf(stderr,"Using a viewport within the screen.\n");
 	}
     }
+#else
+    int _screen_w, _screen_h;
+    SDL_GetWindowSize(globalWindow, _screen_w, _screen_h);
+
+    if ((screenwidth!=_screen_w) || (screenheight!=_screen_h)) {
+        fprintf(stderr, "Warning: screen resolution is actually %dx%d.\n",
+                _screen_w, _screen_h);
+        if ((_screen_w < screenwidth) || (_screen_h < screenheight)) {
+            fprintf(stderr, "Too small to pad; using full screen.\n");
+            screenwidth = _screen_w;
+            screenheight = _screen_h;
+        } else {
+            glViewport((_screen_w - screenwidth) >> 1, (_screen_h - screenheight) >> 1,
+                       screenwidth, screenheight);
+            fprintf(stderr, "Using a viewport within the screen.\n");
+        }
+    }
+#endif // !USE_SDL2
 
     /* Actually, this mode seems to be both more compatible and faster, so
        I think I'll leave it like this. Change this to 1 at your own risk. */
@@ -153,7 +225,9 @@ void initialize()
     screenbuffer=malloc(screenbufferwidth*screenbufferheight);
     screenbuffer32=malloc(screenbufferwidth*screenbufferheight*4);
 
+#ifndef USE_SDL2
     SDL_WM_SetCaption("Ken's Labyrinth", "Ken's Labyrinth");
+#endif // !USE_SDL2
 
     linecompare(479);
 
@@ -378,9 +452,17 @@ void initialize()
 	fade(63);
     }  
 
+#ifndef USE_SDL2
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+#else
+    // TODO: ?
+#endif // !USE_SDL2
     SetVisibleScreenOffset(0);
+#ifndef USE_SDL2
     SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 
     if (moustat == 0)
 	moustat = setupmouse();
@@ -461,7 +543,11 @@ void initialize()
 	    glClear( GL_COLOR_BUFFER_BIT);
 	    visiblescreenyoffset=(l/90)-20;
 	    ShowPartialOverlay(20,20+visiblescreenyoffset,320,200,0);
-	    SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	    SDL_LockMutex(timermutex);
 	}
 	PollInputs();
@@ -487,7 +573,11 @@ void initialize()
 	else
 	    visiblescreenyoffset=(l/90)-20;
 	ShowPartialOverlay(20,20+visiblescreenyoffset,320,200,0);
-	SDL_GL_SwapBuffers();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	SDL_LockMutex(timermutex);
 
 	while(clockspeed<oclockspeed+4) {
