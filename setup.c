@@ -643,7 +643,6 @@ void setupsetkeys(void) {
 #ifdef USE_SDL2
                 sk=getOldAsciiKeyCode(sk);
 #endif // USE_SDL2
-                fprintf(stderr, "s.c1: Scancode: %d.\n", sk);
 			    if (sk<SDLKEYS) {
 				j=sk;
 			    }

@@ -240,6 +240,7 @@ typedef enum {
 } OLDKey;
 
 int getOldAsciiKeyCode(int newKeyCode);
+int getUpperChar(int smallCharKeyCode);
 
 #endif // SDL2KEYHELPER_H
 

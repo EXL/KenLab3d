@@ -6188,12 +6188,10 @@ Uint16 getkeypress() {
 	    case SDL_QUIT:
 		quitgame=1;
 	    case SDL_KEYDOWN:
-#ifndef USE_SDL2
-		sk=event.key.keysym.sym;
-#else
+        sk=event.key.keysym.sym;
+#ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
-        fprintf(stderr, "ss.c1: Code is: %d.\n", sk);
-#endif
+#endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=1;
 		}
@@ -6202,7 +6200,18 @@ Uint16 getkeypress() {
 #ifndef USE_SDL2
 		sk=event.key.keysym.unicode;
 #else
-        sk=getOldAsciiKeyCode(event.key.keysym.sym);
+        // Check if SHIFT keys pushed
+        if (sk == getOldAsciiKeyCode(SDLK_RSHIFT) || sk == getOldAsciiKeyCode(SDLK_LSHIFT)) {
+            return 0;
+        }
+
+        // If pushed, Upper Char
+        if (keystatus[PCkey[getOldAsciiKeyCode(SDLK_RSHIFT)]] || keystatus[PCkey[getOldAsciiKeyCode(SDLK_LSHIFT)]]) {
+            // There is char?
+            if (sk >= getOldAsciiKeyCode(SDLK_a) && sk <= getOldAsciiKeyCode(SDLK_z)) {
+                sk = getUpperChar(sk);
+            }
+        }
 #endif // !USE_SDL2
 		return sk;
 	    case SDL_KEYUP:
@@ -6256,7 +6265,6 @@ void PollInputs() {
 		sk=event.key.keysym.sym;
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
-        fprintf(stderr, "ss.c2: Code is: %d.\n", sk);
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=1;

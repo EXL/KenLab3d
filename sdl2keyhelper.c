@@ -2,6 +2,10 @@
 
 #include <SDL2/SDL.h>
 
+int getUpperChar(int smallCharKeyCode) {
+    return smallCharKeyCode - 0x20;
+}
+
 int getOldAsciiKeyCode(int newKeyCode) {
     switch (newKeyCode) {
     default:
