@@ -1007,18 +1007,22 @@ void configure(void) {
 void loadsettings(void) {
     FILE *file=fopen("settings.ini","r");
     int i,versflag,version;
+
+#ifndef USE_SDL2
     SDL_Rect **modes;
+#endif // !USE_SDL2
 
     channels=2; musicvolume=64; soundvolume=64; gammalevel=1.0;
 #ifndef USE_SDL2
         modes=SDL_ListModes(NULL,SDL_FULLSCREEN);
+
+        if ((modes!=NULL)&&(modes!=(SDL_Rect **)-1)&&(modes[0]!=NULL))
+        resolutionnumber=modes[0]->w*10000+modes[0]->h;
 #else
         // TODO: Rewrite here all
         // modes=SDL_ListModes(NULL,SDL_WINDOW_FULLSCREEN);
 #endif // !USE_SDL2
     i=0;
-    if ((modes!=NULL)&&(modes!=(SDL_Rect **)-1)&&(modes[0]!=NULL))
-	resolutionnumber=modes[0]->w*10000+modes[0]->h;
 
     for(i=0;i<numkeys;i++)
 	newkeydefs[i]=newdefaultkey[i];
@@ -1205,7 +1209,7 @@ void setup(void) {
     }
 
     int _screen_w, _screen_h;
-    SDL_GetWindowSize(globalWindow, _screen_w, _screen_h);
+    SDL_GetWindowSize(globalWindow, &_screen_w, &_screen_h);
 
     screenwidth = _screen_w;
     screenheight = _screen_h;

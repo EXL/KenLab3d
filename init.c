@@ -188,7 +188,7 @@ void initialize()
     }
 #else
     int _screen_w, _screen_h;
-    SDL_GetWindowSize(globalWindow, _screen_w, _screen_h);
+    SDL_GetWindowSize(globalWindow, &_screen_w, &_screen_h);
 
     if ((screenwidth!=_screen_w) || (screenheight!=_screen_h)) {
         fprintf(stderr, "Warning: screen resolution is actually %dx%d.\n",
