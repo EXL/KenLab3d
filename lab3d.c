@@ -1834,7 +1834,11 @@ int main(int argc,char **argv)
 			lastbarchange = 1;
 			lastshoot = 1;
 			keystatus[1] = 0;
+#ifndef USE_SDL2
 			newkeystatus[SDLK_ESCAPE]=0;
+#else
+            newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+#endif // !USE_SDL
 		    }
 
 		    /* Slot machine... */
@@ -3185,10 +3189,15 @@ int main(int argc,char **argv)
 	    loadstory(boardnum);
 	    
 	    mixing=0;
-
+#ifndef USE_SDL2
 	    keystatus[1] = 0; newkeystatus[SDLK_ESCAPE]=0;
 	    keystatus[57] = 0; newkeystatus[SDLK_SPACE]=0;
 	    keystatus[28] = 0; newkeystatus[SDLK_RETURN]=0;
+#else
+        keystatus[1] = 0; newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+        keystatus[57] = 0; newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+        keystatus[28] = 0; newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+#endif // !USE_SDL2
 	    while(readmouse(NULL, NULL)!=0) {
 		PollInputs();
 		SDL_Delay(10);
@@ -3321,9 +3330,15 @@ int main(int argc,char **argv)
 		    {
 			musicoff();
 			fade(0);
+#ifndef USE_SDL2
 			keystatus[57] = 0; newkeystatus[SDLK_SPACE]=0;
 			keystatus[28] = 0; newkeystatus[SDLK_RETURN]=0;
 			keystatus[1] = 0; newkeystatus[SDLK_ESCAPE]=0;
+#else
+            keystatus[57] = 0; newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+            keystatus[28] = 0; newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+            keystatus[1] = 0; newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+#endif // !USE_SDL2
 			if (newgameplace == 0) boardnum = 0;
 			if (newgameplace == 1) boardnum = 10;
 			if (newgameplace == 2) boardnum = 20;
@@ -3425,17 +3440,29 @@ int main(int argc,char **argv)
 		lastbarchange = 1;
 	    }
 	}
+#ifndef USE_SDL2
 	if (newkeystatus[SDLK_F5]) {
+#else
+    if (newkeystatus[getOldAsciiKeyCode(SDLK_F5)]) {
+#endif // !USE_SDL2
 	    soundvolume-=(clockspd>>1);
 	    if (soundvolume<0) soundvolume=0;
 	    soundvolumevisible=240;
 	}
-	if (newkeystatus[SDLK_F6]) {
+#ifndef USE_SDL2
+    if (newkeystatus[SDLK_F6]) {
+#else
+    if (newkeystatus[getOldAsciiKeyCode(SDLK_F6)]) {
+#endif // !USE_SDL2
 	    soundvolume+=(clockspd>>1);
 	    if (soundvolume>256) soundvolume=256;
 	    soundvolumevisible=240;
 	}
-	if (newkeystatus[SDLK_F7]) {
+#ifndef USE_SDL2
+    if (newkeystatus[SDLK_F7]) {
+#else
+    if (newkeystatus[getOldAsciiKeyCode(SDLK_F7)]) {
+#endif // !USE_SDL2
 	    musicvolume-=(clockspd>>1);
 	    if (musicvolume<0) musicvolume=0;
 	    SDL_LockMutex(soundmutex); /* Probably overkill. */
@@ -3443,7 +3470,11 @@ int main(int argc,char **argv)
 	    SDL_UnlockMutex(soundmutex);
 	    musicvolumevisible=240;
 	}
-	if (newkeystatus[SDLK_F8]) {
+#ifndef USE_SDL2
+    if (newkeystatus[SDLK_F8]) {
+#else
+    if (newkeystatus[getOldAsciiKeyCode(SDLK_F8)]) {
+#endif // !USE_SDL2
 	    musicvolume+=(clockspd>>1);
 	    if (musicvolume>256) musicvolume=256;
 	    SDL_LockMutex(soundmutex); /* Probably overkill. */
@@ -3451,7 +3482,11 @@ int main(int argc,char **argv)
 	    SDL_UnlockMutex(soundmutex);
 	    musicvolumevisible=240;
 	}
-	if (newkeystatus[SDLK_F10]) {
+#ifndef USE_SDL2
+    if (newkeystatus[SDLK_F10]) {
+#else
+    if (newkeystatus[getOldAsciiKeyCode(SDLK_F10)]) {
+#endif // !USE_SDL2
 	  gammalevel*=pow(1.01,clockspd);
 	  if (gammalevel>10.0) gammalevel=10.0;
 #ifndef USE_SDL2
@@ -3466,7 +3501,11 @@ int main(int argc,char **argv)
         }
 #endif // !USE_SDL2
 	}
-	if (newkeystatus[SDLK_F9]) {
+#ifndef USE_SDL2
+    if (newkeystatus[SDLK_F9]) {
+#else
+    if (newkeystatus[getOldAsciiKeyCode(SDLK_F9)]) {
+#endif // !USE_SDL2
 	  gammalevel*=pow(1.01,-clockspd);
 	  if (gammalevel<0.1) gammalevel=0.1;
 #ifndef USE_SDL2

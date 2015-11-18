@@ -139,7 +139,7 @@ void writeshort(unsigned char *t,K_UINT16 v) {
 }
 
 int getkeydefstat(int keydef) {
-    int key=newkeystatus[newkeydefs[keydef]];
+    int key=newkeystatus[newkeydefs[keydef]]; // TODO: Check this.
     if (key) return key;
     if (keydef == 8 || keydef == 12) return 0;
     if (buttondefs[keydef]!=-1) {
@@ -157,7 +157,7 @@ int getaxispos(int axis, int deadzone) {
     return 0;
 }
 void clearkeydefstat(int keydef) {
-    newkeystatus[newkeydefs[keydef]] = 0;
+    newkeystatus[newkeydefs[keydef]] = 0; // TODO: Check this.
     if (buttondefs[keydef]!=-1) {
 	buttonstatus[buttondefs[keydef]] = 0;
     }
@@ -2353,9 +2353,15 @@ void introduction(K_INT16 songnum)
     keystatus[57] = 0;
     keystatus[28] = 0;
     keystatus[1] = 0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_ESCAPE]=0;
     newkeystatus[SDLK_RETURN]=0;
     newkeystatus[SDLK_SPACE]=0;
+#else
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
     sharemessplc = 64;
     newgamepisode = 1;
     animater2 = 0;
@@ -2402,9 +2408,15 @@ void introduction(K_INT16 songnum)
 	    keystatus[0xc9] = 0;
 	    keystatus[0xc8] = 0;
 	    keystatus[0xcb] = 0;
+#ifndef USE_SDL2
 	    newkeystatus[SDLK_UP]=0;
 	    newkeystatus[SDLK_PAGEUP]=0;
 	    newkeystatus[SDLK_LEFT]=0;
+#else
+        newkeystatus[getOldAsciiKeyCode(SDLK_UP)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_PAGEUP)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_LEFT)]=0;
+#endif // !USE_SDL2
 	}
 	if ((keystatus[0xd1]|keystatus[0xd0]|keystatus[0xcd]) != 0)
 	{
@@ -2420,9 +2432,15 @@ void introduction(K_INT16 songnum)
 	    keystatus[0xd1] = 0;
 	    keystatus[0xd0] = 0;
 	    keystatus[0xcd] = 0;
+#ifndef USE_SDL2
 	    newkeystatus[SDLK_DOWN]=0;
 	    newkeystatus[SDLK_PAGEDOWN]=0;
 	    newkeystatus[SDLK_RIGHT]=0;
+#else
+        newkeystatus[getOldAsciiKeyCode(SDLK_DOWN)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_PAGEDOWN)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_RIGHT)]=0;
+#endif // !USE_SDL2
 	}
 	if (getkeydefstat(17) > 0)
 	{
@@ -2478,9 +2496,15 @@ void introduction(K_INT16 songnum)
 	    keystatus[1] = 0;
 	    keystatus[57] = 0;
 	    keystatus[28] = 0;
+#ifndef USE_SDL2
 	    newkeystatus[SDLK_ESCAPE]=0;
 	    newkeystatus[SDLK_RETURN]=0;
 	    newkeystatus[SDLK_SPACE]=0;
+#else
+        newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
 	    SDL_LockMutex(timermutex);
 	    clockspeed = 0;
 	    SDL_UnlockMutex(timermutex);
@@ -2506,9 +2530,15 @@ void introduction(K_INT16 songnum)
 	    keystatus[1] = 0;
 	    keystatus[57] = 0;
 	    keystatus[28] = 0;
+#ifndef USE_SDL2
 	    newkeystatus[SDLK_ESCAPE]=0;
 	    newkeystatus[SDLK_RETURN]=0;
 	    newkeystatus[SDLK_SPACE]=0;
+#else
+        newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
 	}
 	if ((dai >= 0) && (dai < 128))
 	    fade(64+((int)(dai>>1)));
@@ -2537,9 +2567,15 @@ void introduction(K_INT16 songnum)
     keystatus[57] = 0;
     keystatus[28] = 0;
     keystatus[1] = 0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_ESCAPE]=0;
     newkeystatus[SDLK_RETURN]=0;
     newkeystatus[SDLK_SPACE]=0;
+#else
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
     if (vidmode == 0)
     {
 	dside = 200;
@@ -3430,9 +3466,15 @@ void wingame(K_INT16 episode)
 		    keystatus[1] = 0;
 		    keystatus[57] = 0;
 		    keystatus[28] = 0;
+#ifndef USE_SDL2
 		    newkeystatus[SDLK_ESCAPE]=0;
 		    newkeystatus[SDLK_RETURN]=0;
 		    newkeystatus[SDLK_SPACE]=0;
+#else
+            newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+            newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+            newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
 		    if (episode == 1) loadstory(-20);
 		    if (episode == 2) loadstory(-18);
 		    finalisemenu();
@@ -3477,9 +3519,15 @@ void wingame(K_INT16 episode)
     keystatus[57] = 0;
     keystatus[28] = 0;
     keystatus[1] = 0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_ESCAPE]=0;
     newkeystatus[SDLK_RETURN]=0;
     newkeystatus[SDLK_SPACE]=0;
+#else
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
     bstatus = 0;
     lastunlock = 1;
     lastshoot = 1;
@@ -3508,9 +3556,15 @@ void winallgame()
     keystatus[1] = 0;
     keystatus[57] = 0;
     keystatus[28] = 0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_ESCAPE]=0;
     newkeystatus[SDLK_RETURN]=0;
     newkeystatus[SDLK_SPACE]=0;
+#else
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
     while ((leavewin == 0) || ((keystatus[1] == 0) && (keystatus[57] == 0) && (keystatus[28] == 0) && (bstatus == 0)))
     {
 	PollInputs();
@@ -3560,9 +3614,15 @@ void winallgame()
 	    keystatus[1] = 0;
 	    keystatus[57] = 0;
 	    keystatus[28] = 0;
-	    newkeystatus[SDLK_ESCAPE]=0;
-	    newkeystatus[SDLK_RETURN]=0;
-	    newkeystatus[SDLK_SPACE]=0;
+#ifndef USE_SDL2
+        newkeystatus[SDLK_ESCAPE]=0;
+        newkeystatus[SDLK_RETURN]=0;
+        newkeystatus[SDLK_SPACE]=0;
+#else
+        newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
 	    loadstory(-16);
 	    finalisemenu();
 	    settransferpalette();
@@ -3597,9 +3657,15 @@ void winallgame()
     keystatus[57] = 0;
     keystatus[28] = 0;
     keystatus[1] = 0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_ESCAPE]=0;
     newkeystatus[SDLK_RETURN]=0;
     newkeystatus[SDLK_SPACE]=0;
+#else
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
     bstatus = 0;
     lastunlock = 1;
     lastshoot = 1;
@@ -4921,7 +4987,11 @@ void getname()
 	    glFlush();
 	    SDL_Delay(10); /* Just to avoid soaking all CPU. */
 	}
+#ifndef USE_SDL2
 	if (ch == SDLK_DELETE)
+#else
+    if (ch == getOldAsciiKeyCode(SDLK_DELETE))
+#endif // !USE_SDL2
 	{
 	    hiscorenam[j] = ch;
 	    for(j=0;j<16;j++)
@@ -5279,16 +5349,22 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     keystatus[0xd0] = 0, keystatus[0x50] = 0, keystatus[0xcd] = 0;
     keystatus[0x01] = 0, keystatus[0x1c] = 0, keystatus[0x9c] = 0;
     keystatus[0x39] = 0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_KP_ENTER]=0;
     newkeystatus[SDLK_RETURN]=0;
     newkeystatus[SDLK_SPACE]=0;
     newkeystatus[SDLK_ESCAPE]=0;
     newkeystatus[SDLK_UP]=newkeystatus[SDLK_DOWN]=newkeystatus[SDLK_LEFT]=
 	newkeystatus[SDLK_RIGHT]=0;
-#ifndef USE_SDL2
     newkeystatus[SDLK_KP2]=newkeystatus[SDLK_KP8]=0;
 #else
-    newkeystatus[SDLK_KP_2]=newkeystatus[SDLK_KP_8]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_KP_ENTER)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_UP)]=newkeystatus[getOldAsciiKeyCode(SDLK_DOWN)]=newkeystatus[getOldAsciiKeyCode(SDLK_LEFT)]=
+    newkeystatus[getOldAsciiKeyCode(SDLK_RIGHT)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_KP_2)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_8)]=0;
 #endif // !USE_SDL2
     animater6 = 0;
     esckeystate = 0;
@@ -5331,11 +5407,12 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 		nowselector = totselectors-1;
 	    keystatus[0x48] = 0, keystatus[0xc8] = 0, keystatus[0xcb] = 0;
 #ifndef USE_SDL2
-	    newkeystatus[SDLK_UP]=newkeystatus[SDLK_KP8]=
+        newkeystatus[SDLK_UP]=newkeystatus[SDLK_KP8]=
+        newkeystatus[SDLK_LEFT]=0;
 #else
-        newkeystatus[SDLK_UP]=newkeystatus[SDLK_KP_8]=
+        newkeystatus[getOldAsciiKeyCode(SDLK_UP)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_8)]=
+        newkeystatus[getOldAsciiKeyCode(SDLK_LEFT)]=0;
 #endif // !USE_SDL2
-		newkeystatus[SDLK_LEFT]=0;
 	}
 	if (((keystatus[0xd0]|keystatus[0x50]|keystatus[0xcd]) != 0) || (mousy > 128))
 	{
@@ -5352,10 +5429,11 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 	    keystatus[0xd0] = 0, keystatus[0x50] = 0, keystatus[0xcd] = 0;
 #ifndef USE_SDL2
 	    newkeystatus[SDLK_DOWN]=newkeystatus[SDLK_KP2]=
+        newkeystatus[SDLK_RIGHT]=0;
 #else
-        newkeystatus[SDLK_DOWN]=newkeystatus[SDLK_KP_2]=
+        newkeystatus[getOldAsciiKeyCode(SDLK_DOWN)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_2)]=
+        newkeystatus[getOldAsciiKeyCode(SDLK_RIGHT)]=0;
 #endif // !USE_SDL2
-		newkeystatus[SDLK_RIGHT]=0;
 	}
 	esckeystate = (keystatus[1]|(keystatus[0x1c]<<1)|(keystatus[0x9c]<<1)|(keystatus[0x39]<<1));
 	if ((obstatus == 0) && (bstatus > 0))
@@ -5989,8 +6067,13 @@ void pressakey()
     bstatus = 1;
     obstatus = 1;
     keystatus[0x1c] = 0, keystatus[0x9c] = 0, keystatus[0x1] = 0, keystatus[0x39] = 0;
+#ifndef USE_SDL2
     newkeystatus[SDLK_RETURN]=newkeystatus[SDLK_KP_ENTER]=0;
     newkeystatus[SDLK_ESCAPE]=newkeystatus[SDLK_SPACE]=0;
+#else
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_ENTER)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+#endif // !USE_SDL2
     while (((keystatus[0x1c]|keystatus[0x9c]|keystatus[1]|keystatus[0x39]) == 0) && (bstatus <= obstatus))
     {
 	PollInputs();
@@ -6105,7 +6188,12 @@ Uint16 getkeypress() {
 	    case SDL_QUIT:
 		quitgame=1;
 	    case SDL_KEYDOWN:
+#ifndef USE_SDL2
 		sk=event.key.keysym.sym;
+#else
+        sk=getOldAsciiKeyCode(sk);
+        fprintf(stderr, "ss.c1: Code is: %d.\n", sk);
+#endif
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=1;
 		}
@@ -6114,11 +6202,14 @@ Uint16 getkeypress() {
 #ifndef USE_SDL2
 		sk=event.key.keysym.unicode;
 #else
-        sk=event.key.keysym.sym;
+        sk=getOldAsciiKeyCode(event.key.keysym.sym);
 #endif // !USE_SDL2
 		return sk;
 	    case SDL_KEYUP:
 		sk=event.key.keysym.sym;
+#ifdef USE_SDL2
+        sk=getOldAsciiKeyCode(sk);
+#endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=0;
 		}
@@ -6163,6 +6254,10 @@ void PollInputs() {
 		break;
 	    case SDL_KEYDOWN:
 		sk=event.key.keysym.sym;
+#ifdef USE_SDL2
+        sk=getOldAsciiKeyCode(sk);
+        fprintf(stderr, "ss.c2: Code is: %d.\n", sk);
+#endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=1;
 		}
@@ -6171,6 +6266,9 @@ void PollInputs() {
 		break;		
 	    case SDL_KEYUP:
 		sk=event.key.keysym.sym;
+#ifdef USE_SDL2
+        sk=getOldAsciiKeyCode(sk);
+#endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=0;
 		}

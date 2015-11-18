@@ -140,6 +140,30 @@ static char jaxisnames[numjoyaxes][30]={
     "Axis 6"
 };
 
+#ifdef USE_SDL2
+#include "sdl2keyhelper.h"
+
+static int newdefaultkey[numkeys]={
+    OLDK_UP,
+    OLDK_DOWN,
+    OLDK_LEFT,
+    OLDK_RIGHT,
+    OLDK_RCTRL,
+    OLDK_a,
+    OLDK_z,
+    OLDK_LSHIFT,
+    OLDK_LCTRL,
+    OLDK_F1,
+    OLDK_F2,
+    OLDK_F3,
+    OLDK_SPACE,
+    OLDK_BACKSPACE,
+    OLDK_RETURN,
+    OLDK_p,
+    OLDK_m,
+    OLDK_ESCAPE
+};
+#else
 static int newdefaultkey[numkeys]={
     SDLK_UP,
     SDLK_DOWN,
@@ -160,6 +184,7 @@ static int newdefaultkey[numkeys]={
     SDLK_m,
     SDLK_ESCAPE
 };
+#endif // !USE_SDL2
 
 static int newdefaultbutton[numkeys]={
     -1,
@@ -395,7 +420,11 @@ int getnumber(void) {
 	    glFlush();
 	    SDL_Delay(10); /* Just to avoid soaking all CPU. */
 	}
+#ifndef USE_SDL2
 	if (ch == SDLK_DELETE)
+#else
+    if (ch == getOldAsciiKeyCode(SDLK_DELETE))
+#endif // !USE_SDL2
 	{
 	    buf[j] = ch;
 	    for(j=0;j<10;j++)
@@ -611,6 +640,10 @@ void setupsetkeys(void) {
 		    {	      
 			case SDL_KEYDOWN:
 			    sk=event.key.keysym.sym;
+#ifdef USE_SDL2
+                sk=getOldAsciiKeyCode(sk);
+#endif // USE_SDL2
+                fprintf(stderr, "s.c1: Scancode: %d.\n", sk);
 			    if (sk<SDLKEYS) {
 				j=sk;
 			    }
@@ -664,6 +697,7 @@ void setupsetbuttons(void) {
 			}
 			break;
 		    case SDL_KEYDOWN:
+                fprintf(stderr, "s.c2: Scancode: %d.\n", sk); // TODO: Check this.
 			j=-1;
 			break;
 		    default:
@@ -746,6 +780,7 @@ void setupsetaxes(void) {
 			}
 			break;
 		    case SDL_KEYDOWN:
+                fprintf(stderr, "s.c3: Scancode: %d.\n", sk); // TODO: Check This
 			j=0;
 			jdone=1;
 			break;

@@ -197,7 +197,11 @@ void oldmain(void)
 		if (lastpageoffset > 21600) pageoffset = 0;
 	    }
 	}
+#ifndef USE_SDL2
 	if (newkeystatus[SDLK_r] > 0)
+#else
+    if (newkeystatus[getOldAsciiKeyCode(SDLK_r)] > 0)
+#endif // !USE_SDL2
 	    rogermode = rogermode ^ 1; /* Don't ask me, I'm just porting this. */
 	if (statusbar == statusbargoal)
 	{
@@ -403,6 +407,7 @@ void oldmain(void)
 					    if (mstat[k] == 109)
 					    {
 						oldwingame(mposx[k],mposy[k]);
+                        // TODO: Check this?
 						newkeystatus[newkeydefs[17]] |= 2;
 						l = 0;
 					    }
@@ -1782,15 +1787,24 @@ void oldmain(void)
 		    SetVisibleScreenOffset(0);
 #ifndef USE_SDL2
     SDL_GL_SwapBuffers();
+
+    newkeystatus[SDLK_ESCAPE] = 0;
+    newkeystatus[SDLK_SPACE] = 0;
+    newkeystatus[SDLK_RETURN] = 0;
+    bstatus = 0;
+    while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0)) {
 #else
     SDL_GL_SwapWindow(globalWindow);
+
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] = 0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] = 0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] = 0;
+    bstatus = 0;
+    while ((newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
+            (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0) &&
+             (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0) && (bstatus == 0)) {
 #endif // !USE_SDL2
-		    newkeystatus[SDLK_ESCAPE] = 0;
-		    newkeystatus[SDLK_SPACE] = 0;
-		    newkeystatus[SDLK_RETURN] = 0;
-		    bstatus = 0;
-		    while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0)) {
-			PollInputs();
+            PollInputs();
 			if (moustat == 0)
 			    bstatus=readmouse(NULL, NULL);
 			if (joystat == 0)
@@ -1798,6 +1812,7 @@ void oldmain(void)
 			SDL_Delay(10);
 		    }
 		}
+        // TODO: Check This
 		newkeystatus[newkeydefs[17]] |= 2;
 		death = 4094;
 		ototclock = 1;
@@ -1843,50 +1858,94 @@ void oldmain(void)
 		picrot(posx,posy,posz,ang);
 		spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)79);
 #ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
+        SDL_GL_SwapBuffers();
+
+        m = 0;
+        n = 0;
+        ototclock = totalclock;
+        while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
+        {
+            PollInputs();
+
+            if (newkeystatus[SDLK_1]) {
+            i=0;
+            m = 1;
+            newkeystatus[SDLK_1]=0;
+            } else if (newkeystatus[SDLK_2]) {
+            i=1;
+            m = 1;
+            newkeystatus[SDLK_2]=0;
+            } else if (newkeystatus[SDLK_3]) {
+            i=2;
+            m = 1;
+            newkeystatus[SDLK_3]=0;
+            } else if (newkeystatus[SDLK_4]) {
+            i=3;
+            m = 1;
+            newkeystatus[SDLK_4]=0;
+            } else if (newkeystatus[SDLK_5]) {
+            i=4;
+            m = 1;
+            newkeystatus[SDLK_5]=0;
+            } else if (newkeystatus[SDLK_6]) {
+            i=5;
+            m = 1;
+            newkeystatus[SDLK_6]=0;
+            } else if (newkeystatus[SDLK_7]) {
+            i=6;
+            m = 1;
+            newkeystatus[SDLK_7]=0;
+            } else if (newkeystatus[SDLK_8]) {
+            i=7;
+            m = 1;
+            newkeystatus[SDLK_8]=0;
+            }
 #else
-    SDL_GL_SwapWindow(globalWindow);
+        SDL_GL_SwapWindow(globalWindow);
+
+        m = 0;
+        n = 0;
+        ototclock = totalclock;
+        while ((m == 0) && (newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
+                            (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0) &&
+                             (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0))
+        {
+            PollInputs();
+
+            if (newkeystatus[getOldAsciiKeyCode(SDLK_1)]) {
+            i=0;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_1)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_2)]) {
+            i=1;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_2)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_3)]) {
+            i=2;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_3)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_4)]) {
+            i=3;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_4)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_5)]) {
+            i=4;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_5)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_6)]) {
+            i=5;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_6)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_7)]) {
+            i=6;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_7)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_8)]) {
+            i=7;
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_8)]=0;
+            }
 #endif // !USE_SDL2
-		m = 0;
-		n = 0;
-		ototclock = totalclock;
-		while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
-		{
-		    PollInputs();
-	    
-		    if (newkeystatus[SDLK_1]) {
-			i=0;
-			m = 1;
-			newkeystatus[SDLK_1]=0;
-		    } else if (newkeystatus[SDLK_2]) {
-			i=1;
-			m = 1;
-			newkeystatus[SDLK_2]=0;
-		    } else if (newkeystatus[SDLK_3]) {
-			i=2;
-			m = 1;
-			newkeystatus[SDLK_3]=0;
-		    } else if (newkeystatus[SDLK_4]) {
-			i=3;
-			m = 1;
-			newkeystatus[SDLK_4]=0;
-		    } else if (newkeystatus[SDLK_5]) {
-			i=4;
-			m = 1;
-			newkeystatus[SDLK_5]=0;
-		    } else if (newkeystatus[SDLK_6]) {
-			i=5;
-			m = 1;
-			newkeystatus[SDLK_6]=0;
-		    } else if (newkeystatus[SDLK_7]) {
-			i=6;
-			m = 1;
-			newkeystatus[SDLK_7]=0;
-		    } else if (newkeystatus[SDLK_8]) {
-			i=7;
-			m = 1;
-			newkeystatus[SDLK_8]=0;
-		    }
 
 		    if (m) {
 			if (hiscorenamstat == 0)
@@ -1915,52 +1974,94 @@ void oldmain(void)
 		picrot(posx,posy,posz,ang);
 		spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)78);
 #ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
-		pageoffset = j;
-		m = 0;
-		ototclock = totalclock;
-	
-		while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
-		{
-		    PollInputs();
-	    
-		    if (newkeystatus[SDLK_1]) {
-			oldloadgame(0);
-			m = 1;
-			newkeystatus[SDLK_1]=0;
-		    } else if (newkeystatus[SDLK_2]) {
-			oldloadgame(1);
-			m = 1;
-			newkeystatus[SDLK_2]=0;
-		    } else if (newkeystatus[SDLK_3]) {
-			oldloadgame(2);
-			m = 1;
-			newkeystatus[SDLK_3]=0;
-		    } else if (newkeystatus[SDLK_4]) {
-			oldloadgame(3);
-			m = 1;
-			newkeystatus[SDLK_4]=0;
-		    } else if (newkeystatus[SDLK_5]) {
-			oldloadgame(4);
-			m = 1;
-			newkeystatus[SDLK_5]=0;
-		    } else if (newkeystatus[SDLK_6]) {
-			oldloadgame(5);
-			m = 1;
-			newkeystatus[SDLK_6]=0;
-		    } else if (newkeystatus[SDLK_7]) {
-			oldloadgame(6);
-			m = 1;
-			newkeystatus[SDLK_7]=0;
-		    } else if (newkeystatus[SDLK_8]) {
-			oldloadgame(7);
-			m = 1;
-			newkeystatus[SDLK_8]=0;
-		    }
+        SDL_GL_SwapBuffers();
+        pageoffset = j;
+        m = 0;
+        ototclock = totalclock;
 
+        while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
+        {
+            PollInputs();
+
+            if (newkeystatus[SDLK_1]) {
+            oldloadgame(0);
+            m = 1;
+            newkeystatus[SDLK_1]=0;
+            } else if (newkeystatus[SDLK_2]) {
+            oldloadgame(1);
+            m = 1;
+            newkeystatus[SDLK_2]=0;
+            } else if (newkeystatus[SDLK_3]) {
+            oldloadgame(2);
+            m = 1;
+            newkeystatus[SDLK_3]=0;
+            } else if (newkeystatus[SDLK_4]) {
+            oldloadgame(3);
+            m = 1;
+            newkeystatus[SDLK_4]=0;
+            } else if (newkeystatus[SDLK_5]) {
+            oldloadgame(4);
+            m = 1;
+            newkeystatus[SDLK_5]=0;
+            } else if (newkeystatus[SDLK_6]) {
+            oldloadgame(5);
+            m = 1;
+            newkeystatus[SDLK_6]=0;
+            } else if (newkeystatus[SDLK_7]) {
+            oldloadgame(6);
+            m = 1;
+            newkeystatus[SDLK_7]=0;
+            } else if (newkeystatus[SDLK_8]) {
+            oldloadgame(7);
+            m = 1;
+            newkeystatus[SDLK_8]=0;
+            }
+#else
+        SDL_GL_SwapWindow(globalWindow);
+        pageoffset = j;
+        m = 0;
+        ototclock = totalclock;
+
+        while ((m == 0) && (newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0)
+               && (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0)
+               && (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0))
+        {
+            PollInputs();
+
+            if (newkeystatus[getOldAsciiKeyCode(SDLK_1)]) {
+            oldloadgame(0);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_1)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_2)]) {
+            oldloadgame(1);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_2)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_3)]) {
+            oldloadgame(2);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_3)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_4)]) {
+            oldloadgame(3);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_4)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_5)]) {
+            oldloadgame(4);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_5)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_6)]) {
+            oldloadgame(5);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_6)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_7)]) {
+            oldloadgame(6);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_7)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_8)]) {
+            oldloadgame(7);
+            m = 1;
+            newkeystatus[getOldAsciiKeyCode(SDLK_8)]=0;
+            }
+#endif // !USE_SDL2
 
 		    SDL_Delay(10);
 		}
@@ -2013,10 +2114,13 @@ void oldmain(void)
 		mixing=0;
 #ifndef USE_SDL2
     SDL_GL_SwapBuffers();
+    while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0)) {
 #else
     SDL_GL_SwapWindow(globalWindow);
+    while ((newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
+           (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0) &&
+           (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0) && (bstatus == 0)) {
 #endif // !USE_SDL2
-		while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0)) {
 		    PollInputs();
 		    if (moustat == 0)
 			bstatus=readmouse(NULL, NULL);
@@ -2053,11 +2157,21 @@ void oldmain(void)
 	    musicon();
 	    oldloadstory();
 	    mixing=0;
+#ifndef USE_SDL2
 	    newkeystatus[SDLK_ESCAPE]=0;
 	    newkeystatus[SDLK_SPACE]=0;
 	    newkeystatus[SDLK_RETURN]=0;
 	    bstatus=0;
 	    while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0))
+#else
+        newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
+        bstatus=0;
+        while ((newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
+               (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0) &&
+               (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0) && (bstatus == 0))
+#endif // !USE_SDL2
 	    {
 		PollInputs();
 		if (moustat == 0)
@@ -2164,10 +2278,17 @@ void oldmain(void)
 		while (j == 0)
 		{
 		    PollInputs();
+#ifndef USE_SDL2
 		    if (newkeystatus[SDLK_n] != 0)  j |= 1;
 		    if (newkeystatus[SDLK_SPACE] != 0)  j |= 1;
 		    if (newkeystatus[SDLK_RETURN] != 0)  j |= 1;
 		    if (newkeystatus[SDLK_y] != 0)  j |= 2;
+#else
+            if (newkeystatus[getOldAsciiKeyCode(SDLK_n)] != 0)  j |= 1;
+            if (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] != 0)  j |= 1;
+            if (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] != 0)  j |= 1;
+            if (newkeystatus[getOldAsciiKeyCode(SDLK_y)] != 0)  j |= 2;
+#endif // !USE_SDL2
 		}
 		if (j == 1)
 		{
@@ -2177,7 +2298,7 @@ void oldmain(void)
 		    lastbarchange = 1;
 		}
 		else
-		    newkeystatus[newkeydefs[17]] = 1;
+            newkeystatus[newkeydefs[17]] = 1; // TODO: Check this
 		totalclock = ototclock;
 		clockspd = 0;
 		picrot(posx,posy,posz,ang);
@@ -2555,7 +2676,13 @@ K_INT16 oldintroduction(void)
 	saidwelcome = 1;
     }
 
+#ifndef USE_SDL2
     while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0))
+#else
+    while ((newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
+           (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0) &&
+           (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0) && (bstatus == 0))
+#endif // !USE_SDL2
     {
 	glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -2617,40 +2744,72 @@ K_INT16 oldintroduction(void)
 	    pageoffset = plc;
 	    spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)78);
 #ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
+        SDL_GL_SwapBuffers();
+        m = 0;
+        while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
+        {
+            PollInputs();
+            i=-1;
+            if (newkeystatus[SDLK_1]) {
+                i=0;
+                newkeystatus[SDLK_1]=0;
+            } else if (newkeystatus[SDLK_2]) {
+                i=1;
+                newkeystatus[SDLK_2]=0;
+            } else if (newkeystatus[SDLK_3]) {
+                i=2;
+                newkeystatus[SDLK_3]=0;
+            } else if (newkeystatus[SDLK_4]) {
+                i=3;
+                newkeystatus[SDLK_4]=0;
+            } else if (newkeystatus[SDLK_5]) {
+                i=4;
+                newkeystatus[SDLK_5]=0;
+            } else if (newkeystatus[SDLK_6]) {
+                i=5;
+                newkeystatus[SDLK_6]=0;
+            } else if (newkeystatus[SDLK_7]) {
+                i=6;
+                newkeystatus[SDLK_7]=0;
+            } else if (newkeystatus[SDLK_8]) {
+                i=7;
+                newkeystatus[SDLK_8]=0;
+            }
 #else
-    SDL_GL_SwapWindow(globalWindow);
+        SDL_GL_SwapWindow(globalWindow);
+        m = 0;
+        while ((m == 0) && (newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
+               (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0)
+               && (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0))
+        {
+            PollInputs();
+            i=-1;
+            if (newkeystatus[getOldAsciiKeyCode(SDLK_1)]) {
+                i=0;
+                newkeystatus[getOldAsciiKeyCode(SDLK_1)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_2)]) {
+                i=1;
+                newkeystatus[getOldAsciiKeyCode(SDLK_2)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_3)]) {
+                i=2;
+                newkeystatus[getOldAsciiKeyCode(SDLK_3)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_4)]) {
+                i=3;
+                newkeystatus[getOldAsciiKeyCode(SDLK_4)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_5)]) {
+                i=4;
+                newkeystatus[getOldAsciiKeyCode(SDLK_5)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_6)]) {
+                i=5;
+                newkeystatus[getOldAsciiKeyCode(SDLK_6)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_7)]) {
+                i=6;
+                newkeystatus[getOldAsciiKeyCode(SDLK_7)]=0;
+            } else if (newkeystatus[getOldAsciiKeyCode(SDLK_8)]) {
+                i=7;
+                newkeystatus[getOldAsciiKeyCode(SDLK_8)]=0;
+            }
 #endif // !USE_SDL2
-	    m = 0;
-	    while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
-	    {
-		PollInputs();
-		i=-1;
-		if (newkeystatus[SDLK_1]) {
-		    i=0;
-		    newkeystatus[SDLK_1]=0;
-		} else if (newkeystatus[SDLK_2]) {
-		    i=1;
-		    newkeystatus[SDLK_2]=0;
-		} else if (newkeystatus[SDLK_3]) {
-		    i=2;
-		    newkeystatus[SDLK_3]=0;
-		} else if (newkeystatus[SDLK_4]) {
-		    i=3;
-		    newkeystatus[SDLK_4]=0;
-		} else if (newkeystatus[SDLK_5]) {
-		    i=4;
-		    newkeystatus[SDLK_5]=0;
-		} else if (newkeystatus[SDLK_6]) {
-		    i=5;
-		    newkeystatus[SDLK_6]=0;
-		} else if (newkeystatus[SDLK_7]) {
-		    i=6;
-		    newkeystatus[SDLK_7]=0;
-		} else if (newkeystatus[SDLK_8]) {
-		    i=7;
-		    newkeystatus[SDLK_8]=0;
-		}
 		if (i >= 0)
 		{
 		    if (oldloadgame(i) != -1)
@@ -2669,9 +2828,15 @@ K_INT16 oldintroduction(void)
 				numboards = 27;
 				close(fil);
 			    }
+#ifndef USE_SDL2
 			newkeystatus[SDLK_SPACE] = 0;
 			newkeystatus[SDLK_RETURN] = 0;
 			newkeystatus[SDLK_ESCAPE] = 0;
+#else
+            newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] = 0;
+            newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] = 0;
+            newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] = 0;
+#endif // !USE_SDL2
 			if (vidmode == 0)
 			{
 			    dside = 200;
@@ -2700,7 +2865,11 @@ K_INT16 oldintroduction(void)
 			oldstatusbaralldraw();
 			return(0);
 		    }
+#ifndef USE_SDL2
 		    newkeystatus[SDLK_SPACE] = 1;
+#else
+            newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] = 1;
+#endif // !USE_SDL2
 		    m = 1;
 		}
 	    }
@@ -2719,9 +2888,16 @@ K_INT16 oldintroduction(void)
 
     fade(0);
 
+#ifndef USE_SDL2
     newkeystatus[SDLK_SPACE] = 0;
     newkeystatus[SDLK_RETURN] = 0;
     newkeystatus[SDLK_ESCAPE] = 0;
+#else
+    newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] = 0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] = 0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] = 0;
+#endif // !USE_SDL2
+
     if (vidmode == 0)
     {
 	dside = 200;
@@ -2906,7 +3082,13 @@ void oldwingame(K_UINT16 mxpos, K_UINT16 mypos)
     loadmusic("WINGAME");
     musicon();
     ksay(1);
+#ifndef USE_SDL2
     while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0) && (brightness > 2))
+#else
+    while ((newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
+           (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0) &&
+           (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0) && (bstatus == 0) && (brightness > 2))
+#endif // !USE_SDL2
     {
 	PollInputs();
 	if (moustat == 0)

@@ -17,6 +17,8 @@
 #ifdef USE_SDL2
 #include <SDL2/SDL.h>
 
+#include "sdl2keyhelper.h"
+
 SDL_Window *globalWindow;
 SDL_GLContext *glContext;
 #else

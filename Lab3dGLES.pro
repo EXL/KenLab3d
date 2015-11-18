@@ -18,6 +18,9 @@ sdl2 {
     DEFINES += USE_SDL2
     QMAKE_CFLAGS += $$system(sdl2-config --cflags)
     LIBS += $$system(sdl2-config --libs) -lSDL2_image -lGL -lGLU
+
+    HEADERS += sdl2keyhelper.h
+    SOURCES += sdl2keyhelper.c
 } else {
     QMAKE_CFLAGS += $$system(sdl-config --cflags)
     LIBS += $$system(sdl-config --libs) -lSDL_image -lGL -lGLU
