@@ -493,22 +493,23 @@ int modecompare(const void *a, const void *b) {
 }
 
 void setupsetresolution(void) {
+#ifndef USE_SDL2
     int a,i,m;
     int resolutionmenusize;
     int detectedresolution[11];
     char resolutiondetectmenu[11][30];
+
     SDL_Rect **modes,**umodes;
+#else
+    int a;
+#endif // !USE_SDL2
     a=resolutionmenu(3,0,resolutiontypemenu,0);
 
     switch(a) {
         case 0:
 #ifndef USE_SDL2
         modes=umodes=SDL_ListModes(NULL,SDL_FULLSCREEN);
-#else
-        // TODO: Rewrite here all
-        // SDL_GetDisplayMode(NULL, NULL, SDL_WINDOW_FULLSCREEN);
-        // modes=umodes=SDL_ListModes(NULL,SDL_WINDOW_FULLSCREEN);
-#endif // !USE_SDL2
+
 	    if ((modes==NULL)||(modes==(SDL_Rect **)-1))
 		return;
 	    m=0;
@@ -550,6 +551,9 @@ void setupsetresolution(void) {
 		} while(a==resolutionmenusize);
 	    resolutionnumber=detectedresolution[a];
 	    free(modes);
+#else
+        // TODO: Rewrite here all
+#endif // !USE_SDL2
 	    break;
 	    /*
 	case 1:	    
@@ -695,7 +699,7 @@ void setupsetbuttons(void) {
 			    j=sk;
 			}
 			break;
-		    case SDL_KEYDOWN:
+            case SDL_KEYDOWN:
                 fprintf(stderr, "s.c2: Scancode: %d.\n", sk); // TODO: Check this.
 			j=-1;
 			break;
@@ -778,8 +782,7 @@ void setupsetaxes(void) {
 			    } else axisvalues[sk]=event.jaxis.value;
 			}
 			break;
-		    case SDL_KEYDOWN:
-                fprintf(stderr, "s.c3: Scancode: %d.\n", sk); // TODO: Check This
+            case SDL_KEYDOWN:
 			j=0;
 			jdone=1;
 			break;

@@ -407,7 +407,7 @@ void oldmain(void)
 					    if (mstat[k] == 109)
 					    {
 						oldwingame(mposx[k],mposy[k]);
-                        // TODO: Check this?
+                        // TODO: Check this.
 						newkeystatus[newkeydefs[17]] |= 2;
 						l = 0;
 					    }
@@ -1812,7 +1812,7 @@ void oldmain(void)
 			SDL_Delay(10);
 		    }
 		}
-        // TODO: Check This
+        // TODO: Check this.
 		newkeystatus[newkeydefs[17]] |= 2;
 		death = 4094;
 		ototclock = 1;
@@ -2298,7 +2298,7 @@ void oldmain(void)
 		    lastbarchange = 1;
 		}
 		else
-            newkeystatus[newkeydefs[17]] = 1; // TODO: Check this
+            newkeystatus[newkeydefs[17]] = 1; // TODO: Check this.
 		totalclock = ototclock;
 		clockspd = 0;
 		picrot(posx,posy,posz,ang);

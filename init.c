@@ -458,7 +458,7 @@ void initialize()
 #ifndef USE_SDL2
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 #else
-    // TODO: ??
+    // TODO: Check this.
 #endif // !USE_SDL2
     SetVisibleScreenOffset(0);
 #ifndef USE_SDL2
