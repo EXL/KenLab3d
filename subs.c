@@ -5102,6 +5102,11 @@ void getname()
 #endif // !USE_SDL2
     while ((ch != 13) && (ch != 27))
     {
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	while ((ch=getkeypress()) == 0)
 	{
 	    textbuf[0] = 95;
