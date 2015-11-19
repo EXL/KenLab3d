@@ -15,7 +15,15 @@
 #endif
 
 #ifdef USE_SDL2
+#ifndef ANDROID_NDK
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+
+// Unix Compatibility
+#define S_IREAD		S_IRUSR
+#define S_IWRITE	S_IWUSR
+#endif // !ANDROID_NDK
 
 #include "sdl2keyhelper.h"
 
@@ -31,9 +39,13 @@ extern Uint16 *gammaRamp;
 #include <GL/gl.h>
 #include <GL/glu.h>
 #else
-#include <GLES/egl.h>
 #include <GLES/gl.h>
+#ifndef ANDROID_NDK
+#include <GLES/egl.h>
 #include <GLES/glues.h>
+#else
+#include <glues.h>
+#endif // !ANDROID_NDK
 
 #define GLdouble GLfloat
 #define GL_CLAMP GL_CLAMP_TO_EDGE
@@ -460,7 +472,7 @@ K_INT16 loadmusic(char*);
 void outdata(unsigned char, unsigned char, unsigned char);
 void musicon();
 void musicoff();
-void setinst(unsigned char, K_INT16, unsigned char, unsigned char, 
+void setinst(unsigned char, K_INT16, unsigned char, unsigned char,
 	     unsigned char, unsigned char, unsigned char, unsigned char,
 	     unsigned char, unsigned char,
 	     unsigned char, unsigned char, unsigned char);
@@ -546,7 +558,7 @@ int PCkey[SDLKEYS]={
     -1, -1, -1, -1, -1, -1, -1, -1,
     0x52, 0x4f, 0x50, 0x51, 0x4b, 0x4c, 0x4d, 0x47, /* 256-263 */
     0x48, 0x49, 0x53, 0xe0, 0x37, 0x4a, 0x4e, 0xe0, /* 264-271 */
-    -1, 0x48+0x80, 0x50+0x80, 0x4d+0x80, 0x4b+0x80, 0x52+0x80, 0x47+0x80, 
+    -1, 0x48+0x80, 0x50+0x80, 0x4d+0x80, 0x4b+0x80, 0x52+0x80, 0x47+0x80,
     0x4f+0x80, /* 272-279 */
     0x49+0x80, 0x51+0x80, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f, 0x40, /* 280-287 */
     0x41, 0x42, 0x43, 0x44, 87, 88, 0xec, 0xed, /* 288-295 */
@@ -621,7 +633,7 @@ EXTERN int axisdefs[numaxes],axispos[numjoyaxes];
 EXTERN int musicvolume,soundvolume;
 EXTERN int channels;
 K_INT16 ksaystereo(K_UINT16 filenum,K_UINT16 x,K_UINT16 y);
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN  
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
 #define readLE16 read
 #define readLE32 read
 #define writeLE16 write

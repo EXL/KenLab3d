@@ -1,6 +1,10 @@
 #include "sdl2keyhelper.h"
 
+#ifndef ANDROID_NDK
 #include <SDL2/SDL.h>
+#else
+#include <SDL.h>
+#endif // !ANDROID_NDK
 
 int getUpperChar(int smallCharKeyCode) {
     return smallCharKeyCode - 0x20;
