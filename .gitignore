@@ -87,6 +87,7 @@ lint.xml
 gen-external-apklibs
 
 ### External symlinks ###
+assets/KenLabData
 jni/src/3rdparty/Tess
 jni/src/3rdparty/Glues
 jni/SDL2_image-2.0.0
