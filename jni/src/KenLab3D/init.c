@@ -323,8 +323,13 @@ void initialize()
 
     if (speechstatus >= 2)
     {
-	if (((i = open("sounds.kzp",O_BINARY|O_RDONLY,0)) != -1)||
-	    ((i = open("SOUNDS.KZP",O_BINARY|O_RDONLY,0)) != -1)) {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/sounds.kzp", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/SOUNDS.KZP", globalDataDir);
+
+    if (((i = open(path1,O_BINARY|O_RDONLY,0)) != -1)||
+        ((i = open(path2,O_BINARY|O_RDONLY,0)) != -1)) {
 	    fstat(i, &fstats);
 	    sndsize = (int)(fstats.st_size);
         TO_DEBUG_LOG("Detected %ld byte sounds.\n", sndsize);
@@ -341,9 +346,14 @@ void initialize()
 	    exit(-1);
 	}
 
-	file=fopen("sounds.kzp","rb");
+    char path3[256];
+    char path4[256];
+    snprintf(path3, sizeof(path3), "%s/sounds.kzp", globalDataDir);
+    snprintf(path4, sizeof(path4), "%s/SOUNDS.KZP", globalDataDir);
+
+    file=fopen(path3,"rb");
 	if (file==NULL) {
-	    file=fopen("SOUNDS.KZP","rb");
+        file=fopen(path4,"rb");
 	}
 	if (file==NULL) {
         TO_DEBUG_LOG("Can not find sounds.kzp.\n");
@@ -631,8 +641,13 @@ void initialize()
     /* Shareware/registered check... */
 
     if (lab3dversion) {
-	if (((i = open("boards.dat",O_BINARY|O_RDONLY,0)) != -1)||
-	    ((i = open("BOARDS.DAT",O_BINARY|O_RDONLY,0)) != -1)) {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/boards.dat", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/BOARDS.DAT", globalDataDir);
+
+    if (((i = open(path1,O_BINARY|O_RDONLY,0)) != -1)||
+        ((i = open(path2,O_BINARY|O_RDONLY,0)) != -1)) {
 	    fstat(i, &fstats);
 	    numboards = (int)(fstats.st_size>>13);
         TO_DEBUG_LOG("Detected %d boards.\n", numboards);
@@ -643,8 +658,13 @@ void initialize()
 	    exit(1);
 	}
     } else {
-	if (((i = open("boards.kzp",O_RDONLY|O_BINARY,0)) != -1)||
-	    ((i = open("BOARDS.KZP",O_RDONLY|O_BINARY,0)) != -1)) {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/boards.kzp", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/BOARDS.KZP", globalDataDir);
+
+    if (((i = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
+        ((i = open(path2,O_RDONLY|O_BINARY,0)) != -1)) {
 	    readLE16(i,&boleng[0],30*4);
 	    numboards = 30;
 	    if ((boleng[40]|boleng[41]) == 0)

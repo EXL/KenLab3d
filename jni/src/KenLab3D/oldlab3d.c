@@ -2377,6 +2377,7 @@ void olddrawlife(void)
 
 K_INT16 oldloadgame(K_INT16 gamenum)
 {
+    char path[256];
     char filename[20];
     K_INT16 i;
     int fil;
@@ -2387,14 +2388,18 @@ K_INT16 oldloadgame(K_INT16 gamenum)
     filename[6] = 'E', filename[7] = gamenum+48;
     filename[8] = '.', filename[9] = 'D', filename[10] = 'A';
     filename[11] = 'T', filename[12] = 0;
-    if((fil=open(filename,O_BINARY|O_RDONLY,
+
+    snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+    if((fil=open(path,O_BINARY|O_RDONLY,
 		 S_IWRITE|S_IREAD|S_IRGRP|S_IROTH))==-1) {
 	filename[0] = 's', filename[1] = 'a', filename[2] = 'v';
 	filename[3] = 'g', filename[4] = 'a', filename[5] = 'm';
 	filename[6] = 'e', filename[7] = gamenum+48;
 	filename[8] = '.', filename[9] = 'd', filename[10] = 'a';
 	filename[11] = 't', filename[12] = 0;
-	if((fil=open(filename,O_BINARY|O_RDONLY,
+
+    snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+    if((fil=open(path,O_BINARY|O_RDONLY,
 		     S_IWRITE|S_IREAD|S_IRGRP|S_IROTH))==-1)
 	    return(-1);
     }
@@ -2523,6 +2528,7 @@ K_INT16 oldloadgame(K_INT16 gamenum)
 
 K_INT16 oldsavegame(K_INT16 gamenum)
 {
+    char path[256];
     char filename[20];
     int fil;
     unsigned char t;
@@ -2541,7 +2547,8 @@ K_INT16 oldsavegame(K_INT16 gamenum)
     filename[6] = 'E', filename[7] = gamenum+48;
     filename[8] = '.', filename[9] = 'D', filename[10] = 'A';
     filename[11] = 'T', filename[12] = 0;
-    if((fil=open(filename,O_BINARY|O_CREAT|O_WRONLY,
+    snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+    if((fil=open(path,O_BINARY|O_CREAT|O_WRONLY,
 		 S_IWRITE|S_IREAD|S_IRGRP|S_IROTH))==-1)
 	return(-1);
     writeLE16(fil,&board[0][0],8192);
@@ -2817,19 +2824,23 @@ K_INT16 oldintroduction(void)
                 newkeystatus[getOldAsciiKeyCode(SDLK_8)]=0;
             }
 #endif // !USE_SDL2
+            char path1[256];
+            char path2[256];
+            snprintf(path1, sizeof(path1), "%s/boards.dat", globalDataDir);
+            snprintf(path2, sizeof(path2), "%s/BOARDS.DAT", globalDataDir);
 		if (i >= 0)
 		{
 		    if (oldloadgame(i) != -1)
 		    {
 			if (numboards == 0)
-			    if ((fil = open("boards.dat",O_BINARY|O_RDONLY,
+                if ((fil = open(path1,O_BINARY|O_RDONLY,
 					    S_IREAD)) != -1)
 			    {
 				numboards = 27;
 				close(fil);
 			    }
 			if (numboards == 0)
-			    if ((fil = open("BOARDS.DAT",O_BINARY|O_RDONLY,
+                if ((fil = open(path2,O_BINARY|O_RDONLY,
 					    S_IREAD)) != -1)
 			    {
 				numboards = 27;
@@ -3164,8 +3175,14 @@ K_INT16 oldloadstory()
     int fil, i, k, textbufcnt, textypos;
 
     ototclock = totalclock;
-    if ((fil = open("story.kzp",O_BINARY|O_RDONLY,S_IREAD)) == -1)
-	if ((fil = open("STORY.KZP",O_BINARY|O_RDONLY,S_IREAD)) == -1)
+
+    char path1[256];
+    char path2[256];
+    snprintf(path1, sizeof(path1), "%s/story.kzp", globalDataDir);
+    snprintf(path2, sizeof(path2), "%s/STORY.KZP", globalDataDir);
+
+    if ((fil = open(path1,O_BINARY|O_RDONLY,S_IREAD)) == -1)
+    if ((fil = open(path2,O_BINARY|O_RDONLY,S_IREAD)) == -1)
 	    return(-1);
     read(fil,&storyoffs[0],256);
     lseek(fil,(long)(storyoffs[boardnum+1]),SEEK_SET);

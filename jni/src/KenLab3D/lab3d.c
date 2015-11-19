@@ -134,14 +134,23 @@ int main(int argc,char **argv)
     SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO|/*SDL_INIT_NOPARACHUTE|*/
 	     SDL_INIT_JOYSTICK);
 
-    if (((fil = open("end.txt",O_RDONLY|O_BINARY,0)) != -1)||
-	((fil = open("END.TXT",O_RDONLY|O_BINARY,0)) != -1)) {
+    char path1[256];
+    char path2[256];
+    char path3[256];
+    char path4[256];
+    snprintf(path1, sizeof(path1), "%s/end.txt", globalDataDir);
+    snprintf(path2, sizeof(path2), "%s/END.TXT", globalDataDir);
+    snprintf(path3, sizeof(path3), "%s/boards.dat", globalDataDir);
+    snprintf(path4, sizeof(path4), "%s/BOARDS.DAT", globalDataDir);
+
+    if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
+    ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1)) {
 	close(fil);
 	lab3dversion=2; /* Version 1.0 detected. */
 	rnumwalls=192;
 	TO_DEBUG_LOG("Ken's Labyrinth version 1.0 detected.\n");
-    } else if (((fil = open("boards.dat",O_RDONLY|O_BINARY,0)) != -1)||
-	       ((fil = open("BOARDS.DAT",O_RDONLY|O_BINARY,0)) != -1)) {
+    } else if (((fil = open(path3,O_RDONLY|O_BINARY,0)) != -1)||
+           ((fil = open(path4,O_RDONLY|O_BINARY,0)) != -1)) {
 	close(fil);
 	lab3dversion=1; /* Version 1.1 detected. */
 	rnumwalls=0xe0;

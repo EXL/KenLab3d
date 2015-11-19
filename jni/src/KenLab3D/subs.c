@@ -190,8 +190,12 @@ void loadboard()
     unsigned char *RGBATexture=malloc(64*64*4);
 
     if (lab3dversion) {
-	if (((fil = open("boards.dat",O_RDONLY|O_BINARY,0)) != -1)||
-	    ((fil = open("BOARDS.DAT",O_RDONLY|O_BINARY,0)) != -1)) {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/boards.dat", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/BOARDS.DAT", globalDataDir);
+    if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
+        ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1)) {
 	    lseek(fil,((long)boardnum)<<13,SEEK_SET);
 	    read(fil,&board[0],8192);
 	    close(fil);
@@ -203,8 +207,12 @@ void loadboard()
 	    exit(1);
 	}
     } else {
-	if (((fil = open("boards.kzp",O_RDONLY|O_BINARY,0)) != -1)||
-	    ((fil = open("BOARDS.KZP",O_RDONLY|O_BINARY,0)) != -1))
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/boards.dat", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/BOARDS.DAT", globalDataDir);
+    if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
+        ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1))
 	{
 	    prepdie = 0;
 	    numwarps = 0;
@@ -1399,8 +1407,12 @@ void loadwalls(int replace)
 
     }
 
-    if (((fil = open("walls.kzp",O_RDONLY|O_BINARY,0)) != -1)||
-	((fil = open("WALLS.KZP",O_RDONLY|O_BINARY,0)) != -1))
+    char path1[256];
+    char path2[256];
+    snprintf(path1, sizeof(path1), "%s/walls.kzp", globalDataDir);
+    snprintf(path2, sizeof(path2), "%s/WALLS.KZP", globalDataDir);
+    if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
+    ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1))
     {
 	bmpkind[0] = 0;
 	wallheader[0] = 8;
@@ -2730,8 +2742,9 @@ K_INT16 loadmusic(char *filename)
 	if (musicsource == 1)
 	{
 	    /* Open KSM->MIDI instrument translation table... */
-
-	    file=fopen("ksmmidi.txt","rt");
+        char path[256];
+        snprintf(path, sizeof(path), "%s/ksmmidi.txt", globalDataDir);
+        file=fopen(path,"rt");
 	    if (file==NULL) {
 		TO_DEBUG_LOG("ksmmidi.txt not found; music disabled.\n");
 		musicsource=-1;
@@ -2743,8 +2756,12 @@ K_INT16 loadmusic(char *filename)
 	}
 	if (musicsource == 2)
 	{
-	    if(((infile=open("insts.dat",O_RDONLY|O_BINARY,0))==-1)&&
-	       ((infile=open("INSTS.DAT",O_RDONLY|O_BINARY,0))==-1))
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/insts.dat", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/INSTS.DAT", globalDataDir);
+        if(((infile=open(path1,O_RDONLY|O_BINARY,0))==-1)&&
+           ((infile=open(path2,O_RDONLY|O_BINARY,0))==-1))
 		return(-1);
 	    for(i=0;i<256;i++)
 	    {
@@ -2762,8 +2779,12 @@ K_INT16 loadmusic(char *filename)
 	    firstime = 0;
 	}
     }
-    if (((infile=open("songs.kzp",O_RDONLY|O_BINARY,0))==-1)&&
-	((infile=open("SONGS.KZP",O_RDONLY|O_BINARY,0))==-1))
+    char path1[256];
+    char path2[256];
+    snprintf(path1, sizeof(path1), "%s/songs.kzp", globalDataDir);
+    snprintf(path2, sizeof(path2), "%s/SONGS.KZP", globalDataDir);
+    if (((infile=open(path1,O_RDONLY|O_BINARY,0))==-1)&&
+    ((infile=open(path2,O_RDONLY|O_BINARY,0))==-1))
 	return(-1);
     readLE16(infile,&numfiles,2);
     i = 0;
@@ -3876,32 +3897,56 @@ K_INT16 kgif(K_INT16 filenum)
 
     if (filenum<0) {
 	switch(filenum) {
-	    case -1:
-		if (((fil = open("lab3d.gif",O_RDONLY|O_BINARY,0)) == -1)&&
-		    ((fil = open("LAB3D.GIF",O_RDONLY|O_BINARY,0)) == -1))
+        case -1: {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/lab3d.gif", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/LAB3D.GIF", globalDataDir);
+        if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
+            ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
 		    return(-1);
 		break;
-	    case -2:
-		if (((fil = open("end1.gif",O_RDONLY|O_BINARY,0)) == -1)&&
-		    ((fil = open("END1.GIF",O_RDONLY|O_BINARY,0)) == -1))
+    }
+    case -2: {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/end1.gif", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/END1.GIF", globalDataDir);
+        if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
+            ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
 		    return(-1);
 		break;
-	    case -3:
-		if (((fil = open("end2.gif",O_RDONLY|O_BINARY,0)) == -1)&&
-		    ((fil = open("END2.GIF",O_RDONLY|O_BINARY,0)) == -1))
+    }
+    case -3: {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/end2.gif", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/END2.GIF", globalDataDir);
+        if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
+            ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
 		    return(-1);
 		break;
-	    case -4:
-		if (((fil = open("end3.gif",O_RDONLY|O_BINARY,0)) == -1)&&
-		    ((fil = open("END3.GIF",O_RDONLY|O_BINARY,0)) == -1))
+    }
+    case -4: {
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/end3.gif", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/END3.GIF", globalDataDir);
+        if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
+            ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
 		    return(-1);
 		break;
 	    default:
 		return(-1);
+    }
 	}
     } else {
-	if (((fil = open("lab3d.kzp",O_RDONLY|O_BINARY,0)) == -1)&&
-	    ((fil = open("LAB3D.KZP",O_RDONLY|O_BINARY,0)) == -1))
+        char path1[256];
+        char path2[256];
+        snprintf(path1, sizeof(path1), "%s/lab3d.kzp", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/LAB3D.KZP", globalDataDir);
+    if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
+        ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
 	    return(-1);
     }
 
@@ -4537,8 +4582,12 @@ K_INT16 loadstory(K_INT16 boardnume)
     K_INT16 fil, i, textbufcnt, textypos;
 
     ototclock = totalclock;
-    if (((fil = open("story.kzp",O_RDONLY|O_BINARY,0)) == -1)&&
-	((fil = open("STORY.KZP",O_RDONLY|O_BINARY,0)) == -1))
+    char path1[256];
+    char path2[256];
+    snprintf(path1, sizeof(path1), "%s/story.kzp", globalDataDir);
+    snprintf(path2, sizeof(path2), "%s/STORY.KZP", globalDataDir);
+    if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
+    ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
 	return(-1);
     readLE16(fil,&storyoffs[0],256);
     lseek(fil,(long)(storyoffs[boardnume+34]),SEEK_SET);
