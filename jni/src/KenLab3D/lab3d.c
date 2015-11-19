@@ -117,6 +117,12 @@ int main(int argc,char **argv)
     K_INT16 soundvolumevisible=0,musicvolumevisible=0;
     int fil;
 
+#ifndef ANDROID_NDK
+    globalDataDir = "./";
+#else
+    globalDataDir = "/storage/sdcard0/KenLabData";
+#endif // !ANDROID_NDK
+
     clockspd=0;
 
     /* Initialisation... */
