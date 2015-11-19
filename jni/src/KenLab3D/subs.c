@@ -71,7 +71,7 @@ void checkGLStatus()
 
     if ((errCode=glGetError())!=GL_NO_ERROR) {
 	errString=gluErrorString(errCode);
-	fprintf(stderr,"OpenGL Error: %s\n",errString);
+	TO_DEBUG_LOG("OpenGL Error: %s\n",errString);
     }
 }
 
@@ -198,7 +198,7 @@ void loadboard()
 	    numwarps=0;
 	    justwarped=0;
 	} else {
-	    fprintf(stderr,"Can't find boards.dat.\n");
+	    TO_DEBUG_LOG("Can't find boards.dat.\n");
 	    SDL_Quit();
 	    exit(1);
 	}
@@ -294,7 +294,7 @@ void loadboard()
 	    }
 	    close(fil);
 	} else {
-	    fprintf(stderr,"Can't find boards.kzp.\n");
+	    TO_DEBUG_LOG("Can't find boards.kzp.\n");
 	    SDL_Quit();
 	    exit(1);
 	}
@@ -521,7 +521,7 @@ void loadtables()
 	joyx3=joyy3=32767;
 
     } else {
-	fprintf(stderr,"Can't find tables.dat.\n");
+	TO_DEBUG_LOG("Can't find tables.dat.\n");
 	SDL_Quit();
 	exit(1);
     }
@@ -943,12 +943,12 @@ static void SetAnisotropic(void) {
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
     if (glGetError()!=GL_NO_ERROR) {
-	fprintf(stderr,"Warning: Anisotropic filtering not supported by driver, using trilinear filtering.\n");
+	TO_DEBUG_LOG("Warning: Anisotropic filtering not supported by driver, using trilinear filtering.\n");
 	anisotropic=0;
     }
     //#else
     //anisotropic=0;
-    //fprintf(stderr,"Warning: Anisotropic filtering not supported at compile time, using trilinear filtering.\n");
+    //TO_DEBUG_LOG("Warning: Anisotropic filtering not supported at compile time, using trilinear filtering.\n");
     //#endif
 #else
     anisotropic = 0;
@@ -1171,7 +1171,7 @@ imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfil
     SDL_Surface* tsurf=IMG_Load(fname);
 
     if (!tsurf) {
-	fprintf(stderr,"Could not load image %s: %s\n",fname,SDL_GetError());
+	TO_DEBUG_LOG("Could not load image %s: %s\n",fname,SDL_GetError());
 	SDL_Quit();
 	exit(1);
 
@@ -1320,7 +1320,7 @@ void loadwalls(int replace)
 	    }
 	    if ((tmp=strchr(lin,'='))) {
 		if (!cwparam) {
-		    fprintf(stderr,"wallparams.ini:%d: Key/value outside of section\n",ln);
+		    TO_DEBUG_LOG("wallparams.ini:%d: Key/value outside of section\n",ln);
 		    SDL_Quit();
 		    exit(1);
 		}
@@ -1338,14 +1338,14 @@ void loadwalls(int replace)
 		} else if (!strcmp(key,"range")) {
 		    i=sscanf(val,"%d %d",&cwparam->tcl,&cwparam->tch);
 		    if (i!=2) {
-			fprintf(stderr,"wallparams.ini:%d: Expected 2 values for range\n",ln);
+			TO_DEBUG_LOG("wallparams.ini:%d: Expected 2 values for range\n",ln);
 			SDL_Quit();
 			exit(1);
 		    }
 		} else if (!strcmp(key,"shadow")) {
 		    shadow[curwall+1]=ival;
 		    if (ival<0 || ival>numwalls) {
-			fprintf(stderr,"wallparams.ini:%d: Invalid value for shadow: %d\n",ln,ival);
+			TO_DEBUG_LOG("wallparams.ini:%d: Invalid value for shadow: %d\n",ln,ival);
 			SDL_Quit();
 			exit(1);
 		    }
@@ -1353,33 +1353,33 @@ void loadwalls(int replace)
 		} else if (!strcmp(key,"bmpkind")) {
 		    cwparam->bmpkind_override=ival;
 		    if (ival<0 || ival>5) {
-			fprintf(stderr,"wallparams.ini:%d: Invalid value for bmpkind: %d\n",ln,ival);
+			TO_DEBUG_LOG("wallparams.ini:%d: Invalid value for bmpkind: %d\n",ln,ival);
 			SDL_Quit();
 			exit(1);
 		    }
 		} else if (!strcmp(key,"minfilt")) {
 		    cwparam->minfilt=GetEnum(val,filtermodes);
 		    if (cwparam->minfilt==-1) {
-			fprintf(stderr,"wallparams.ini:%d: Invalid value for filter: %s\n",ln,val);
+			TO_DEBUG_LOG("wallparams.ini:%d: Invalid value for filter: %s\n",ln,val);
 			SDL_Quit();
 			exit(1);
 		    }
 		} else if (!strcmp(key,"magfilt")) {
 		    cwparam->magfilt=GetEnum(val,filtermodes);
 		    if (cwparam->magfilt==-1) {
-			fprintf(stderr,"wallparams.ini:%d: Invalid value for filter: %s\n",ln,val);
+			TO_DEBUG_LOG("wallparams.ini:%d: Invalid value for filter: %s\n",ln,val);
 			SDL_Quit();
 			exit(1);
 		    }
 		} else if (!strcmp(key,"wrap")) {
 		    cwparam->wrapmode=GetEnum(val,wrapmodes);
 		    if (cwparam->wrapmode==-1) {
-			fprintf(stderr,"wallparams.ini:%d: Invalid value for wrap mode: %s\n",ln,val);
+			TO_DEBUG_LOG("wallparams.ini:%d: Invalid value for wrap mode: %s\n",ln,val);
 			SDL_Quit();
 			exit(1);
 		    }
 		} else {
-		    fprintf(stderr,"wallparams.ini:%d: Invalid key: %s\n",ln,key);
+		    TO_DEBUG_LOG("wallparams.ini:%d: Invalid key: %s\n",ln,key);
 		    SDL_Quit();
 		    exit(1);
 		}
@@ -1508,14 +1508,14 @@ void loadwalls(int replace)
 	    }
 	    if ((i < 127) && ((i&1)==0)) {
 		if (debugmode)
-		    fprintf(stderr,"Trying to draw screen buffer.\n");
+		    TO_DEBUG_LOG("Trying to draw screen buffer.\n");
 #ifndef OPENGLES
 		glDrawBuffer(GL_BACK);
 #endif // !OPENGLES
 		fade(64+(i>>1));
 		SetVisibleScreenOffset(0);
 		if (debugmode)
-		    fprintf(stderr,"Screen buffer draw OK.\n");
+		    TO_DEBUG_LOG("Screen buffer draw OK.\n");
 	    } else {
 #ifndef OPENGLES
 		glDrawBuffer(GL_FRONT);
@@ -1545,10 +1545,10 @@ void loadwalls(int replace)
 		    screenbuffer[screenbufferwidth*199+j]=63;
 		}
 		if (debugmode)
-		    fprintf(stderr,"Trying to update screen buffer.\n");
+		    TO_DEBUG_LOG("Trying to update screen buffer.\n");
 		UploadPartialOverlay(j,199,1,1);
 		if (debugmode)
-		    fprintf(stderr,"Screen buffer update OK.\n");
+		    TO_DEBUG_LOG("Screen buffer update OK.\n");
 	    }
 
 	    /* Use double buffer when fading, single buffer when not.
@@ -1635,14 +1635,14 @@ void loadwalls(int replace)
 		TextureConvert(walsegg, RGBATexture, bmpkind[i+1]);
 
 		if (debugmode)
-		    fprintf(stderr,"Trying to upload texture.\n");
+		    TO_DEBUG_LOG("Trying to upload texture.\n");
 
 		if (anisotropic)
 		    SetAnisotropic();
 		BuildMipmaps((Uint32*)RGBATexture,64,64,1,10);
 
 		if (debugmode)
-		    fprintf(stderr,"Upload texture complete.\n");
+		    TO_DEBUG_LOG("Upload texture complete.\n");
 
 		if (i==gameover-1) {
 		    /* Keep two copies of this; one for walls, the other for spinning
@@ -1677,7 +1677,7 @@ printf("\n");*/
 	}
 	close(fil);
     } else {
-	fprintf(stderr,"Can't find walls.kzp.\n");
+	TO_DEBUG_LOG("Can't find walls.kzp.\n");
 	SDL_Quit();
 	exit(1);
     }
@@ -2718,7 +2718,7 @@ K_INT16 loadmusic(char *filename)
 
 	    file=fopen("ksmmidi.txt","rt");
 	    if (file==NULL) {
-		fprintf(stderr,"ksmmidi.txt not found; music disabled.\n");
+		TO_DEBUG_LOG("ksmmidi.txt not found; music disabled.\n");
 		musicsource=-1;
 		return -1;
 	    }
@@ -4105,13 +4105,13 @@ void UploadPartialOverlayToTexture(int x,int y,int dx,int dy,int w,int h,
     //glPixelTransferi(GL_MAP_COLOR,GL_TRUE);
 
     if (debugmode)
-	fprintf(stderr,"Partial overlay upload (%d %d %d %d)... ",
+	TO_DEBUG_LOG("Partial overlay upload (%d %d %d %d)... ",
 		w,h,dx,dy);
 
 
     if (create) {
 	if (debugmode)
-	    fprintf(stderr,"(create) ");
+	    TO_DEBUG_LOG("(create) ");
 #ifdef OPENGLES
     glTexImage2D(GL_TEXTURE_2D,0,colourformat,w,
                  h,0,colourformat,
@@ -4142,7 +4142,7 @@ void UploadPartialOverlayToTexture(int x,int y,int dx,int dy,int w,int h,
 
     checkGLStatus();
     if (debugmode)
-	fprintf(stderr,"done.\n");
+	TO_DEBUG_LOG("done.\n");
     //glPixelTransferi(GL_MAP_COLOR,GL_FALSE);
 #ifndef OPENGLES
     glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);
@@ -4394,8 +4394,8 @@ void ShowPartialOverlay(int x,int y,int w,int h,int statusbar) {
 		ty2=((float)(br+1))/64.0;
 
 		if (debugmode) {
-		    fprintf(stderr,"Partial overlay display... ");
-		    fprintf(stderr,"%d %d %d %d %d %d... ",i,j,lr,tr,rr,br);
+		    TO_DEBUG_LOG("Partial overlay display... ");
+		    TO_DEBUG_LOG("%d %d %d %d %d %d... ",i,j,lr,tr,rr,br);
 		}
 
 		glBindTexture(GL_TEXTURE_2D,screenbuffertextures[i*6+j]);
@@ -4439,7 +4439,7 @@ void ShowPartialOverlay(int x,int y,int w,int h,int statusbar) {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif // !OPENGLES
 		if (debugmode)
-		    fprintf(stderr,"done.\n");
+		    TO_DEBUG_LOG("done.\n");
 
 	    }
     }
@@ -6518,7 +6518,7 @@ void quit() {
     free(screenbuffer);
 
     if (quitgame == 2)
-	fprintf(stderr,"Error #3:  Invalid saved game.");
+	TO_DEBUG_LOG("Error #3:  Invalid saved game.");
     if (numboards < 30)
     {
 
@@ -6538,13 +6538,13 @@ void quit() {
 	SDL_JoystickClose(joystick);
 
 #ifdef USE_SDL2
-    fprintf(stderr, "1. Delete gamma Ramp.\n");
+    TO_DEBUG_LOG("1. Delete gamma Ramp.\n");
     SDL_free(gammaRamp);
     gammaRamp = NULL;
-    fprintf(stderr, "2. Delete GL contex.\n");
+    TO_DEBUG_LOG("2. Delete GL contex.\n");
     SDL_GL_DeleteContext(glContext);
     glContext = NULL;
-    fprintf(stderr, "3. Destroy SDL Window.\n");
+    TO_DEBUG_LOG("3. Destroy SDL Window.\n");
     SDL_DestroyWindow(globalWindow);
     globalWindow = NULL;
 #endif // USE_SDL2

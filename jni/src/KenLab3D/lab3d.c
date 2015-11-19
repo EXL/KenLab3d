@@ -133,17 +133,17 @@ int main(int argc,char **argv)
 	close(fil);
 	lab3dversion=2; /* Version 1.0 detected. */
 	rnumwalls=192;
-	fprintf(stderr, "Ken's Labyrinth version 1.0 detected.\n");
+	TO_DEBUG_LOG("Ken's Labyrinth version 1.0 detected.\n");
     } else if (((fil = open("boards.dat",O_RDONLY|O_BINARY,0)) != -1)||
 	       ((fil = open("BOARDS.DAT",O_RDONLY|O_BINARY,0)) != -1)) {
 	close(fil);
 	lab3dversion=1; /* Version 1.1 detected. */
 	rnumwalls=0xe0;
-	fprintf(stderr, "Ken's Labyrinth version 1.1 detected.\n");
+	TO_DEBUG_LOG("Ken's Labyrinth version 1.1 detected.\n");
     } else {
 	lab3dversion=0; /* Assuming version 2.x. */
 	rnumwalls=448;
-	fprintf(stderr, "Ken's Labyrinth version 2.x detected.\n");
+	TO_DEBUG_LOG("Ken's Labyrinth version 2.x detected.\n");
     }
 
     loadsettings();
@@ -164,11 +164,11 @@ int main(int argc,char **argv)
 	    virtualscreenheight=atof(argv[++i]);
 
 	    if ((screenwidth<=0)||(screenheight<=0)) {
-		fprintf(stderr,"Invalid screen resolution; using default.\n");
+		TO_DEBUG_LOG("Invalid screen resolution; using default.\n");
 		screenwidth=800; screenheight=600;
 	    }
 	    if ((virtualscreenwidth<320.0)||(virtualscreenheight<200.0)) {
-		fprintf(stderr,"Invalid 2D resolution; using default.\n");
+		TO_DEBUG_LOG("Invalid 2D resolution; using default.\n");
 		virtualscreenwidth=360; virtualscreenheight=240;
 	    }
 	}
@@ -177,7 +177,7 @@ int main(int argc,char **argv)
 	    asph=atof(argv[++i]);
 
 	    if ((aspw<=0.1)||(asph<=0.1)) {
-		fprintf(stderr,"Invalid aspect ratio correction; using default.\n");
+		TO_DEBUG_LOG("Invalid aspect ratio correction; using default.\n");
 		aspw=1.0; asph=1.0;
 	    }
 	}
@@ -215,7 +215,7 @@ int main(int argc,char **argv)
 	}
 	i = 0;
 	if (strcmp(ksmfile,"cheaton")==0) {
-	    fprintf(stderr,"Alternate cheat mode on.\n");
+	    TO_DEBUG_LOG("Alternate cheat mode on.\n");
 	    cheatenable=2;
 	}
 	while ((ksmfile[i] != 0) && (i < 8))
@@ -229,7 +229,7 @@ int main(int argc,char **argv)
 	    /* Obfuscated text translates as "snausty". */
 	    if (strcmp(ksmfile,"zslz\202\205|") == 0) {
 		cheatenable = 1;
-		fprintf(stderr,"Cheats enabled.\n");
+		TO_DEBUG_LOG("Cheats enabled.\n");
 	    }
 	}
     }
@@ -3557,16 +3557,16 @@ int main(int argc,char **argv)
 	  if (gammalevel>10.0) gammalevel=10.0;
 #ifndef USE_SDL2
 	  if (SDL_SetGamma(gammalevel,gammalevel,gammalevel)==-1)
-	    fprintf(stderr,"Gamma not supported.\n");
+	    TO_DEBUG_LOG("Gamma not supported.\n");
 #else
       if (gammaRamp) {
           SDL_CalculateGammaRamp(gammalevel, gammaRamp);
 
           if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
-              fprintf(stderr, "lab3d.c, 1: Gamma ramp not supported.\n");
+              TO_DEBUG_LOG("lab3d.c, 1: Gamma ramp not supported.\n");
           }
       } else {
-          fprintf(stderr, "Warning: gammaRump is null!\n");
+          TO_DEBUG_LOG("Warning: gammaRump is null!\n");
       }
 #endif // !USE_SDL2
 	}
@@ -3580,16 +3580,16 @@ int main(int argc,char **argv)
 #ifndef USE_SDL2
 	  SDL_SetGamma(gammalevel,gammalevel,gammalevel);
 	  if (SDL_SetGamma(gammalevel,gammalevel,gammalevel)==-1)
-        fprintf(stderr,"Gamma not supported.\n");
+        TO_DEBUG_LOG("Gamma not supported.\n");
 #else
       if (gammaRamp) {
             SDL_CalculateGammaRamp(gammalevel, gammaRamp);
 
             if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
-                fprintf(stderr, "lab3d.c, 2: Gamma ramp not supported.\n");
+                TO_DEBUG_LOG("lab3d.c, 2: Gamma ramp not supported.\n");
             }
       } else {
-          fprintf(stderr, "Warning: gammaRump is null!\n");
+          TO_DEBUG_LOG("Warning: gammaRump is null!\n");
       }
 #endif // !USE_SDL2
 	}
@@ -3625,7 +3625,7 @@ int main(int argc,char **argv)
     /* End of main loop. End of game. Tidy up things... */
 
     if (frames>0)
-	fprintf(stderr,"%d frames in %d ticks. Frame rate is: %f fps.\n",
+	TO_DEBUG_LOG("%d frames in %d ticks. Frame rate is: %f fps.\n",
 		frames,timeused,((float)frames)/((float)timeused)*240.0);
     quit();
     return 0;

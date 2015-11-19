@@ -40,6 +40,12 @@ extern Uint16 *gammaRamp;
 #include <SDL/SDL.h>
 #endif // USE_SDL2
 
+#ifndef ANDROID_NDK
+#define TO_DEBUG_LOG(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define TO_DEBUG_LOG(...) LOGI(__VA_ARGS__)
+#endif // !ANDROID_NDK
+
 #ifndef OPENGLES
 #include <GL/gl.h>
 #include <GL/glu.h>

@@ -257,7 +257,7 @@ K_INT16 castray(K_UINT16 posxs,K_UINT16 posys, double angle) {
 
 	if ((status&255)==1) waln|=16384;
 
-	//	fprintf(stderr,"Ray hit at %lf,%lf\n",hitpointx,hitpointy);
+    //	TO_DEBUG_LOG("Ray hit at %lf,%lf\n",hitpointx,hitpointy);
 
 	/* Keep going if ray hit a wall very close to us. */
 
@@ -320,7 +320,7 @@ void recurseray(K_UINT16 posxs,K_UINT16 posys,double angle,double la,double ra,
     if (angcan(ra-la)<EPSILON) return;
 
     if (castray(posxs,posys,angle)<0) {
-        fprintf(stderr,"Warning: ray to nothing.\n");
+        TO_DEBUG_LOG("Warning: ray to nothing.\n");
 	return;
     }
     if ((angcan(ra-la)>=M_PI/2-EPSILON)||
@@ -377,19 +377,19 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
     angr=angs/1024.0*M_PI+vangw;
 
     if (castray(posxs,posys,angr)<0)
-	fprintf(stderr,"Warning: ray to nothing.\n");
+    TO_DEBUG_LOG("Warning: ray to nothing.\n");
     hpx1=hitpointx;
     hpy1=hitpointy;
 
     if (castray(posxs,posys,angl)<0)
-	fprintf(stderr,"Warning: ray to nothing.\n");
+    TO_DEBUG_LOG("Warning: ray to nothing.\n");
 
     if ((angcan(angr-angl)>=M_PI/2-EPSILON)||
 	(distance2(hitpointx,hitpointy,hpx1,hpy1)>(1.0-EPSILON)))
 	recurseray(posxs,posys,angs/1024.0*M_PI,angl,
 		   angr,hitpointx,hitpointy,hpx1,hpy1);
 
-    //    fprintf(stderr,"Rays cast: %d\n",rayscast);
+    //    TO_DEBUG_LOG("Rays cast: %d\n",rayscast);
 
     if (vidmode == 0) {
 	yy = 9000;
@@ -1724,9 +1724,9 @@ void drawtooverlay(K_UINT16 picx, K_UINT16 picy, K_UINT16 w,
     y+=visiblescreenyoffset;
 
     if (x+w>=screenbufferwidth)
-	fprintf(stderr, "Drawing off right side!");
+    TO_DEBUG_LOG("Drawing off right side!");
     if (y+h>=screenbufferheight) {
-	fprintf(stderr, "Drawing off bottom side! %d %d\n",y,h);
+    TO_DEBUG_LOG("Drawing off bottom side! %d %d\n",y,h);
     }
 
     for(a=0;a<w;a++) {

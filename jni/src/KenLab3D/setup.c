@@ -40,14 +40,14 @@ HRESULT CreateLink(LPCSTR lpszPathObj,
         if (SUCCEEDED(hres)) {
             WORD wsz[MAX_PATH];
 
-	    fprintf(stderr,"Trying to save shortcut...\n");
+        TO_DEBUG_LOG("Trying to save shortcut...\n");
             MultiByteToWideChar(CP_ACP, 0, lpszPathLink, -1,
 				wsz, MAX_PATH);
 
             hres = ppf->lpVtbl->Save(ppf, wsz, TRUE);
             ppf->lpVtbl->Release(ppf);
 	    if (SUCCEEDED(hres))
-		fprintf(stderr,"Done.\n");
+        TO_DEBUG_LOG("Done.\n");
         }
         psl->lpVtbl->Release(psl);
     }
@@ -62,13 +62,13 @@ void createshortcut(void) {
     char p3[MAX_PATH];
     int i;
 
-    fprintf(stderr,"Getting desktop location.\n");
+    TO_DEBUG_LOG("Getting desktop location.\n");
     if (SHGetSpecialFolderLocation(GetDesktopWindow(),
 				   CSIDL_DESKTOPDIRECTORY,&l)!=NOERROR)
 	return;
-    fprintf(stderr,"Converting...\n");
+    TO_DEBUG_LOG("Converting...\n");
     if (SHGetPathFromIDList(l,p)!=TRUE) return;
-    fprintf(stderr,"Desktop location is %s.\n",p);
+    TO_DEBUG_LOG("Desktop location is %s.\n",p);
 
     i=strlen(p);
     if (i>MAX_PATH-20) return;
@@ -76,7 +76,7 @@ void createshortcut(void) {
     strcpy(p3,p);
     strcat(p3,"\\Ken's Labyrinth.lnk");
 
-    fprintf(stderr,"Creating link as %s.\n",p3);
+    TO_DEBUG_LOG("Creating link as %s.\n",p3);
 
     GetCurrentDirectory(MAX_PATH,p2);
 
@@ -700,7 +700,7 @@ void setupsetbuttons(void) {
 			}
 			break;
             case SDL_KEYDOWN:
-                fprintf(stderr, "s.c2: Scancode: %d.\n", sk); // TODO: Check this.
+                TO_DEBUG_LOG("s.c2: Scancode: %d.\n", sk); // TODO: Check this.
 			j=-1;
 			break;
 		    default:
@@ -1200,13 +1200,13 @@ void setup(void) {
     SDL_EnableKeyRepeat(200,30);
 #endif // !USE_SDL2
 
-    fprintf(stderr,"Activating video...\n");
+    TO_DEBUG_LOG("Activating video...\n");
 
     screenwidth=360; screenheight=240;
 
     icon=SDL_LoadBMP("ken.bmp");
     if (icon==NULL) {
-	fprintf(stderr,"Warning: ken.bmp (icon file) not found.\n");
+    TO_DEBUG_LOG("Warning: ken.bmp (icon file) not found.\n");
     }
 #ifndef USE_SDL2
     SDL_WM_SetIcon(icon,NULL);
@@ -1215,7 +1215,7 @@ void setup(void) {
     if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32,
 				 SDL_OPENGL))==
 	NULL) {
-	fprintf(stderr,"Video mode set failed.\n");
+    TO_DEBUG_LOG("Video mode set failed.\n");
 	SDL_Quit();
 	exit(-1);
     }
@@ -1228,7 +1228,7 @@ void setup(void) {
     if ((globalWindow=SDL_CreateWindow("Ken's Labyrinth", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
                                        screenwidth, screenheight, SDL_WINDOW_OPENGL))==
             NULL) {
-        fprintf(stderr, "Video mode set failed: %s.\n", SDL_GetError());
+        TO_DEBUG_LOG("Video mode set failed: %s.\n", SDL_GetError());
         SDL_DestroyWindow(globalWindow);
         SDL_Quit();
         exit(-1);
@@ -1236,7 +1236,7 @@ void setup(void) {
 
     // Create GL Context
     if ((glContext=SDL_GL_CreateContext(globalWindow))==NULL) {
-        fprintf(stderr, "Can't create GL Context: %s.\n", SDL_GetError());
+        TO_DEBUG_LOG("Can't create GL Context: %s.\n", SDL_GetError());
         SDL_GL_DeleteContext(glContext);
         SDL_DestroyWindow(globalWindow);
         SDL_Quit();
@@ -1252,10 +1252,10 @@ void setup(void) {
         SDL_CalculateGammaRamp(1.0, gammaRamp);
 
         if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
-            fprintf(stderr, "setup.c: Can't set gamma ramp.\n");
+            TO_DEBUG_LOG("setup.c: Can't set gamma ramp.\n");
         }
     } else {
-        fprintf(stderr, "Warning: gammaRump is null!\n");
+        TO_DEBUG_LOG("Warning: gammaRump is null!\n");
     }
 
     int _screen_w, _screen_h;
@@ -1292,12 +1292,12 @@ void setup(void) {
     linecompare(479);
 
     if (screenbuffer==NULL) {
-	fprintf(stderr,"Insufficient memory.\n");
+    TO_DEBUG_LOG("Insufficient memory.\n");
 	SDL_Quit();
 	exit(-1);
     }
 
-    fprintf(stderr,"Loading configuration file...\n");
+    TO_DEBUG_LOG("Loading configuration file...\n");
 
     loadtables();
     fullfilter=partialfilter=GL_NEAREST;
@@ -1309,11 +1309,11 @@ void setup(void) {
     musicsource=-1;
     speechstatus=0;
 
-    fprintf(stderr,"Allocating memory...\n");
+    TO_DEBUG_LOG("Allocating memory...\n");
     if (((lzwbuf = malloc(12304-8200)) == NULL)||
 	((lzwbuf2=malloc(8200))==NULL))
     {
-	fprintf(stderr,"Error #3: Memory allocation failed.\n");
+    TO_DEBUG_LOG("Error #3: Memory allocation failed.\n");
 	SDL_Quit();
 	exit(-1);
     }
@@ -1357,7 +1357,7 @@ void setup(void) {
     }
 
     saidwelcome = 0;
-    fprintf(stderr,"Loading intro pictures...\n");
+    TO_DEBUG_LOG("Loading intro pictures...\n");
 
     if (lab3dversion) {
 	kgif(-1);
@@ -1369,7 +1369,7 @@ void setup(void) {
 		spritepalette[k++] = (opaldef[i][1]*j)/17;
 		spritepalette[k++] = (opaldef[i][2]*j)/17;
 	    }
-	fprintf(stderr,"Loading old graphics...\n");
+    TO_DEBUG_LOG("Loading old graphics...\n");
 	loadwalls(0);
 	fade(63);
 	k=0;
@@ -1391,7 +1391,7 @@ void setup(void) {
 
 	kgif(0);
 	settransferpalette();
-	fprintf(stderr,"Loading graphics...\n");
+    TO_DEBUG_LOG("Loading graphics...\n");
 	loadwalls(0);
 
 	kgif(1);
@@ -1406,13 +1406,13 @@ void setup(void) {
     savesettings();
 
 #ifdef USE_SDL2
-    fprintf(stderr, "1. Delete gamma Ramp.\n");
+    TO_DEBUG_LOG("1. Delete gamma Ramp.\n");
     SDL_free(gammaRamp);
     gammaRamp = NULL;
-    fprintf(stderr, "2. Delete GL contex.\n");
+    TO_DEBUG_LOG("2. Delete GL contex.\n");
     SDL_GL_DeleteContext(glContext);
     glContext = NULL;
-    fprintf(stderr, "3. Destroy SDL Window.\n");
+    TO_DEBUG_LOG("3. Destroy SDL Window.\n");
     SDL_DestroyWindow(globalWindow);
     globalWindow = NULL;
 #endif // USE_SDL2

@@ -52,7 +52,7 @@ void initialize()
 
     SDL_ShowCursor(0);
 
-    fprintf(stderr,"Activating video...\n");
+    TO_DEBUG_LOG("Activating video...\n");
 
     // TODO: Check this
 //#ifndef OPENGLES
@@ -65,7 +65,7 @@ void initialize()
 
     icon=SDL_LoadBMP("ken.bmp");
     if (icon==NULL) {
-	fprintf(stderr,"Warning: ken.bmp (icon file) not found.\n");
+    TO_DEBUG_LOG("Warning: ken.bmp (icon file) not found.\n");
     }
 #ifndef USE_SDL2
     SDL_WM_SetIcon(icon,NULL);
@@ -75,7 +75,7 @@ void initialize()
 				 fullscreen?
 				 (SDL_OPENGL|SDL_FULLSCREEN):SDL_OPENGL))==
 	NULL) {
-	fprintf(stderr,"True colour failed; taking whatever is available.\n");
+    TO_DEBUG_LOG("True colour failed; taking whatever is available.\n");
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
@@ -84,7 +84,7 @@ void initialize()
 				     fullscreen?
 				     (SDL_OPENGL|SDL_FULLSCREEN):SDL_OPENGL))==
 	    NULL) {
-	    fprintf(stderr,"Video mode set failed.\n");
+        TO_DEBUG_LOG("Video mode set failed.\n");
 	    SDL_Quit();
 	    exit(-1);
 	}
@@ -95,7 +95,7 @@ void initialize()
                                        fullscreen?
                                        (SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN):SDL_WINDOW_OPENGL))==
             NULL) {
-        fprintf(stderr, "True colour failed; taking whatever is available.\n");
+        TO_DEBUG_LOG("True colour failed; taking whatever is available.\n");
 
 #ifndef OPENGLES // Check this.
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -111,7 +111,7 @@ void initialize()
                                            fullscreen?
                                            (SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN):SDL_WINDOW_OPENGL))==
                 NULL) {
-            fprintf(stderr, "Video mode set failed: %s.\n", SDL_GetError());
+            TO_DEBUG_LOG("Video mode set failed: %s.\n", SDL_GetError());
             SDL_DestroyWindow(globalWindow);
             SDL_Quit();
             exit(-1);
@@ -120,7 +120,7 @@ void initialize()
 
     // Create OpenGL Context
     if ((glContext=SDL_GL_CreateContext(globalWindow))==NULL) {
-        fprintf(stderr, "Can't make GL Context: %s.\n", SDL_GetError());
+        TO_DEBUG_LOG("Can't make GL Context: %s.\n", SDL_GetError());
         SDL_GL_DeleteContext(glContext);
         SDL_DestroyWindow(globalWindow);
         SDL_Quit();
@@ -138,23 +138,23 @@ void initialize()
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER,&reald);
 #endif // !OPENGLES
 
-    fprintf(stderr,"GL Vendor: %s\n",glGetString(GL_VENDOR));
-    fprintf(stderr,"GL Renderer: %s\n",glGetString(GL_RENDERER));
-    fprintf(stderr,"GL Version: %s\n",glGetString(GL_VERSION));
-    //fprintf(stderr,"GL Extensions: %s\n",glGetString(GL_EXTENSIONS));
+    TO_DEBUG_LOG("GL Vendor: %s\n",glGetString(GL_VENDOR));
+    TO_DEBUG_LOG("GL Renderer: %s\n",glGetString(GL_RENDERER));
+    TO_DEBUG_LOG("GL Version: %s\n",glGetString(GL_VERSION));
+    //TO_DEBUG_LOG("GL Extensions: %s\n",glGetString(GL_EXTENSIONS));
 
-    fprintf(stderr,"GLU Version: %s\n",gluGetString(GLU_VERSION));
-    //fprintf(stderr,"GLU Extensions: %s\n",gluGetString(GLU_EXTENSIONS));
+    TO_DEBUG_LOG("GLU Version: %s\n",gluGetString(GLU_VERSION));
+    //TO_DEBUG_LOG("GLU Extensions: %s\n",gluGetString(GLU_EXTENSIONS));
 #ifndef OPENGLES
     if (reald==0) {
-	fprintf(stderr,"Double buffer not available.\n");
+    TO_DEBUG_LOG("Double buffer not available.\n");
 	SDL_Quit();
 	exit(-1);
     }
 
     if (realz<16) {
-	fprintf(stderr,"Warning: Depth buffer resolution too low; expect\n");
-	fprintf(stderr,"graphical glitches.\n");
+    TO_DEBUG_LOG("Warning: Depth buffer resolution too low; expect\n");
+    TO_DEBUG_LOG("graphical glitches.\n");
 	SDL_Quit();
 	exit(-1);
     }
@@ -174,11 +174,11 @@ void initialize()
 
         SDL_CalculateGammaRamp(gammalevel, gammaRamp);
         if ((SDL_SetWindowGammaRamp(globalWindow, gammaRamp, gammaRamp, gammaRamp))==-1) {
-            fprintf(stderr, "init.c: Can't set gamma ramp.\n");
+            TO_DEBUG_LOG("init.c: Can't set gamma ramp.\n");
         }
 
     } else {
-        fprintf(stderr, "Error: gammaRamp isn't null!\n");
+        TO_DEBUG_LOG("Error: gammaRamp isn't null!\n");
     }
 #endif // !USE_SDL2
 
@@ -198,17 +198,17 @@ void initialize()
        aspect of SDL is undefined. */
 #ifndef USE_SDL2
     if ((screenwidth!=screen->w)||(screenheight!=screen->h)) {
-	fprintf(stderr,"Warning: screen resolution is actually %dx%d.\n",
+    TO_DEBUG_LOG("Warning: screen resolution is actually %dx%d.\n",
 		screen->w,screen->h);
 	if ((screen->w<screenwidth)||(screen->h<screenheight)) {
-	    fprintf(stderr,"Too small to pad; using full screen.\n");
+        TO_DEBUG_LOG("Too small to pad; using full screen.\n");
 	    screenwidth=screen->w;
 	    screenheight=screen->h;
 	}
 	else {
 	    glViewport((screen->w-screenwidth)>>1,(screen->h-screenheight)>>1,
 		       screenwidth,screenheight);
-	    fprintf(stderr,"Using a viewport within the screen.\n");
+        TO_DEBUG_LOG("Using a viewport within the screen.\n");
 	}
     }
 #else
@@ -216,16 +216,16 @@ void initialize()
     SDL_GetWindowSize(globalWindow, &_screen_w, &_screen_h);
 
     if ((screenwidth!=_screen_w) || (screenheight!=_screen_h)) {
-        fprintf(stderr, "Warning: screen resolution is actually %dx%d.\n",
+        TO_DEBUG_LOG("Warning: screen resolution is actually %dx%d.\n",
                 _screen_w, _screen_h);
         if ((_screen_w < screenwidth) || (_screen_h < screenheight)) {
-            fprintf(stderr, "Too small to pad; using full screen.\n");
+            TO_DEBUG_LOG("Too small to pad; using full screen.\n");
             screenwidth = _screen_w;
             screenheight = _screen_h;
         } else {
             glViewport((_screen_w - screenwidth) >> 1, (_screen_h - screenheight) >> 1,
                        screenwidth, screenheight);
-            fprintf(stderr, "Using a viewport within the screen.\n");
+            TO_DEBUG_LOG("Using a viewport within the screen.\n");
         }
     }
 #endif // !USE_SDL2
@@ -257,12 +257,12 @@ void initialize()
     linecompare(479);
 
     if (screenbuffer==NULL) {
-	fprintf(stderr,"Insufficient memory.\n");
+    TO_DEBUG_LOG("Insufficient memory.\n");
 	SDL_Quit();
 	exit(-1);
     }
 
-    fprintf(stderr,"Loading tables/settings...\n");
+    TO_DEBUG_LOG("Loading tables/settings...\n");
 
     loadtables();
     vidmode = 1; /* Force fake 360x240 mode. */
@@ -272,7 +272,7 @@ void initialize()
 	joystat = 1;
 
     if (joystat==0) {
-        fprintf(stderr,"Opening joystick...\n");
+        TO_DEBUG_LOG("Opening joystick...\n");
 	joystick=SDL_JoystickOpen(0);
 	SDL_JoystickEventState(1);
     }
@@ -283,18 +283,18 @@ void initialize()
     srand((unsigned int)tnow);
     if ((note = malloc(16384)) == NULL)
     {
-	fprintf(stderr,"Error #1:  Memory allocation failed.\n");
+    TO_DEBUG_LOG("Error #1:  Memory allocation failed.\n");
 	SDL_Quit();
 	exit(-1);
     }
 
     if (musicsource==1) {
-	fprintf(stderr,"Opening music output...\n");
+    TO_DEBUG_LOG("Opening music output...\n");
 #ifdef WIN32
 	if ((i=midiOutOpen(&sequencerdevice,MIDI_MAPPER,(DWORD)(NULL),
 			   (DWORD)(NULL),0))!=
 	    MMSYSERR_NOERROR) {
-	    fprintf(stderr,"Failed to open MIDI Mapper; error %d.\n",i);
+        TO_DEBUG_LOG("Failed to open MIDI Mapper; error %d.\n",i);
 	    SDL_Quit();
 	    exit(-1);
 	}
@@ -302,12 +302,12 @@ void initialize()
 #ifdef USE_OSS
 	sequencerdevice=open("/dev/sequencer", O_WRONLY, 0);
 	if (sequencerdevice<0) {
-	    fprintf(stderr,"Music failed opening /dev/sequencer.\n");
+        TO_DEBUG_LOG("Music failed opening /dev/sequencer.\n");
 	    SDL_Quit();
 	    exit(-1);
 	}
 	if (ioctl(sequencerdevice, SNDCTL_SEQ_NRMIDIS, &nrmidis) == -1) {
-	    fprintf(stderr, "Can't get info about midi ports!\n");
+        TO_DEBUG_LOG("Can't get info about midi ports!\n");
 	    SDL_Quit();
 	    exit(-1);
 	}
@@ -315,7 +315,7 @@ void initialize()
     }
 
     if (musicsource==2) {
-	fprintf(stderr,"Opening Adlib emulation for %s music (%s output)...\n",
+    TO_DEBUG_LOG("Opening Adlib emulation for %s music (%s output)...\n",
 		musicpan?"stereo":"mono",(channels-1)?"stereo":"mono");
 	adlibinit(44100,channels,2);
 	adlibsetvolume(musicvolume*48);
@@ -327,7 +327,7 @@ void initialize()
 	    ((i = open("SOUNDS.KZP",O_BINARY|O_RDONLY,0)) != -1)) {
 	    fstat(i, &fstats);
 	    sndsize = (int)(fstats.st_size);
-	    fprintf(stderr, "Detected %ld byte sounds.\n", sndsize);
+        TO_DEBUG_LOG("Detected %ld byte sounds.\n", sndsize);
 	    close(i);
 	} else sndsize=0;
 
@@ -336,7 +336,7 @@ void initialize()
 	SoundBuffer=malloc(65536*2);
 
 	if ((SoundFile==NULL)||(SoundBuffer==NULL)) {
-	    fprintf(stderr,"Insufficient memory for sound.\n");
+        TO_DEBUG_LOG("Insufficient memory for sound.\n");
 	    SDL_Quit();
 	    exit(-1);
 	}
@@ -346,19 +346,19 @@ void initialize()
 	    file=fopen("SOUNDS.KZP","rb");
 	}
 	if (file==NULL) {
-	    fprintf(stderr,"Can not find sounds.kzp.\n");
+        TO_DEBUG_LOG("Can not find sounds.kzp.\n");
 	    SDL_Quit();
 	    exit(-1);
 	}
 	if (fread(SoundFile,1,sndsize,file)!=sndsize) {
-	    fprintf(stderr,"Error in sounds.kzp.\n");
+        TO_DEBUG_LOG("Error in sounds.kzp.\n");
 	    SDL_Quit();
 	    exit(-1);
 	}
 	fclose(file);
 
 	SDL_LockMutex(soundmutex);
-	fprintf(stderr,"Opening sound output in %s for %s sound effects...\n",
+    TO_DEBUG_LOG("Opening sound output in %s for %s sound effects...\n",
 		(channels-1)?"stereo":"mono",
 		soundpan?"stereo":"mono");
 
@@ -381,14 +381,14 @@ void initialize()
 	SDL_PauseAudio(0);
     } else {
 	if (soundtimer)
-	    fprintf(stderr,"Warning: no sound, using system timer.\n");
+        TO_DEBUG_LOG("Warning: no sound, using system timer.\n");
 	soundtimer=0;
     }
-    fprintf(stderr,"Allocating memory...\n");
+    TO_DEBUG_LOG("Allocating memory...\n");
     if (((lzwbuf = malloc(12304-8200)) == NULL)||
 	((lzwbuf2=malloc(8200))==NULL))
     {
-	fprintf(stderr,"Error #3: Memory allocation failed.\n");
+    TO_DEBUG_LOG("Error #3: Memory allocation failed.\n");
 	SDL_Quit();
 	exit(-1);
     }
@@ -427,14 +427,14 @@ void initialize()
     for(i=0;i<SDLKEYS;i++)
 	newkeystatus[i]=0;
 
-    fprintf(stderr,"Allocating screen buffer texture...\n");
+    TO_DEBUG_LOG("Allocating screen buffer texture...\n");
     if (largescreentexture) {
 	glGenTextures(1,&screenbuffertexture);
     } else {
 	glGenTextures(72,screenbuffertextures);
     }
 
-    fprintf(stderr,"Loading intro music...\n");
+    TO_DEBUG_LOG("Loading intro music...\n");
     saidwelcome = 0;
     loadmusic("BEGIN");
     clockspeed = 0;
@@ -447,7 +447,7 @@ void initialize()
     clockspeed = 0;
     skilevel = 0;
     musicon();
-    fprintf(stderr,"Loading intro pictures...\n");
+    TO_DEBUG_LOG("Loading intro pictures...\n");
 
     if (lab3dversion) {
 	kgif(-1);
@@ -459,7 +459,7 @@ void initialize()
 		spritepalette[k++] = (opaldef[i][1]*j)/17;
 		spritepalette[k++] = (opaldef[i][2]*j)/17;
 	    }
-	fprintf(stderr,"Loading old graphics...\n");
+    TO_DEBUG_LOG("Loading old graphics...\n");
 	loadwalls(1);
     } else {
 	/* The ingame palette is stored in this GIF! */
@@ -469,7 +469,7 @@ void initialize()
 	/* Show the Epic Megagames logo while loading... */
 
 	kgif(0);
-	fprintf(stderr,"Loading graphics...\n");
+    TO_DEBUG_LOG("Loading graphics...\n");
 	loadwalls(1);
 
 	/* Ken's Labyrinth logo. */
@@ -635,10 +635,10 @@ void initialize()
 	    ((i = open("BOARDS.DAT",O_BINARY|O_RDONLY,0)) != -1)) {
 	    fstat(i, &fstats);
 	    numboards = (int)(fstats.st_size>>13);
-	    fprintf(stderr, "Detected %d boards.\n", numboards);
+        TO_DEBUG_LOG("Detected %d boards.\n", numboards);
 	    close(i);
 	} else {
-	    fprintf(stderr,"boards.dat not found.\n");
+        TO_DEBUG_LOG("boards.dat not found.\n");
 	    SDL_Quit();
 	    exit(1);
 	}
@@ -653,7 +653,7 @@ void initialize()
 		numboards = 10;
 	    close(i);
 	} else {
-	    fprintf(stderr,"boards.kzp not found.\n");
+        TO_DEBUG_LOG("boards.kzp not found.\n");
 	    SDL_Quit();
 	    exit(1);
 	}
