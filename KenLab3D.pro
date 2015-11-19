@@ -8,7 +8,7 @@ CONFIG += sdl2
 CONFIG += warn_off
 
 TEMPLATE = app
-TARGET = Lab3dGLES
+TARGET = KenLab3D
 
 #DEFINES += USE_OSS
 
