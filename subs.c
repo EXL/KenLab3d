@@ -5102,11 +5102,9 @@ void getname()
 #endif // !USE_SDL2
     while ((ch != 13) && (ch != 27))
     {
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
+#ifdef OPENGLES // TODO: Check SwapBuffers.
     SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+#endif // !OPENGLES
 	while ((ch=getkeypress()) == 0)
 	{
 	    textbuf[0] = 95;
@@ -5521,12 +5519,9 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     mousy = 0;
     while (esckeystate == 0)
     {
-    // TODO: Check this.
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
+#ifdef OPENGLES // TODO: Check SwapBuffers.
     SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+#endif // !OPENGLES
 	PollInputs();
 	animater6++;
 	if (animater6 == 6)
@@ -5695,11 +5690,9 @@ void creditsmenu()
     textprint(149,20+n+1,32);
     loadstory(-1);
     finalisemenu();
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
+#ifdef OPENGLES // TODO: Check SwapBuffers.
     SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+#endif // !OPENGLES
     pressakey();
 }
 
@@ -5728,11 +5721,9 @@ void bigstorymenu()
 	nowenterstate = 1;
 	lastenterstate = 1;
 	glFlush();
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
+#ifdef OPENGLES // TODO: Check SwapBuffers.
     SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+#endif // !OPENGLES
 	while ((nowenterstate <= lastenterstate) && (bstatus <= obstatus))
 	{
 	    PollInputs();
@@ -5809,11 +5800,9 @@ void helpmenu()
     strcpy(&textbuf[0],"Help");
     textprint(161,18+n+1,32);
     finalisemenu();
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
+#ifdef OPENGLES // TODO: Check SwapBuffers.
     SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+#endif // !OPENGLES
     pressakey();
 }
 
@@ -6029,11 +6018,9 @@ void orderinfomenu() {
     textprint(30,156,48);
 
     finalisemenu();
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
+#ifdef OPENGLES // TODO: Check SwapBuffers.
     SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+#endif // !OPENGLES
     pressakey();
     
 }
