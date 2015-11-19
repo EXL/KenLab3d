@@ -209,8 +209,8 @@ void loadboard()
     } else {
         char path1[256];
         char path2[256];
-        snprintf(path1, sizeof(path1), "%s/boards.dat", globalDataDir);
-        snprintf(path2, sizeof(path2), "%s/BOARDS.DAT", globalDataDir);
+        snprintf(path1, sizeof(path1), "%s/boards.kzp", globalDataDir);
+        snprintf(path2, sizeof(path2), "%s/BOARDS.KZP", globalDataDir);
     if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
         ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1))
 	{
