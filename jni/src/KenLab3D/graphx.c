@@ -471,7 +471,7 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
     glDisableClientState(GL_VERTEX_ARRAY);
 #endif // !OPENGLES
 
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     /* Switch to labyrinth view transformations. */
 
@@ -721,7 +721,7 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
 	    if (j == invisible-1)
 		glDisable(GL_BLEND);
 	}
-	checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     }
 
 
@@ -1504,7 +1504,7 @@ void flatsprite(K_UINT16 x, K_UINT16 y,K_INT16 ang,K_INT16 playerang,
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif // !OPENGLES
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     glPopMatrix();
 
     glDisable(GL_BLEND);
@@ -1600,7 +1600,7 @@ void pictur(K_INT16 x,K_INT16 y,K_INT16 siz,K_INT16 ang,K_INT16 walnume)
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif // !OPENGLES
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     glDisable(GL_BLEND);
 }
@@ -1695,7 +1695,7 @@ void doordraw(K_UINT16 x,K_UINT16 y,K_INT16 walnume,K_UINT16 posxs,
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 #endif // !OPENGLES
     glDisable(GL_BLEND);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
 }
 

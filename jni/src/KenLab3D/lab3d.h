@@ -527,7 +527,7 @@ void ksmhandler();
 void SetVisibleScreenOffset(K_UINT16 offset);
 void ShowPartialOverlay(int x,int y,int w,int h,int statusbar);
 void PollInputs();
-void checkGLStatus();
+void checkGLStatus(char *file, int line);
 void floorsprite(K_UINT16 x, K_UINT16 y, K_INT16 walnume);
 void flatsprite(K_UINT16 x, K_UINT16 y,K_INT16 ang,K_INT16 playerang,
 		K_INT16 walnume);

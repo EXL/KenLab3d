@@ -100,7 +100,7 @@ void drawvolumebar(int vol,int type,float level) {
     glDisableClientState(GL_COLOR_ARRAY);
 #endif // !OPENGLES
     glDisable(GL_BLEND);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 }
 
 int main(int argc,char **argv)

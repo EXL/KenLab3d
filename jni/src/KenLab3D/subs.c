@@ -64,14 +64,14 @@ void seqbuf_dump ()
 #endif
 
 /* Check OpenGL status and complain if necessary. */
-void checkGLStatus()
+void checkGLStatus(char* file, int line)
 {
     GLenum errCode;
     const GLubyte *errString;
 
     if ((errCode=glGetError())!=GL_NO_ERROR) {
 	errString=gluErrorString(errCode);
-	TO_DEBUG_LOG("OpenGL Error: %s\n",errString);
+    TO_DEBUG_LOG("OpenGL Error: %s file: %s line: %d\n", errString, file, line);
     }
 }
 
@@ -325,7 +325,7 @@ void loadboard()
 	spritepalette[2]=63;
     }
     glBindTexture(GL_TEXTURE_2D,texName[map-1]);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     TextureConvert(walseg[map-1], RGBATexture, bmpkind[map]);
 
@@ -337,12 +337,12 @@ void loadboard()
 #ifndef OPENGLES
     glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
 #endif // !OPENGLES
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     BuildMipmaps((Uint32*)RGBATexture,64,64,1,10);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     /* Place warps and monsters... */
 
@@ -949,7 +949,7 @@ static inline void TextureAvg32 (Uint32 * pic, int w, int h)
 
 static void SetAnisotropic(void) {
 #ifndef OPENGLES
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     //#ifdef GL_EXT_texture_filter_anisotropic
     GLfloat aniso;
@@ -1117,13 +1117,13 @@ void UploadTexture(GLuint tex, void* pixels, int w, int h,  int repx, int repy, 
     int mipmaps=1;
 
     glBindTexture(GL_TEXTURE_2D, tex);
-    checkGLStatus ();
+    checkGLStatus( __FILE__, __LINE__ );
 #ifndef OPENGLES
     glPixelStorei (GL_UNPACK_SKIP_PIXELS, 0);
     glPixelStorei (GL_UNPACK_SKIP_ROWS, 0);
 #endif // !OPENGLES
     glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
-    checkGLStatus ();
+    checkGLStatus( __FILE__, __LINE__ );
 
     switch (minfilt) {
     case GL_NEAREST:
@@ -1160,7 +1160,7 @@ void UploadTexture(GLuint tex, void* pixels, int w, int h,  int repx, int repy, 
                   GL_UNSIGNED_BYTE, pixels);
 #endif // !OPENGLES
     }
-    checkGLStatus ();
+    checkGLStatus( __FILE__, __LINE__ );
 }
 
 int checkalpha(Uint32* tex, int w, int cw, int ch) {
@@ -1623,7 +1623,7 @@ void loadwalls(int replace)
 		glGenTextures(1,&texName[i]);
 
 		glBindTexture(GL_TEXTURE_2D,texName[i]);
-		checkGLStatus();
+        checkGLStatus( __FILE__, __LINE__ );
 
 		if (wrapmode) {
 		    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
@@ -1633,14 +1633,14 @@ void loadwalls(int replace)
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,magfilt);
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,minfilt);
-		checkGLStatus();
+        checkGLStatus( __FILE__, __LINE__ );
 
 #ifndef OPENGLES
 		glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
 #endif // !OPENGLES
-		checkGLStatus();
+        checkGLStatus( __FILE__, __LINE__ );
 		glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-		checkGLStatus();
+        checkGLStatus( __FILE__, __LINE__ );
 
 		/* Replace door1 with colour test image. */
 
@@ -1682,7 +1682,7 @@ void loadwalls(int replace)
 		    BuildMipmaps((Uint32*)RGBATexture,64,64,1,10);
 		}
 
-		checkGLStatus();
+        checkGLStatus( __FILE__, __LINE__ );
 
 		/*	    printf("Wall number %d:\n",i);
 
@@ -1790,21 +1790,21 @@ void TransitionTexture(int left,int texture,int right) {
 	glGenTextures(1,&splitTexName[texnum][x]);
 
 	glBindTexture(GL_TEXTURE_2D,splitTexName[texnum][x]);
-	checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,partialfilter);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,
 			fullfilter);
-	checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
 #ifndef OPENGLES
 	glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
 #endif // !OPENGLES
-	checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-	checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
 	/* Add code here to upload two textures from texdata, one with cols
 	   0-63, other 2-65. */
@@ -1817,7 +1817,7 @@ void TransitionTexture(int left,int texture,int right) {
 
 	BuildMipmaps((Uint32*)(texdata+x*512),64,64,1,10);
 
-	checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     }
     splitTexNum[texnum++]=texture;
 
@@ -4146,14 +4146,14 @@ void UploadPartialOverlayToTexture(int x,int y,int dx,int dy,int w,int h,
 #endif
 
     glBindTexture(GL_TEXTURE_2D,tex);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 #ifndef OPENGLES
     glPixelStorei(GL_UNPACK_ROW_LENGTH,screenbufferwidth);
     glPixelStorei(GL_UNPACK_SKIP_PIXELS,x);
     glPixelStorei(GL_UNPACK_SKIP_ROWS,y);
 #endif // !OPENGLES
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     if (create) {
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
@@ -4200,7 +4200,7 @@ void UploadPartialOverlayToTexture(int x,int y,int dx,int dy,int w,int h,
     }
 #endif
 
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     if (debugmode)
 	TO_DEBUG_LOG("done.\n");
     //glPixelTransferi(GL_MAP_COLOR,GL_FALSE);
@@ -4507,7 +4507,7 @@ void ShowPartialOverlay(int x,int y,int w,int h,int statusbar) {
 	glDisable(GL_BLEND);
     else
 	glDisable(GL_ALPHA_TEST);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     if (statusbar==1) {
 	for(i=0;i<(virtualscreenwidth-319)/2;i+=20) {
@@ -5495,12 +5495,12 @@ K_INT16 mainmenu()
 #ifndef OPENGLES
 		    glDrawBuffer(GL_BACK);
 #endif // !OPENGLES
-		    checkGLStatus();
+            checkGLStatus( __FILE__, __LINE__ );
 		    kgif(1);
 		    drawintroduction();
 		    spriteyoffset=0;
 		    drawmainmenu();
-		    checkGLStatus();
+            checkGLStatus( __FILE__, __LINE__ );
 #ifndef USE_SDL2
     SDL_GL_SwapBuffers();
 #else
@@ -5514,13 +5514,13 @@ K_INT16 mainmenu()
 #ifndef OPENGLES
 		    glDrawBuffer(GL_BACK);
 #endif // !OPENGLES
-		    checkGLStatus();
+            checkGLStatus( __FILE__, __LINE__ );
 		    wipeoverlay(0,0,361,statusbaryoffset);
 		    statusbaralldraw();
 		    if (compass>0) showcompass(ang);
 		    picrot(posx,posy,posz,ang);
 		    drawmainmenu();
-		    checkGLStatus();
+            checkGLStatus( __FILE__, __LINE__ );
 #ifndef USE_SDL2
     SDL_GL_SwapBuffers();
 #else
@@ -6364,12 +6364,12 @@ void copyslots(K_INT16 slotnum)
 	    l[k+448]=tempbuf[(i<<8)+(j<<3)+7];
 	}
     glBindTexture(GL_TEXTURE_2D,texName[slotnum-1]);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     TextureConvert(l, RGBATexture, bmpkind[slotnum]);
 
     BuildMipmaps((Uint32*)RGBATexture,64,64,1,10);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     free(RGBATexture);
 }
 
@@ -6391,13 +6391,13 @@ void updatemap() {
     unsigned char *RGBATexture=malloc(64*64*4);
 
     glBindTexture(GL_TEXTURE_2D,texName[map-1]);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     TextureConvert(walseg[map-1], RGBATexture, bmpkind[map]);
 
     BuildMipmaps((Uint32*)RGBATexture,64,64,1,10);
 
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     free(RGBATexture);
 }
 
@@ -6407,13 +6407,13 @@ void updategameover() {
     unsigned char *RGBATexture=malloc(64*64*4);
 
     glBindTexture(GL_TEXTURE_2D,texName[gameover-1]);
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
 
     TextureConvert(walseg[gameover-1], RGBATexture, bmpkind[gameover]);
 
     BuildMipmaps((Uint32*)RGBATexture,64,64,1,10);
 
-    checkGLStatus();
+    checkGLStatus( __FILE__, __LINE__ );
     free(RGBATexture);
 }
 
