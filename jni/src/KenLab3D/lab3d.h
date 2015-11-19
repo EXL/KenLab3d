@@ -23,6 +23,11 @@
 // Unix Compatibility
 #define S_IREAD		S_IRUSR
 #define S_IWRITE	S_IWUSR
+
+#include <android/log.h>
+
+#define LOG_TAG "KenLab3D"
+#define LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #endif // !ANDROID_NDK
 
 #include "sdl2keyhelper.h"

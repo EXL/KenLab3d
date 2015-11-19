@@ -4800,7 +4800,7 @@ void hiscorecheck()
 	return;
 #ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
-#endif !OPENGLES
+#endif //!OPENGLES
     wipeoverlay(0,0,361,statusbaryoffset);
     lseek(fil,(long)(boardnum<<7),SEEK_SET);
     read(fil,&tempbuf[0],128);
