@@ -31,7 +31,7 @@ LOCAL_SRC_FILES :=	$(SDL_PATH)/src/main/android/SDL_android_main.c \
 
 LOCAL_SHARED_LIBRARIES := SDL2 SDL2_image
 
-LOCAL_STATIC_LIBRARIES := Glues
+LOCAL_STATIC_LIBRARIES := Glues Tess
 
 LOCAL_LDLIBS := -lGLESv1_CM -lGLESv2 -llog
 
