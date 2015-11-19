@@ -988,6 +988,8 @@ void configure(void) {
 	soundblocksize<<=soundblock;
     }
     soundtimer=0;
+
+#ifndef OPENGLES
     switch(texturedepth) {
 	case 1:
 	    colourformat=GL_RGBA8;
@@ -998,6 +1000,9 @@ void configure(void) {
 	default:
 	    colourformat=GL_RGBA;
     }
+#else
+    colourformat = GL_RGBA;
+#endif // !OPENGLES
     aspw=1.0;
     asph=1.0;
     switch(scaling) {
@@ -1175,6 +1180,8 @@ void setup(void) {
 	     SDL_INIT_JOYSTICK);
     SDL_JoystickOpen(0);
     SDL_JoystickEventState(1);
+
+#ifndef OPENGLES
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
@@ -1185,6 +1192,8 @@ void setup(void) {
     SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,0);
+#endif // !OPENGLES
+
     SDL_ShowCursor(0);
 
 #ifndef USE_SDL2
@@ -1321,10 +1330,10 @@ void setup(void) {
     walcounter = initialwalls;
     if (convwalls > initialwalls)
     {
-	v = pic;
+    v = (char *)pic;
 	for(i=0;i<convwalls-initialwalls;i++)
 	{
-	    walseg[walcounter] = v;
+        walseg[walcounter] = (unsigned char *)v;
 	    walcounter++;
 	    v += 4096;
 	}
@@ -1388,7 +1397,9 @@ void setup(void) {
 	kgif(1);
 	fade(63);
     }
+#ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
 
     setupmenu();
   

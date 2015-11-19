@@ -27,8 +27,19 @@ extern Uint16 *gammaRamp;
 #include <SDL/SDL.h>
 #endif // USE_SDL2
 
+#ifndef OPENGLES
 #include <GL/gl.h>
 #include <GL/glu.h>
+#else
+#include <GLES/egl.h>
+#include <GLES/gl.h>
+#include <GLES/glues.h>
+
+#define GLdouble GLfloat
+#define GL_CLAMP GL_CLAMP_TO_EDGE
+#define GL_BGR GL_RGB
+#endif // !OPENGLES
+
 #ifndef GL_BGR
 /* MSVC compatibility hack (some versions have out-of-date OpenGL headers). */
 #define GL_BGR GL_BGR_EXT
@@ -362,7 +373,7 @@ EXTERN K_INT16 statusbar, statusbargoal, doorx, doory, doorstat;
 EXTERN K_INT16 fadehurtval, fadewarpval;
 EXTERN K_INT32 ototclock, totalclock, purpletime, greentime, capetime[2];
 EXTERN K_INT32 scoreclock, scorecount;
-EXTERN unsigned char textbuf[41];
+EXTERN char textbuf[41];
 EXTERN K_INT16 musicsource, midiscrap;
 EXTERN K_UINT32 musicstatus, count, countstop;
 EXTERN K_UINT16 numnotes, speed, drumstat, numchans, nownote;

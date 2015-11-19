@@ -37,6 +37,7 @@ void initialize()
     soundmutex=SDL_CreateMutex();
     timermutex=SDL_CreateMutex();
 
+#ifndef OPENGLES // TODO: Check this.
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,8);
@@ -47,10 +48,20 @@ void initialize()
     SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,0);
+#endif // !OPENGLES
     
     SDL_ShowCursor(0);
 
     fprintf(stderr,"Activating video...\n");
+
+    // TODO: Check this
+//#ifndef OPENGLES
+//    int flags = SDL_OPENGL;
+//    int bpp = 32;
+//#else
+//    int flags = fullscreen  ? (SDL_SWSURFACE|SDL_FULLSCREEN):SDL_SWSURFACE;
+//    int bpp = 16;
+//#endif // !OPENGLES
 
     icon=SDL_LoadBMP("ken.bmp");
     if (icon==NULL) {
@@ -85,10 +96,13 @@ void initialize()
                                        (SDL_WINDOW_OPENGL|SDL_WINDOW_FULLSCREEN):SDL_WINDOW_OPENGL))==
             NULL) {
         fprintf(stderr, "True colour failed; taking whatever is available.\n");
+
+#ifndef OPENGLES // Check this.
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
+#endif // !OPENGLES
 
         SDL_DestroyWindow(globalWindow); // Don't needed, but...
 
@@ -116,11 +130,13 @@ void initialize()
     SDL_SetWindowIcon(globalWindow, icon);
 #endif // !USE_SDL2
 
+#ifndef OPENGLES
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE,&realr);
     SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE,&realg);
     SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE,&realb);
     SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE,&realz);
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER,&reald);
+#endif // !OPENGLES
 
     fprintf(stderr,"GL Vendor: %s\n",glGetString(GL_VENDOR));
     fprintf(stderr,"GL Renderer: %s\n",glGetString(GL_RENDERER));
@@ -129,7 +145,7 @@ void initialize()
 
     fprintf(stderr,"GLU Version: %s\n",gluGetString(GLU_VERSION));
     //fprintf(stderr,"GLU Extensions: %s\n",gluGetString(GLU_EXTENSIONS));
-
+#ifndef OPENGLES
     if (reald==0) {
 	fprintf(stderr,"Double buffer not available.\n");
 	SDL_Quit();
@@ -142,7 +158,13 @@ void initialize()
 	SDL_Quit();
 	exit(-1);
     }
-
+#else
+    realr = 5;
+    realg = 6;
+    realb = 5;
+    realz = 16;
+    reald = 1;
+#endif // !OPENGLES
 #ifndef USE_SDL2
     SDL_SetGamma(gammalevel,gammalevel,gammalevel);
 #else
@@ -340,6 +362,8 @@ void initialize()
 		(channels-1)?"stereo":"mono",
 		soundpan?"stereo":"mono");
 
+    // TODO: Check the musicsource is 2
+
 	want.freq=(musicsource==2)?44100:11025;
 	want.format=AUDIO_S16SYS;
 	want.channels=channels;
@@ -381,10 +405,10 @@ void initialize()
     walcounter = initialwalls;
     if (convwalls > initialwalls)
     {
-	v = pic;
+    v = (char *)pic;
 	for(i=0;i<convwalls-initialwalls;i++)
 	{
-	    walseg[walcounter] = v;
+        walseg[walcounter] = (unsigned char *)v;
 	    walcounter++;
 	    v += 4096;
 	}

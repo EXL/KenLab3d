@@ -30,7 +30,9 @@ void oldmain(void)
 
     clockspd=0;
 
+#ifndef OPENGLES
     glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
     settransferpalette();
     lastunlock = 1;
     lastshoot = 1;
@@ -1950,10 +1952,15 @@ void oldmain(void)
 		    if (m) {
 			if (hiscorenamstat == 0)
 			{
+#ifndef OPENGLES
 			    glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
 			    drawinputbox();
 			    getname();
+
+#ifndef OPENGLES
 			    glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
 			}
 			oldsavegame(i);
 		    }

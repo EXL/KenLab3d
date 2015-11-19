@@ -321,7 +321,9 @@ void loadboard()
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,fullfilter);
     
+#ifndef OPENGLES
     glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+#endif // !OPENGLES
     checkGLStatus();
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
     checkGLStatus();
@@ -875,7 +877,7 @@ typedef struct imgcache {
 
 static imgcache* img_cache=NULL;
 
-
+#ifndef OPENGLES
 static inline int AverageColour32 (Uint32 * p, int x, int y, int w, int h)
 {
     int a, c, n = 0;
@@ -908,7 +910,6 @@ static inline int AverageColour32 (Uint32 * p, int x, int y, int w, int h)
 
 static inline void TextureAvg32 (Uint32 * pic, int w, int h)
 {
-
     Uint32 *f = pic;
 
     int x, y;
@@ -921,6 +922,7 @@ static inline void TextureAvg32 (Uint32 * pic, int w, int h)
 	    f++;
 	}
 }
+#endif // !OPENGLES
 
 #ifndef GL_EXT_texture_filter_anisotropic
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT     0x84FE
@@ -928,6 +930,7 @@ static inline void TextureAvg32 (Uint32 * pic, int w, int h)
 #endif
 
 static void SetAnisotropic(void) {
+#ifndef OPENGLES
     checkGLStatus();
 
     //#ifdef GL_EXT_texture_filter_anisotropic
@@ -942,7 +945,9 @@ static void SetAnisotropic(void) {
     //anisotropic=0;
     //fprintf(stderr,"Warning: Anisotropic filtering not supported at compile time, using trilinear filtering.\n");
     //#endif
-
+#else
+    anisotropic = 0;
+#endif // !OPENGLES
 }
 
 #define USE_GLU_MIPMAPS
@@ -950,9 +955,14 @@ static void SetAnisotropic(void) {
 #ifdef USE_GLU_MIPMAPS
 
 void BuildMipmaps(Uint32* pix, int w, int h, int hasalpha, int maxlevel) {
+#ifndef OPENGLES
     if (hasalpha) TextureAvg32(pix,w,h);
     glPixelStorei (GL_UNPACK_ROW_LENGTH, w);
     gluBuild2DMipmaps(GL_TEXTURE_2D,hasalpha?GL_RGBA:GL_RGB,w,h,GL_RGBA,GL_UNSIGNED_BYTE,pix);
+#else
+    GLint format = (hasalpha > 0) ? GL_RGBA : GL_RGB;
+    gluBuild2DMipmaps(GL_TEXTURE_2D,format,w,h,format,GL_UNSIGNED_BYTE,pix);
+#endif // !OPENGLES
 }
 #else
 
@@ -1054,10 +1064,16 @@ void BuildMipmaps(Uint32* pix, int w, int h, int hasalpha, int maxmips) {
     int level=0;
 
     while (1) {
+#ifndef OPENGLES
 	if (hasalpha) TextureAvg32(bufs[level],cw,ch);
 	glPixelStorei (GL_UNPACK_ROW_LENGTH, cw);
-	glTexImage2D (GL_TEXTURE_2D,level, format, cw, ch, 0, GL_RGBA,
-		      GL_UNSIGNED_BYTE, bufs[level]);
+    glTexImage2D (GL_TEXTURE_2D,level, format, cw, ch, 0, GL_RGBA,
+              GL_UNSIGNED_BYTE, bufs[level]);
+#else
+    glTexImage2D (GL_TEXTURE_2D,level, format, cw, ch, 0, format,
+                  GL_UNSIGNED_BYTE, bufs[level]);
+#endif // !OPENGLES
+
 	glFinish();
 	if (cw<=1 && ch<=1 ) break;
 	ow=cw; oh=ch;
@@ -1079,15 +1095,15 @@ void BuildMipmaps(Uint32* pix, int w, int h, int hasalpha, int maxmips) {
 #endif /*USE_GLU_MIPMAPS*/
 
 
-
 void UploadTexture(GLuint tex, void* pixels, int w, int h,  int repx, int repy, int hasalpha, int minfilt, int magfilt) {
     int mipmaps=1;
 
     glBindTexture(GL_TEXTURE_2D, tex);
     checkGLStatus ();
-
+#ifndef OPENGLES
     glPixelStorei (GL_UNPACK_SKIP_PIXELS, 0);
     glPixelStorei (GL_UNPACK_SKIP_ROWS, 0);
+#endif // !OPENGLES
     glPixelStorei (GL_UNPACK_ALIGNMENT, 1);
     checkGLStatus ();
 
@@ -1116,8 +1132,15 @@ void UploadTexture(GLuint tex, void* pixels, int w, int h,  int repx, int repy, 
 	    SetAnisotropic();
 	BuildMipmaps (pixels, w, h, hasalpha,20);
     } else {
+#ifndef OPENGLES
 	glTexImage2D (GL_TEXTURE_2D,0, hasalpha?GL_RGBA:GL_RGB, w, h, 0, GL_RGBA,
 			   GL_UNSIGNED_BYTE, pixels);
+#else
+    GLint format = (hasalpha > 0) ? GL_RGBA : GL_RGB;
+
+    glTexImage2D (GL_TEXTURE_2D, 0, format, w, h, 0, format,
+                  GL_UNSIGNED_BYTE, pixels);
+#endif // !OPENGLES
     }
     checkGLStatus ();
 }
@@ -1481,14 +1504,17 @@ void loadwalls(int replace)
 	    if ((i < 127) && ((i&1)==0)) {
 		if (debugmode)
 		    fprintf(stderr,"Trying to draw screen buffer.\n");
+#ifndef OPENGLES
 		glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
 		fade(64+(i>>1));
 		SetVisibleScreenOffset(0);
 		if (debugmode)
 		    fprintf(stderr,"Screen buffer draw OK.\n");
 	    } else {
+#ifndef OPENGLES
 		glDrawBuffer(GL_FRONT);
-		
+#endif // !OPENGLES
 		if (i==128) {
 		    fade(63);
 		}
@@ -1584,7 +1610,9 @@ void loadwalls(int replace)
 		glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,minfilt);	    
 		checkGLStatus();
 		
+#ifndef OPENGLES
 		glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+#endif // !OPENGLES
 		checkGLStatus();
 		glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 		checkGLStatus();
@@ -1696,7 +1724,9 @@ printf("\n");*/
 	}
 
     }
+#ifndef OPENGLES
     glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
 }
 
 #define COPYLINE \
@@ -1744,7 +1774,9 @@ void TransitionTexture(int left,int texture,int right) {
 			fullfilter);	    
 	checkGLStatus();
 
+#ifndef OPENGLES
 	glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+#endif // !OPENGLES
 	checkGLStatus();
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 	checkGLStatus();	
@@ -1752,9 +1784,11 @@ void TransitionTexture(int left,int texture,int right) {
 	/* Add code here to upload two textures from texdata, one with cols
 	   0-63, other 2-65. */
 
+#ifndef OPENGLES
 	glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);
 	glPixelStorei(GL_UNPACK_SKIP_ROWS,0);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+#endif // !OPENGLES
 	
 	BuildMipmaps((Uint32*)(texdata+x*512),64,64,1,10);
 	
@@ -2045,9 +2079,9 @@ K_INT16 savegame(K_INT16 gamenum)
 	gamehead[gamenum][i] = hiscorenam[i];
     gamehead[gamenum][16] = hiscorenamstat;
 
-    writeshort(&(gamehead[gamenum][17]),boardnum);
-    writelong(&(gamehead[gamenum][19]),scorecount);
-    writelong(&(gamehead[gamenum][23]),scoreclock);
+    writeshort((unsigned char *)&(gamehead[gamenum][17]),boardnum);
+    writelong((unsigned char *)&(gamehead[gamenum][19]),scorecount);
+    writelong((unsigned char *)&(gamehead[gamenum][23]),scoreclock);
 
     gamexist[gamenum] = 1;
     writeLE16(fil,&board[0][0],8192);
@@ -2652,7 +2686,9 @@ void introduction(K_INT16 songnum)
     fadehurtval = 0;
     visiblescreenyoffset=0;
     wipeoverlay(0,0,361,statusbaryoffset);
+#ifndef OPENGLES
     glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
     statusbaralldraw();
 }
 
@@ -2732,7 +2768,7 @@ K_INT16 loadmusic(char *filename)
 	return(-1);
     }
 
-    filoffs=readlong(buffer+8);
+    filoffs=readlong((unsigned char *)buffer+8);
 
     lseek(infile,filoffs,SEEK_SET);
     read(infile,&trinst[0],16);
@@ -3692,10 +3728,12 @@ void setdarkenedpalette() {
     if (ingame)
 	Red[255]=Green[255]=Blue[255]=Alpha[255]=0.0;
 
+#ifndef OPENGLES
     glPixelMapfv(GL_PIXEL_MAP_I_TO_R,256,Red);
     glPixelMapfv(GL_PIXEL_MAP_I_TO_G,256,Green);
     glPixelMapfv(GL_PIXEL_MAP_I_TO_B,256,Blue);
-    glPixelMapfv(GL_PIXEL_MAP_I_TO_A,256,Alpha);    
+    glPixelMapfv(GL_PIXEL_MAP_I_TO_A,256,Alpha);
+#endif // OPENGLES
 
     ConvertPartialOverlay(0,0,360,240);
 }
@@ -3719,10 +3757,12 @@ void settransferpalette() {
     if (ingame)
 	Red[255]=Green[255]=Blue[255]=Alpha[255]=0.0;
 
+#ifndef OPENGLES
     glPixelMapfv(GL_PIXEL_MAP_I_TO_R,256,Red);
     glPixelMapfv(GL_PIXEL_MAP_I_TO_G,256,Green);
     glPixelMapfv(GL_PIXEL_MAP_I_TO_B,256,Blue);
-    glPixelMapfv(GL_PIXEL_MAP_I_TO_A,256,Alpha);    
+    glPixelMapfv(GL_PIXEL_MAP_I_TO_A,256,Alpha);
+#endif // !OPENGLES
 
     ConvertPartialOverlay(0,0,360,240);
 }
@@ -3746,10 +3786,12 @@ void updateoverlaypalette(K_UINT16 start,K_UINT16 amount,unsigned char *cols) {
     if (ingame)
 	Red[255]=Green[255]=Blue[255]=Alpha[255]=0.0;
 
+#ifndef OPENGLES
     glPixelMapfv(GL_PIXEL_MAP_I_TO_R,256,Red);
     glPixelMapfv(GL_PIXEL_MAP_I_TO_G,256,Green);
     glPixelMapfv(GL_PIXEL_MAP_I_TO_B,256,Blue);
-    glPixelMapfv(GL_PIXEL_MAP_I_TO_A,256,Alpha); 
+    glPixelMapfv(GL_PIXEL_MAP_I_TO_A,256,Alpha);
+#endif // !OPENGLES
 
     ConvertPartialOverlay(0,0,360,240);
 }
@@ -4034,12 +4076,17 @@ K_INT16 kgif(K_INT16 filenum)
 
 void UploadPartialOverlayToTexture(int x,int y,int dx,int dy,int w,int h,
 				   GLuint tex,int create) {
+#ifdef OPENGLES
+    int yy;
+#endif
+
     glBindTexture(GL_TEXTURE_2D,tex);
     checkGLStatus();
-    
+#ifndef OPENGLES
     glPixelStorei(GL_UNPACK_ROW_LENGTH,screenbufferwidth);
     glPixelStorei(GL_UNPACK_SKIP_PIXELS,x);
     glPixelStorei(GL_UNPACK_SKIP_ROWS,y);
+#endif // !OPENGLES
     glPixelStorei(GL_UNPACK_ALIGNMENT,1);
     checkGLStatus();
 
@@ -4060,23 +4107,43 @@ void UploadPartialOverlayToTexture(int x,int y,int dx,int dy,int w,int h,
     if (create) {
 	if (debugmode)
 	    fprintf(stderr,"(create) ");
-	glTexImage2D(GL_TEXTURE_2D,0,colourformat,w,
-		     h,0,GL_RGBA,
-		     GL_UNSIGNED_BYTE,
-		     screenbuffer32);
-    } else {
+#ifdef OPENGLES
+    glTexImage2D(GL_TEXTURE_2D,0,colourformat,w,
+                 h,0,colourformat,
+                 GL_UNSIGNED_BYTE,
+                 NULL);
+#else
+    glTexImage2D(GL_TEXTURE_2D,0,colourformat,w,
+             h,0,GL_RGBA,
+             GL_UNSIGNED_BYTE,
+             screenbuffer32);
+#endif // OPENGLES
+    }
+#ifndef OPENGLES
+    else {
 	glTexSubImage2D(GL_TEXTURE_2D,0,dx,dy,w,h,
 			GL_RGBA,
 			GL_UNSIGNED_BYTE,
 			screenbuffer32);
     }
+#endif // !OPENGLES
+
+#ifdef OPENGLES
+    for( yy = 0; yy < h; yy++ ) {
+        char *row = (char*)screenbuffer32 + ((yy + y)*screenbufferwidth + x) * 4;
+        glTexSubImage2D(GL_TEXTURE_2D, 0, dx, dy+yy, w, 1, GL_RGBA, GL_UNSIGNED_BYTE, row);
+    }
+#endif
+
     checkGLStatus();
     if (debugmode)
 	fprintf(stderr,"done.\n");
     //glPixelTransferi(GL_MAP_COLOR,GL_FALSE);
+#ifndef OPENGLES
     glPixelStorei(GL_UNPACK_SKIP_PIXELS,0);
     glPixelStorei(GL_UNPACK_SKIP_ROWS,0);
     glPixelStorei(GL_UNPACK_ROW_LENGTH,0);
+#endif // !OPENGLES
 }
 
 void ConvertPartialOverlay(int sx, int sy, int w, int h) {
@@ -4247,6 +4314,7 @@ void ShowPartialOverlay(int x,int y,int w,int h,int statusbar) {
 	y-=visiblescreenyoffset;
 	
 	glBindTexture(GL_TEXTURE_2D,screenbuffertexture);
+#ifndef OPENGLES
 	glBegin(GL_QUADS);
 	glColor3f(redfactor,greenfactor,bluefactor);
 	glTexCoord2f(tx1,ty2);
@@ -4258,6 +4326,33 @@ void ShowPartialOverlay(int x,int y,int w,int h,int statusbar) {
 	glTexCoord2f(tx1,ty1);
 	glVertex2s(x,y);
 	glEnd();
+#else
+    GLfloat vtx[] = {
+        x   ,y+h,
+        x+w ,y+h,
+        x+w ,y  ,
+        x   ,y
+    };
+
+    GLfloat tex[] = {
+        tx1,ty2,
+        tx2,ty2,
+        tx2,ty1,
+        tx1,ty1
+    };
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glColor4f(redfactor,greenfactor,bluefactor,1.0f);
+
+    glVertexPointer(2, GL_FLOAT, 0, vtx);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
     } else {
 	left=(x-1)/62;
 	if (left<0) left=0;
@@ -4299,6 +4394,7 @@ void ShowPartialOverlay(int x,int y,int w,int h,int statusbar) {
 		}
 
 		glBindTexture(GL_TEXTURE_2D,screenbuffertextures[i*6+j]);
+#ifndef OPENGLES
 		glBegin(GL_QUADS);
 		glColor3f(redfactor,greenfactor,bluefactor);
 		glTexCoord2f(tx1,ty2);
@@ -4310,7 +4406,33 @@ void ShowPartialOverlay(int x,int y,int w,int h,int statusbar) {
 		glTexCoord2f(tx1,ty1);
 		glVertex2s(lr+62*j,tr+62*i-visiblescreenyoffset);
 		glEnd();
+#else
+        GLfloat vtx[] = {
+            lr+62*j,br+1+62*i-visiblescreenyoffset,
+            rr+1+62*j,br+1+62*i-visiblescreenyoffset,
+            rr+1+62*j,tr+62*i-visiblescreenyoffset,
+            lr+62*j,tr+62*i-visiblescreenyoffset
+        };
 
+        GLfloat tex[] = {
+            tx1,ty2,
+            tx2,ty2,
+            tx2,ty1,
+            tx1,ty1
+        };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glColor4f(redfactor,greenfactor,bluefactor,1.0f);
+
+        glVertexPointer(2, GL_FLOAT, 0, vtx);
+        glTexCoordPointer(2, GL_FLOAT, 0, tex);
+        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
 		if (debugmode)
 		    fprintf(stderr,"done.\n");
 
@@ -4671,7 +4793,9 @@ void hiscorecheck()
     if (((fil = open("hiscore.dat",O_RDWR|O_BINARY,0)) == -1)&&
 	((fil = open("HISCORE.DAT",O_RDWR|O_BINARY,0)) == -1))
 	return;
+#ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
+#endif !OPENGLES
     wipeoverlay(0,0,361,statusbaryoffset);
     lseek(fil,(long)(boardnum<<7),SEEK_SET);
     read(fil,&tempbuf[0],128);
@@ -4898,7 +5022,9 @@ void hiscorecheck()
     textprint(180-(strlen(textbuf)<<2),135+1,(char)65);
     finalisemenu();
     glFlush();
+#ifndef OPENGLES
     glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
     while ((keystatus[1] == 0) && (keystatus[57] == 0) && (keystatus[28] == 0) && (bstatus == 0)) {
 	PollInputs();
 	SDL_Delay(10);
@@ -4963,8 +5089,10 @@ void getname()
       }*/
 
     ch = 0;
-    finalisemenu();    
+    finalisemenu();
+#ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
     sprintf(&textbuf[0],"Please type your name!");
 
     textprint(180-(strlen(textbuf)<<2),135+1,(char)161);
@@ -5209,8 +5337,9 @@ K_INT16 mainmenu()
     fade(63);
     if (sortcnt == -1) {
 	/* Emulating the original a bit too closely, this... */
-
+#ifndef OPENGLES
 	glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
 	spriteyoffset=20;
 	drawintroduction();
 	spriteyoffset=0;
@@ -5220,12 +5349,14 @@ K_INT16 mainmenu()
     SDL_GL_SwapWindow(globalWindow);
 #endif // !USE_SDL2
     } else {
+#ifndef OPENGLES
 	glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
 	ShowStatusBar();
     }
-
+#ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
-
+#endif // !OPENGLES
     done = 0;
     if (sortcnt != -1)
     {
@@ -5284,7 +5415,9 @@ K_INT16 mainmenu()
 		   avoid annoying flicker. */
 		if (sortcnt == -1) {		    
 		    spriteyoffset=20;
+#ifndef OPENGLES
 		    glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
 		    checkGLStatus();
 		    kgif(1);
 		    drawintroduction();
@@ -5296,10 +5429,14 @@ K_INT16 mainmenu()
 #else
     SDL_GL_SwapWindow(globalWindow);
 #endif // !USE_SDL2
+#ifndef OPENGLES
 		    glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
 		}
 		else {
+#ifndef OPENGLES
 		    glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
 		    checkGLStatus();
 		    wipeoverlay(0,0,361,statusbaryoffset);
 		    statusbaralldraw();
@@ -5312,7 +5449,9 @@ K_INT16 mainmenu()
 #else
     SDL_GL_SwapWindow(globalWindow);
 #endif // !USE_SDL2
+#ifndef OPENGLES
 		    glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
 		}
 	    }
 	}
@@ -5326,7 +5465,9 @@ K_INT16 mainmenu()
     j = mainmenuplace;
     if (mainmenuplace < 0)
 	mainmenuplace = (-mainmenuplace)-1;
+#ifndef OPENGLES
     glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
     return(j);
 }
 
@@ -5339,8 +5480,9 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     K_INT16 animater6, n, esckeystate;
     int mousx, mousy;
     K_INT16 bstatus, obstatus;
-
+#ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
     if (vidmode == 0)
 	n = 0;
     else
@@ -5374,6 +5516,12 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     mousy = 0;
     while (esckeystate == 0)
     {
+    // TODO: Check this.
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	PollInputs();
 	animater6++;
 	if (animater6 == 6)
@@ -5603,6 +5751,11 @@ void bigstorymenu()
 		quitstat = 1;
 	}
 	ksay(27);
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     }
 }
 
@@ -5657,7 +5810,9 @@ void sodamenu()
     K_INT16 n, valid;
 
     wipeoverlay(0,0,361,statusbaryoffset);
+#ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
     ototclocker = totalclock;
     if (vidmode == 0)
 	n = 0;
@@ -5808,7 +5963,9 @@ void sodamenu()
     SDL_LockMutex(timermutex);
     clockspeed = 0;
     SDL_UnlockMutex(timermutex);
+#ifndef OPENGLES
     glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
     wipeoverlay(0,0,361,statusbaryoffset);
     linecompare(statusbar);
 }
@@ -5941,7 +6098,7 @@ K_INT16 loadsavegamemenu(K_INT16 whichmenu)
 	    textbuf[19] = 32;
 	    textbuf[20] = 32;
 	    k = j*27;
-	    templong=readlong(&gamehead[j][19]);
+        templong=readlong((unsigned char *)&gamehead[j][19]);
 //	    templong=*((K_INT32 *)(&gamehead[j][19]));
 
 	    textbuf[21] = (char)((templong/100000L)%10L)+48;
@@ -5955,7 +6112,7 @@ K_INT16 loadsavegamemenu(K_INT16 whichmenu)
 	    while ((textbuf[k] == 48) && (k < 26))
 		textbuf[k++] = 32;
 	    k = j*27;
-	    templong=readlong(&gamehead[j][23]);
+        templong=readlong((unsigned char *)&gamehead[j][23]);
 //	    templong=*((K_INT32 *)(&gamehead[j][23]));
 
 	    templong /= 240;

@@ -24,7 +24,8 @@ void drawvolumebar(int vol,int type,float level) {
     gluOrtho2D(0.0, 360.0, -15+30*type, 225+30*type);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-	
+
+#ifndef OPENGLES
     glBegin(GL_QUADS);
     glColor4f(0,0,0,level);
     glVertex2s(96,110);
@@ -41,6 +42,63 @@ void drawvolumebar(int vol,int type,float level) {
     glVertex2s(96+(vol>>1),130);
     glVertex2s(96+(vol>>1),110);
     glEnd();
+#else
+    GLfloat vtx[] = {
+        96,110,
+        96,130,
+        224,130,
+        224,110,
+        96,110,
+        96,130,
+        96+(vol>>1),130,
+        96+(vol>>1),110
+    };
+
+    GLfloat colors[] = {
+        0,0,0,level,
+        0,0,0,level,
+        0.25,0.25,0.25,level,
+        0.25,0.25,0.25,level,
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0,
+        0,0,0,0
+    };
+
+    int i,k;
+    if (type)
+    {
+        for (i=4; i<8; i++)
+        {
+            k = i*4;
+            colors[k+0] = 0;
+            colors[k+1] = 0;
+            colors[k+2] = 255;
+            colors[k+3] = level;
+        }
+    }
+    else
+    {
+        for (i=4; i<8; i++)
+        {
+            k = i*4;
+            colors[k+0] = 255;
+            colors[k+1] = 0;
+            colors[k+2] = 0;
+            colors[k+3] = level;
+        }
+    }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
+    glColorPointer(4, GL_FLOAT, 0, colors);
+    glVertexPointer(2, GL_FLOAT, 0, vtx);
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 8 );
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+#endif // !OPENGLES
     glDisable(GL_BLEND);
     checkGLStatus();
 }
@@ -3413,10 +3471,14 @@ int main(int argc,char **argv)
 		    {
 			if (hiscorenamstat == 0)
 			{
-			    glDrawBuffer(GL_FRONT);
+#ifndef OPENGLES
+                glDrawBuffer(GL_FRONT);
+#endif // !OPENGLES
 			    drawinputbox();
 			    getname();
-			    glDrawBuffer(GL_BACK);
+#ifndef OPENGLES
+                glDrawBuffer(GL_BACK);
+#endif // !OPENGLES
 			}
 			if (hiscorenamstat > 0)
 			    savegame(loadsavegameplace);

@@ -441,7 +441,7 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
     glDisable(GL_DEPTH_TEST);
     glDepthMask(0);
 
-
+#ifndef OPENGLES
     glBegin(GL_QUADS);
 
     glColor3f(palette[0xe3*3]/64.0*redfactor,
@@ -452,6 +452,24 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
     glVertex3i(360,240-yy/90,0);
     glVertex3i(360,240,0);      
     glEnd();
+#else
+    GLfloat vtx[] = {
+        0,240,
+        0,240-yy/90,
+        360,240-yy/90,
+        360,240
+    };
+
+    glColor4f(palette[0xe3*3]/64.0*redfactor,
+            palette[0xe3*3+1]/64.0*greenfactor,
+            palette[0xe3*3+2]/64.0*bluefactor,
+            1.0f);
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(2, GL_FLOAT, 0, vtx);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    glDisableClientState(GL_VERTEX_ARRAY);
+#endif // !OPENGLES
 
     checkGLStatus();
 
@@ -469,7 +487,11 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
     xmax *= aspw; xmin *= aspw;
     ymax *= asph; ymin *= asph;
     
+#ifndef OPENGLES
     glFrustum(xmin, xmax, ymin, ymax, neardist, 98304.0);
+#else
+    glFrustumf(xmin, xmax, ymin, ymax, neardist, 98304.0);
+#endif // !OPENGLES
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -535,7 +557,8 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
 		if (splitTexNum[k]==j) break;
 
 	if (k<numsplits) {
-	    glBindTexture(GL_TEXTURE_2D,splitTexName[k][0]); 
+        glBindTexture(GL_TEXTURE_2D,splitTexName[k][0]);
+#ifndef OPENGLES
 	    glBegin(GL_QUADS);
 	    if (shadecoffs) {
 		glColor3f(redfactor,greenfactor,bluefactor);
@@ -553,8 +576,41 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
 	    glTexCoord2f(0.0,33.0/64.0);
 	    glVertex3i((x1+x2)>>1,(y1+y2)>>1,0);      
 	    glEnd();
+#else
+        GLfloat vtx[] = {
+            x1,y1,0,
+            x1,y1,1024,
+            (x1+x2)>>1,(y1+y2)>>1,1024,
+            (x1+x2)>>1,(y1+y2)>>1,0
+        };
 
-	    glBindTexture(GL_TEXTURE_2D,splitTexName[k][1]); 
+        GLfloat tex[] = {
+            0.0,1.0/64.0,
+            1.0,1.0/64.0,
+            1.0,33.0/64.0,
+            0.0,33.0/64.0
+        };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        if (shadecoffs) {
+            glColor4f(redfactor,greenfactor,bluefactor, 1.0f);
+        }
+        else {
+            glColor4f(0.9*redfactor,0.9*greenfactor,0.9*bluefactor, 1.0f);
+        }
+
+        glVertexPointer(3, GL_FLOAT, 0, vtx);
+        glTexCoordPointer(2, GL_FLOAT, 0, tex);
+        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
+
+        glBindTexture(GL_TEXTURE_2D,splitTexName[k][1]);
+#ifndef OPENGLES
 	    glBegin(GL_QUADS);
 	    glTexCoord2f(0.0,31.0/64.0);
 	    glVertex3i((x1+x2)>>1,(y1+y2)>>1,0);
@@ -565,11 +621,43 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
 	    glTexCoord2f(0.0,63.0/64.0);
 	    glVertex3i(x2,y2,0);      
 	    glEnd();
+#else
+        GLfloat vtx_a[] = {
+            (x1+x2)>>1,(y1+y2)>>1,0,
+            (x1+x2)>>1,(y1+y2)>>1,1024,
+            x2,y2,1024,
+            x2,y2,0
+        };
 
+        GLfloat tex_a[] = {
+            0.0,31.0/64.0,
+            1.0,31.0/64.0,
+            1.0,63.0/64.0,
+            0.0,63.0/64.0,
+        };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        if (shadecoffs) {
+            glColor4f(redfactor,greenfactor,bluefactor, 1.0f);
+        }
+        else {
+            glColor4f(0.9*redfactor,0.9*greenfactor,0.9*bluefactor, 1.0f);
+        }
+
+        glVertexPointer(3, GL_FLOAT, 0, vtx_a);
+        glTexCoordPointer(2, GL_FLOAT, 0, tex_a);
+        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
 	} else {
 	    if (j == invisible-1)
 		glEnable(GL_BLEND);
-	    glBindTexture(GL_TEXTURE_2D,texName[j]); 
+        glBindTexture(GL_TEXTURE_2D,texName[j]);
+#ifndef OPENGLES
 	    glBegin(GL_QUADS);
 	    if (j == invisible-1)
 		glColor4f(1.0,1.0,1.0,0.0); /* Must draw invisible walls
@@ -592,6 +680,44 @@ void picrot(K_UINT16 posxs, K_UINT16 posys, K_INT16 poszs, K_INT16 angs)
 	    glTexCoord2f(0.0,walltexcoord[j][1]);
 	    glVertex3i(x2,y2,0);      
 	    glEnd();
+#else
+        GLfloat vtx_b[] = {
+            x1,y1,0,
+            x1,y1,1024,
+            x2,y2,1024,
+            x2,y2,0
+        };
+
+        GLfloat tex_b[] = {
+            0.0,walltexcoord[j][0],
+            1.0,walltexcoord[j][0],
+            1.0,walltexcoord[j][1],
+            0.0,walltexcoord[j][1]
+        };
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        if (j == invisible-1)
+            glColor4f(1.0,1.0,1.0,0.0); /* Must draw invisible walls
+                           to make stuff behind invisible;
+                           see board 15. */
+        else {
+            if (shadecoffs) {
+                glColor4f(redfactor,greenfactor,bluefactor, 1.0f);
+            }
+            else {
+                glColor4f(0.9*redfactor,0.9*greenfactor,0.9*bluefactor, 1.0f);
+            }
+        }
+
+        glVertexPointer(3, GL_FLOAT, 0, vtx_b);
+        glTexCoordPointer(2, GL_FLOAT, 0, tex_b);
+        glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
 	    if (j == invisible-1)
 		glDisable(GL_BLEND);
 	}
@@ -1262,6 +1388,7 @@ void floorsprite(K_UINT16 x, K_UINT16 y, K_INT16 walnume) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#ifndef OPENGLES
     glBegin(GL_QUADS);
     glColor3f(redfactor,greenfactor,bluefactor);
 
@@ -1274,6 +1401,33 @@ void floorsprite(K_UINT16 x, K_UINT16 y, K_INT16 walnume) {
     glTexCoord2f(0.0,walltexcoord[walnume-1][1]);
     glVertex3i(x+512,y-512,1024);      
     glEnd();
+#else
+    GLfloat vtx[] = {
+        x-512,y-512,1024,
+        x-512,y+512,1024,
+        x+512,y+512,1024,
+        x+512,y-512,1024
+    };
+
+    GLfloat tex[] = {
+        0.0,walltexcoord[walnume-1][0],
+        1.0,walltexcoord[walnume-1][0],
+        1.0,walltexcoord[walnume-1][1],
+        0.0,walltexcoord[walnume-1][1]
+    };
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glColor4f(redfactor,greenfactor,bluefactor,1.0f);
+
+    glVertexPointer(3, GL_FLOAT, 0, vtx);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
     glDisable(GL_BLEND);
 }
 
@@ -1310,7 +1464,8 @@ void flatsprite(K_UINT16 x, K_UINT16 y,K_INT16 ang,K_INT16 playerang,
     glTranslatef(-(x1+x2)/2.0,-(y1+y2)/2.0,-512);
     glEnable(GL_TEXTURE_2D);
     glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-    glBindTexture(GL_TEXTURE_2D,texName[walnume-1]); 
+    glBindTexture(GL_TEXTURE_2D,texName[walnume-1]);
+#ifndef OPENGLES
     glBegin(GL_QUADS);
     glColor3f(redfactor,greenfactor,bluefactor);
     glTexCoord2f(0.0,walltexcoord[walnume-1][0]);
@@ -1322,6 +1477,33 @@ void flatsprite(K_UINT16 x, K_UINT16 y,K_INT16 ang,K_INT16 playerang,
     glTexCoord2f(0.0,walltexcoord[walnume-1][1]);
     glVertex3i(x2,y2,0);      
     glEnd();
+#else
+    GLfloat vtx[] = {
+        x1,y1,0,
+        x1,y1,1024,
+        x2,y2,1024,
+        x2,y2,0
+    };
+
+    GLfloat tex[] = {
+        0.0,walltexcoord[walnume-1][0],
+        1.0,walltexcoord[walnume-1][0],
+        1.0,walltexcoord[walnume-1][1],
+        0.0,walltexcoord[walnume-1][1]
+    };
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glColor4f(redfactor,greenfactor,bluefactor,1.0f);
+
+    glVertexPointer(3, GL_FLOAT, 0, vtx);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
     checkGLStatus();
     glPopMatrix();
 
@@ -1379,6 +1561,7 @@ void pictur(K_INT16 x,K_INT16 y,K_INT16 siz,K_INT16 ang,K_INT16 walnume)
 	glBindTexture(GL_TEXTURE_2D,gameoversprite); /* Horrible kludge. */
     else
 	glBindTexture(GL_TEXTURE_2D,texName[walnume-1]);
+#ifndef OPENGLES
     glBegin(GL_QUADS);
     glColor3f(redfactor,greenfactor,bluefactor);
     glTexCoord2f(1.0,walltexcoord[walnume-1][0]);
@@ -1390,6 +1573,33 @@ void pictur(K_INT16 x,K_INT16 y,K_INT16 siz,K_INT16 ang,K_INT16 walnume)
     glTexCoord2f(0.0,walltexcoord[walnume-1][0]);
     glVertex3f(0.0,64.0,0);      
     glEnd();
+#else
+    GLfloat vtx[] = {
+        0.0,0.0,0,
+        64.0,0.0,0,
+        64.0,64.0,0,
+        0.0,64.0,0
+    };
+
+    GLfloat tex[] = {
+        1.0,walltexcoord[walnume-1][0],
+        1.0,walltexcoord[walnume-1][1],
+        0.0,walltexcoord[walnume-1][1],
+        0.0,walltexcoord[walnume-1][0]
+    };
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glColor4f(redfactor,greenfactor,bluefactor,1.0f);
+
+    glVertexPointer(3, GL_FLOAT, 0, vtx);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
     checkGLStatus();
 
     glDisable(GL_BLEND);
@@ -1444,7 +1654,8 @@ void doordraw(K_UINT16 x,K_UINT16 y,K_INT16 walnume,K_UINT16 posxs,
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glTexEnvf(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-    glBindTexture(GL_TEXTURE_2D,texName[walnume-1]); 
+    glBindTexture(GL_TEXTURE_2D,texName[walnume-1]);
+#ifndef OPENGLES
     glBegin(GL_QUADS);
     glColor3f(redfactor,greenfactor,bluefactor);
     glTexCoord2f(0.0,walltexcoord[walnume-1][0]);
@@ -1456,6 +1667,33 @@ void doordraw(K_UINT16 x,K_UINT16 y,K_INT16 walnume,K_UINT16 posxs,
     glTexCoord2f(0.0,walltexcoord[walnume-1][1]);
     glVertex3i(x2,y2,0);      
     glEnd();
+#else
+    GLfloat vtx[] = {
+        x1,y1,0,
+        x1,y1,1024,
+        x2,y2,1024,
+        x2,y2,0
+    };
+
+    GLfloat tex[] = {
+        0.0,walltexcoord[walnume-1][0],
+        1.0,walltexcoord[walnume-1][0],
+        1.0,walltexcoord[walnume-1][1],
+        0.0,walltexcoord[walnume-1][1]
+    };
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glColor4f(redfactor,greenfactor,bluefactor,1.0f);
+
+    glVertexPointer(3, GL_FLOAT, 0, vtx);
+    glTexCoordPointer(2, GL_FLOAT, 0, tex);
+    glDrawArrays( GL_TRIANGLE_FAN, 0, 4 );
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+#endif // !OPENGLES
     glDisable(GL_BLEND);
     checkGLStatus();
 	
