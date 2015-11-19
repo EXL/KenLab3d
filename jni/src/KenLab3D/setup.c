@@ -1186,7 +1186,6 @@ void setup(void) {
     SDL_JoystickOpen(0);
     SDL_JoystickEventState(1);
 
-#ifndef OPENGLES
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
@@ -1197,7 +1196,11 @@ void setup(void) {
     SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,0);
-#endif // !OPENGLES
+
+#ifdef ANDROID_NDK
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1); // TODO: Check this.
+#endif // ANDROID_NDK
 
     SDL_ShowCursor(0);
 

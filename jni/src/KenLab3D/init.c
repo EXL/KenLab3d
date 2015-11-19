@@ -37,7 +37,6 @@ void initialize()
     soundmutex=SDL_CreateMutex();
     timermutex=SDL_CreateMutex();
 
-#ifndef OPENGLES // TODO: Check this.
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,8);
@@ -48,7 +47,11 @@ void initialize()
     SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,0);
-#endif // !OPENGLES
+
+#ifdef ANDROID_NDK
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1); // TODO: Check this.
+#endif // ANDROID_NDK
 
     SDL_ShowCursor(0);
 
@@ -97,12 +100,10 @@ void initialize()
             NULL) {
         TO_DEBUG_LOG("True colour failed; taking whatever is available.\n");
 
-#ifndef OPENGLES // Check this.
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
-#endif // !OPENGLES
 
         SDL_DestroyWindow(globalWindow); // Don't needed, but...
 
@@ -130,13 +131,11 @@ void initialize()
     SDL_SetWindowIcon(globalWindow, icon);
 #endif // !USE_SDL2
 
-#ifndef OPENGLES
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE,&realr);
     SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE,&realg);
     SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE,&realb);
     SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE,&realz);
     SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER,&reald);
-#endif // !OPENGLES
 
     TO_DEBUG_LOG("GL Vendor: %s\n",glGetString(GL_VENDOR));
     TO_DEBUG_LOG("GL Renderer: %s\n",glGetString(GL_RENDERER));
@@ -145,7 +144,7 @@ void initialize()
 
     TO_DEBUG_LOG("GLU Version: %s\n",gluGetString(GLU_VERSION));
     //TO_DEBUG_LOG("GLU Extensions: %s\n",gluGetString(GLU_EXTENSIONS));
-#ifndef OPENGLES
+
     if (reald==0) {
     TO_DEBUG_LOG("Double buffer not available.\n");
 	SDL_Quit();
@@ -158,13 +157,7 @@ void initialize()
 	SDL_Quit();
 	exit(-1);
     }
-#else
-    realr = 5;
-    realg = 6;
-    realb = 5;
-    realz = 16;
-    reald = 1;
-#endif // !OPENGLES
+
 #ifndef USE_SDL2
     SDL_SetGamma(gammalevel,gammalevel,gammalevel);
 #else
