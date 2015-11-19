@@ -12,48 +12,48 @@
 #endif
 
 #ifdef WIN32
-HRESULT CreateLink(LPCSTR lpszPathObj, 
+HRESULT CreateLink(LPCSTR lpszPathObj,
 		   LPSTR lpszPathLink, LPSTR lpszDesc,
-		   LPSTR lpszArgs) { 
-    HRESULT hres; 
-    IShellLink* psl; 
+		   LPSTR lpszArgs) {
+    HRESULT hres;
+    IShellLink* psl;
     char p[MAX_PATH];
- 
+
     CoInitialize(NULL);
-    hres = CoCreateInstance(&CLSID_ShellLink, NULL, 
+    hres = CoCreateInstance(&CLSID_ShellLink, NULL,
 			    CLSCTX_INPROC_SERVER, &IID_IShellLink,
-			    (void *)&psl); 
-    if (SUCCEEDED(hres)) { 
-        IPersistFile* ppf; 
-	
+			    (void *)&psl);
+    if (SUCCEEDED(hres)) {
+        IPersistFile* ppf;
+
 	GetCurrentDirectory(MAX_PATH, p);
-        psl->lpVtbl->SetWorkingDirectory(psl, p); 
-        hres=psl->lpVtbl->SetPath(psl, lpszPathObj); 
+        psl->lpVtbl->SetWorkingDirectory(psl, p);
+        hres=psl->lpVtbl->SetPath(psl, lpszPathObj);
 
-        psl->lpVtbl->SetArguments(psl, lpszArgs); 
+        psl->lpVtbl->SetArguments(psl, lpszArgs);
 
-        psl->lpVtbl->SetDescription(psl, lpszDesc); 
- 
-        hres = psl->lpVtbl->QueryInterface(psl, &IID_IPersistFile, 
-					   (void *)&ppf); 
- 
-        if (SUCCEEDED(hres)) { 
-            WORD wsz[MAX_PATH]; 
- 
+        psl->lpVtbl->SetDescription(psl, lpszDesc);
+
+        hres = psl->lpVtbl->QueryInterface(psl, &IID_IPersistFile,
+					   (void *)&ppf);
+
+        if (SUCCEEDED(hres)) {
+            WORD wsz[MAX_PATH];
+
 	    fprintf(stderr,"Trying to save shortcut...\n");
-            MultiByteToWideChar(CP_ACP, 0, lpszPathLink, -1, 
-				wsz, MAX_PATH); 
+            MultiByteToWideChar(CP_ACP, 0, lpszPathLink, -1,
+				wsz, MAX_PATH);
 
-            hres = ppf->lpVtbl->Save(ppf, wsz, TRUE); 
+            hres = ppf->lpVtbl->Save(ppf, wsz, TRUE);
             ppf->lpVtbl->Release(ppf);
 	    if (SUCCEEDED(hres))
 		fprintf(stderr,"Done.\n");
-        } 
-        psl->lpVtbl->Release(psl); 
-    } 
+        }
+        psl->lpVtbl->Release(psl);
+    }
     CoUninitialize();
-    return hres; 
-} 
+    return hres;
+}
 
 void createshortcut(void) {
     ITEMIDLIST *l;
@@ -336,7 +336,7 @@ void selectionmenu(int alts,char titles[][30],int *value) {
     int j=12*alts+24;
 
     drawmenu(304,j,menu);
-    
+
     for(i=0;i<alts;i++) {
 	strcpy(textbuf,titles[i]);
 	textprint(71,120-6*alts+12*i,lab3dversion?32:34);
@@ -349,7 +349,7 @@ void selectionmenu(int alts,char titles[][30],int *value) {
     else
 	i=getselection(28,99-6*alts,*value,alts);
 
-    if (i>=0) *value=i;   
+    if (i>=0) *value=i;
 }
 
 int resolutionmenu(int alts,int start,char titles[][30],int def) {
@@ -377,7 +377,7 @@ int resolutionmenu(int alts,int start,char titles[][30],int def) {
     }
 
     drawmenu(304,j,menu);
-    
+
     for(i=0;i<alts;i++) {
 	strcpy(textbuf,titles[i]);
 	textprint(71,120-6*alts+12*i,lab3dversion?32:34);
@@ -466,7 +466,7 @@ void customresolution(void) {
     int x,y;
 
     drawinputbox();
-    finalisemenu();    
+    finalisemenu();
     sprintf(&textbuf[0],"Enter screen width:");
     textprint(180-(strlen(textbuf)<<2),135+1,(char)161);
     x=getnumber();
@@ -532,7 +532,7 @@ void setupsetresolution(void) {
 		    if (modes[i]->w<10000&&
 			modes[i]->h<10000) {
 			detectedresolution[resolutionmenusize]=
-			    modes[i]->w*10000+modes[i]->h;		
+			    modes[i]->w*10000+modes[i]->h;
 			sprintf(resolutiondetectmenu[resolutionmenusize],
 				"%dx%d",
 				detectedresolution[resolutionmenusize]/10000,
@@ -556,7 +556,7 @@ void setupsetresolution(void) {
 #endif // !USE_SDL2
 	    break;
 	    /*
-	case 1:	    
+	case 1:
 	    a=resolutionmenu(8,0,resolutionstandardmenu,resolutionnumber);
 	    if (a>=0) resolutionnumber=a;
 	    break;
@@ -622,7 +622,7 @@ void setupsetkeys(void) {
     i=0;
     while(!quit) {
 	drawmenu(360,240,menu);
-    
+
 	for(j=0;j<numkeys;j++) {
 	    strcpy(textbuf,keynames[j]);
 	    textprint(31,13+12*j,lab3dversion?32:34);
@@ -630,7 +630,7 @@ void setupsetkeys(void) {
 	    textbuf[11]=0;
 	    textprint(261,13+12*j,lab3dversion?32:34);
 	}
-    
+
 	finalisemenu();
 	i=getselection(-12,-9,i,numkeys);
 	if (i<0) quit=1;
@@ -641,7 +641,7 @@ void setupsetkeys(void) {
 		while(SDL_PollEvent(&event))
 		{
 		    switch(event.type)
-		    {	      
+		    {
 			case SDL_KEYDOWN:
 			    sk=event.key.keysym.sym;
 #ifdef USE_SDL2
@@ -668,7 +668,7 @@ void setupsetbuttons(void) {
     i=0;
     while(!quit) {
 	drawmenu(360,240,menu);
-    
+
 	for(j=0;j<numkeys;j++) {
 	    strcpy(textbuf,keynames[j]);
 	    textprint(31,13+12*j,lab3dversion?32:34);
@@ -681,7 +681,7 @@ void setupsetbuttons(void) {
 	    textbuf[11]=0;
 	    textprint(261,13+12*j,lab3dversion?32:34);
 	}
-    
+
 	finalisemenu();
 	i=getselection(-12,-9,i,numkeys);
 	if (i<0) quit=1;
@@ -692,7 +692,7 @@ void setupsetbuttons(void) {
 		while(SDL_PollEvent(&event))
 		{
 		    switch(event.type)
-		    {	      
+		    {
 		    case SDL_JOYBUTTONDOWN:
 			sk=event.jbutton.button;
 			if (sk<numjoybuttons) {
@@ -726,7 +726,7 @@ void setupsetaxes(void) {
     i=0;
     while(!quit) {
 	drawmenu(360,240,menu);
-    
+
 	for(j=0;j<numaxes;j++) {
 	    strcpy(textbuf,axisnames[j]);
 	    textprint(31,13+12*j,lab3dversion?32:34);
@@ -742,7 +742,7 @@ void setupsetaxes(void) {
 	    textbuf[11]=0;
 	    textprint(261,13+12*j,lab3dversion?32:34);
 	}
-    
+
 	finalisemenu();
 	i=getselection(-12,-9,i,numaxes);
 	if (i<0) quit=1;
@@ -765,7 +765,7 @@ void setupsetaxes(void) {
 		while(SDL_PollEvent(&event))
 		{
 		    switch(event.type)
-		    {	      
+		    {
 		    case SDL_JOYAXISMOTION:
 			sk=event.jaxis.axis;
 			if (sk<numjoyaxes) {
@@ -962,7 +962,7 @@ void configure(void) {
     switch(music) {
 	case 2:
 	    musicsource=1;
-	    break;	    
+	    break;
 	case 1:
 	    musicsource=2;
 	    break;
@@ -1015,7 +1015,7 @@ void configure(void) {
 	    if (div1<1) {
 	        fprintf(stderr,
 		        "Warning: resolution must be 320x200 or more"
-		        " for integer scaling.\n");	    
+		        " for integer scaling.\n");
 	        virtualscreenwidth=360;
 	        virtualscreenheight=240;
 	    } else {
@@ -1096,7 +1096,7 @@ void loadsettings(void) {
     if (i==5) {
 	for(i=0;i<numkeys;i++)
 	    if (fscanf(file,"%d\n",newkeydefs+i)!=1) break;
-	
+
 	if (version>0) {
 	    for(i=0;i<numkeys;i++)
 		if (fscanf(file,"%d\n",buttondefs+i)!=1) break;
@@ -1107,8 +1107,8 @@ void loadsettings(void) {
     if (i>0) {
 	i=fscanf(file,"%d %d\n",&soundvolume,&musicvolume);
     } else i=0;
-    
-    
+
+
     if (i==2) {
 	i=fscanf(file,"%d\n",&cheat);
     } else i=0;
@@ -1137,7 +1137,7 @@ void savesettings(void) {
     if (file==NULL) return;
     fprintf(file,"-1 1\n");
     fprintf(file,"%d %d %d %d %d %d\n",inputdevice,resolutionnumber,fullscr,
-	    nearest,music,sound);    
+	    nearest,music,sound);
     for(i=0;i<numkeys;i++)
 	fprintf(file,"%d\n",newkeydefs[i]);
     for(i=0;i<numkeys;i++)
@@ -1212,7 +1212,7 @@ void setup(void) {
     SDL_WM_SetIcon(icon,NULL);
 
 
-    if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32, 
+    if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32,
 				 SDL_OPENGL))==
 	NULL) {
 	fprintf(stderr,"Video mode set failed.\n");
@@ -1269,7 +1269,7 @@ void setup(void) {
     virtualscreenheight=240;
 
     largescreentexture=0;
-							      
+
     if (largescreentexture) {
 	/* One large 512x512 texture. */
 
@@ -1282,7 +1282,7 @@ void setup(void) {
 	screenbufferheight=746;
     }
 
-    screenbuffer=malloc(screenbufferwidth*screenbufferheight);    
+    screenbuffer=malloc(screenbufferwidth*screenbufferheight);
     screenbuffer32=malloc(screenbufferwidth*screenbufferheight*4);
 
 #ifndef USE_SDL2
@@ -1296,7 +1296,7 @@ void setup(void) {
 	SDL_Quit();
 	exit(-1);
     }
-    
+
     fprintf(stderr,"Loading configuration file...\n");
 
     loadtables();
@@ -1388,7 +1388,7 @@ void setup(void) {
 	/* The ingame palette is stored in this GIF! */
 	kgif(1);
 	memcpy(spritepalette,palette,768);
-	
+
 	kgif(0);
 	settransferpalette();
 	fprintf(stderr,"Loading graphics...\n");
@@ -1402,7 +1402,7 @@ void setup(void) {
 #endif // !OPENGLES
 
     setupmenu();
-  
+
     savesettings();
 
 #ifdef USE_SDL2

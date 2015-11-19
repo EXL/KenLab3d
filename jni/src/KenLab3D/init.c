@@ -49,7 +49,7 @@ void initialize()
     SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,0);
 #endif // !OPENGLES
-    
+
     SDL_ShowCursor(0);
 
     fprintf(stderr,"Activating video...\n");
@@ -71,7 +71,7 @@ void initialize()
     SDL_WM_SetIcon(icon,NULL);
 
 
-    if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32, 
+    if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32,
 				 fullscreen?
 				 (SDL_OPENGL|SDL_FULLSCREEN):SDL_OPENGL))==
 	NULL) {
@@ -80,7 +80,7 @@ void initialize()
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,5);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
-	if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 0, 
+	if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 0,
 				     fullscreen?
 				     (SDL_OPENGL|SDL_FULLSCREEN):SDL_OPENGL))==
 	    NULL) {
@@ -203,7 +203,7 @@ void initialize()
 	if ((screen->w<screenwidth)||(screen->h<screenheight)) {
 	    fprintf(stderr,"Too small to pad; using full screen.\n");
 	    screenwidth=screen->w;
-	    screenheight=screen->h;	    
+	    screenheight=screen->h;
 	}
 	else {
 	    glViewport((screen->w-screenwidth)>>1,(screen->h-screenheight)>>1,
@@ -234,7 +234,7 @@ void initialize()
        I think I'll leave it like this. Change this to 1 at your own risk. */
 
     largescreentexture=0;
-							      
+
     if (largescreentexture) {
 	/* One large 512x512 texture. */
 
@@ -261,7 +261,7 @@ void initialize()
 	SDL_Quit();
 	exit(-1);
     }
-    
+
     fprintf(stderr,"Loading tables/settings...\n");
 
     loadtables();
@@ -322,7 +322,7 @@ void initialize()
     }
 
     if (speechstatus >= 2)
-    {	
+    {
 	if (((i = open("sounds.kzp",O_BINARY|O_RDONLY,0)) != -1)||
 	    ((i = open("SOUNDS.KZP",O_BINARY|O_RDONLY,0)) != -1)) {
 	    fstat(i, &fstats);
@@ -369,10 +369,10 @@ void initialize()
 	want.channels=channels;
 	want.samples=soundblocksize;
 	want.userdata=NULL;
-	want.callback=AudioCallback;	
+	want.callback=AudioCallback;
 	soundbytespertick=(channels*want.freq*2)/240;
-	soundtimerbytes=0;	
-	
+	soundtimerbytes=0;
+
 	SDL_OpenAudio(&want,NULL);
 
 	reset_dsp();
@@ -477,7 +477,7 @@ void initialize()
 	    kgif(1);
 
 	fade(63);
-    }  
+    }
 
 #ifndef USE_SDL2
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
@@ -495,7 +495,7 @@ void initialize()
 	moustat = setupmouse();
     SDL_LockMutex(timermutex);
     oclockspeed = clockspeed;
-    while ((keystatus[1] == 0) && (keystatus[57] == 0) && 
+    while ((keystatus[1] == 0) && (keystatus[57] == 0) &&
 	   (keystatus[28] == 0) && (bstatus == 0) &&
 	   (clockspeed < oclockspeed+960))
     {

@@ -130,13 +130,13 @@ int main(int argc,char **argv)
 
     if (((fil = open("end.txt",O_RDONLY|O_BINARY,0)) != -1)||
 	((fil = open("END.TXT",O_RDONLY|O_BINARY,0)) != -1)) {
-	close(fil);	
+	close(fil);
 	lab3dversion=2; /* Version 1.0 detected. */
 	rnumwalls=192;
 	fprintf(stderr, "Ken's Labyrinth version 1.0 detected.\n");
     } else if (((fil = open("boards.dat",O_RDONLY|O_BINARY,0)) != -1)||
 	       ((fil = open("BOARDS.DAT",O_RDONLY|O_BINARY,0)) != -1)) {
-	close(fil);	
+	close(fil);
 	lab3dversion=1; /* Version 1.1 detected. */
 	rnumwalls=0xe0;
 	fprintf(stderr, "Ken's Labyrinth version 1.1 detected.\n");
@@ -319,7 +319,7 @@ int main(int argc,char **argv)
 		    /* Game over, man! */
 
 		    fade(0);
-		    
+
 		    glClearColor(0,0,0,0);
 		    glClear(GL_COLOR_BUFFER_BIT);
 
@@ -511,7 +511,7 @@ int main(int argc,char **argv)
 	sortcnt = 0;
 	SDL_LockMutex(soundmutex);
 	SDL_LockMutex(timermutex);
-	
+
 	/* Speed cap at 2 ticks/frame (about 120 fps). */
 	if ((musicstatus == 1) && (clockspeed >= 0) && (clockspeed < 2)) {
 	    SDL_UnlockMutex(soundmutex);
@@ -659,7 +659,7 @@ int main(int argc,char **argv)
 	    // y = (int)((clockspd*sintable[bulang[i]])>>13);
 	    y=(K_INT16)((clockspd*sintable[bulang[i]&1023])>>13);
 	    if (bulang[i]&1024) y=-y;
-	    
+
 	    if (bulkind[i] == 15)
 	    {
 		x -= (x>>1);
@@ -1154,7 +1154,7 @@ int main(int argc,char **argv)
 	tempbuf[mrotbuf[0]] = 20;
 	j = 1;				     //j is stop (end of nodes)
 
-	/* This block converted from asm... Apparently, it does a sort of 
+	/* This block converted from asm... Apparently, it does a sort of
 	   breadth-first search on neighbouring board squares up to a distance
 	   of 20 squares, limited by walls. Translation: it works out which
 	   squares are in the same room within 20 squares, and their distance
@@ -1536,7 +1536,7 @@ int main(int argc,char **argv)
 		    }
 		}
 		if (mstat[i] == monzor || mstat[i] == monke2 || mstat[i] == monan2) {
-		    
+
 		    if (tempbuf[((mposx[i]>>10)<<6)|(mposy[i]>>10)]) {
 			mixing=1;
 			strcpy(textbuf,"BOSS:");
@@ -1545,7 +1545,7 @@ int main(int argc,char **argv)
 			drawmeter((mshot[i]<<8)/3,4096,175,2);
 			mixing=0;
 		    }
-		    
+
 		}
 		if (mstat[i] == monzor)
 		    if ((mshot[i] < 24) && (mshock[i] == 0) && ((rand()&1023) <= clockspd))
@@ -1776,7 +1776,7 @@ int main(int argc,char **argv)
 	/* Handle action button presses... */
 
 	waterstat = 0;
-	if (((getkeydefstat(12) > 0) || 
+	if (((getkeydefstat(12) > 0) ||
 	     ((bstatus&2) > 0)) && (death == 4095)) {
 	    if (!inhibitrepeat)
 	    {
@@ -2423,7 +2423,7 @@ int main(int argc,char **argv)
 	    if (tsvel<-256) tsvel=-256;
 
 	}
-	
+
 
 	if (((vel+myvel) != 0) || (tsvel != 0))
 	{
@@ -2481,7 +2481,7 @@ int main(int argc,char **argv)
 		    ksay(2);
 	    }
 	}
-	
+
 	/* In centre of square (used to check for falling down holes)? */
 
 	i = (board[x][y]&1023);
@@ -2499,12 +2499,12 @@ int main(int argc,char **argv)
 	/* Check cheat keys... */
 
 	if ((keystatus[42] > 0) && (keystatus[54] > 0) && (cheatenable == 1))
-	    cheatkeysdown = 1;	
+	    cheatkeysdown = 1;
 	else if ((keystatus[42] > 0) && (keystatus[29] > 0) && (cheatenable == 2))
 	    cheatkeysdown=1;
-	else	    
+	else
 	    cheatkeysdown = 0;
-	
+
 	/* Check for goodies... */
 
 	if ((keystatus[19] > 0) && (cheatkeysdown == 1)) {
@@ -2773,7 +2773,7 @@ int main(int argc,char **argv)
 	}
 	else
 	    justwarped = 0;
-	
+
 	/* Fade... */
 
 	if (death == 4095)
@@ -3249,7 +3249,7 @@ int main(int argc,char **argv)
 	    mixing=1;
 
 	    loadstory(boardnum);
-	    
+
 	    mixing=0;
 #ifndef USE_SDL2
 	    keystatus[1] = 0; newkeystatus[SDLK_ESCAPE]=0;
@@ -3291,7 +3291,7 @@ int main(int argc,char **argv)
 		fade(j);
 		ShowPartialOverlay(0,0,360,statusbaryoffset,0);
 		mixing=0;
-		
+
 		fade(27);
 
 #ifndef USE_SDL2
@@ -3358,7 +3358,7 @@ int main(int argc,char **argv)
 	{
 	    SDL_LockMutex(soundmutex); /* Paranoid, I know... */
 	    mute = 1 - mute;
-	    if ((mute == 1) && (musicsource == 1)) { 
+	    if ((mute == 1) && (musicsource == 1)) {
 #ifdef WIN32
 		midiOutReset(sequencerdevice);
 #endif
@@ -3495,7 +3495,7 @@ int main(int argc,char **argv)
 		if (vidmode == 0)
 		    linecompare(statusbar);
 		SDL_LockMutex(timermutex);
-		clockspeed = 0;	
+		clockspeed = 0;
 		SDL_UnlockMutex(timermutex);
 	    }
 	    else
@@ -3605,7 +3605,7 @@ int main(int argc,char **argv)
 	    if (musicvolumevisible<0)
 		musicvolumevisible=0;
 	}
-	    
+
 	if (ototclock <= 0)
 	    ototclock++;
 	else
@@ -3621,7 +3621,7 @@ int main(int argc,char **argv)
     SDL_GL_SwapWindow(globalWindow);
 #endif // !USE_SDL2
     }
-    
+
     /* End of main loop. End of game. Tidy up things... */
 
     if (frames>0)
