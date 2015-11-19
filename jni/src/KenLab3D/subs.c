@@ -497,8 +497,13 @@ void loadtables()
 {
     K_INT16 fil;
 
-    if (((fil = open("tables.dat",O_RDONLY|O_BINARY,0)) != -1)||
-	((fil = open("TABLES.DAT",O_RDONLY|O_BINARY,0)) != -1))
+    char path1[256];
+    char path2[256];
+    snprintf(path1, sizeof(path1), "%s/tables.dat", globalDataDir);
+    snprintf(path2, sizeof(path2), "%s/TABLES.DAT", globalDataDir);
+
+    if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
+    ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1))
     {
 	readLE32(fil,&sintable[0],8192);
 	readLE32(fil,&tantable[0],4096);
