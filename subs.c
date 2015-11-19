@@ -5695,6 +5695,11 @@ void creditsmenu()
     textprint(149,20+n+1,32);
     loadstory(-1);
     finalisemenu();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     pressakey();
 }
 
@@ -5723,6 +5728,11 @@ void bigstorymenu()
 	nowenterstate = 1;
 	lastenterstate = 1;
 	glFlush();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
 	while ((nowenterstate <= lastenterstate) && (bstatus <= obstatus))
 	{
 	    PollInputs();
@@ -5755,12 +5765,7 @@ void bigstorymenu()
 	    if (i > k)
 		quitstat = 1;
 	}
-	ksay(27);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+    ksay(27);
     }
 }
 
@@ -5804,6 +5809,11 @@ void helpmenu()
     strcpy(&textbuf[0],"Help");
     textprint(161,18+n+1,32);
     finalisemenu();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     pressakey();
 }
 
@@ -6019,6 +6029,11 @@ void orderinfomenu() {
     textprint(30,156,48);
 
     finalisemenu();
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#endif // !USE_SDL2
     pressakey();
     
 }
