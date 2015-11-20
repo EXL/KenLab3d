@@ -37,10 +37,17 @@ void initialize()
     soundmutex=SDL_CreateMutex();
     timermutex=SDL_CreateMutex();
 
+#ifndef OPENGLES
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
+#else
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,6);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
+#endif // !OPENGLES
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,0);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,0);
@@ -51,6 +58,7 @@ void initialize()
 #ifdef ANDROID_NDK
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1); // TODO: Check this.
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 #endif // ANDROID_NDK
 
     SDL_ShowCursor(0);
@@ -207,6 +215,7 @@ void initialize()
 #else
     int _screen_w, _screen_h;
     SDL_GetWindowSize(globalWindow, &_screen_w, &_screen_h);
+    TO_DEBUG_LOG("Actual Screen Size ---> %dx%d.\n", _screen_w, _screen_h);
 
     if ((screenwidth!=_screen_w) || (screenheight!=_screen_h)) {
         TO_DEBUG_LOG("Warning: screen resolution is actually %dx%d.\n",
