@@ -142,7 +142,7 @@ static char jaxisnames[numjoyaxes][30]={
 
 #ifdef USE_SDL2
 #include "sdl2keyhelper.h"
-
+#ifndef ANDROID_NDK
 static int newdefaultkey[numkeys]={
     OLDK_UP,
     OLDK_DOWN,
@@ -163,6 +163,28 @@ static int newdefaultkey[numkeys]={
     OLDK_m,
     OLDK_ESCAPE
 };
+#else
+static int newdefaultkey[numkeys]={
+    OLDK_UP,
+    OLDK_DOWN,
+    OLDK_LEFT,
+    OLDK_RIGHT,
+    OLDK_q,
+    OLDK_i,
+    OLDK_k,
+    OLDK_LSHIFT,
+    OLDK_SPACE,
+    OLDK_z,
+    OLDK_x,
+    OLDK_c,
+    OLDK_e,
+    OLDK_BACKSPACE,
+    OLDK_RETURN,
+    OLDK_p,
+    OLDK_m,
+    OLDK_ESCAPE
+};
+#endif // !ANDROID_NDK
 #else
 static int newdefaultkey[numkeys]={
     SDLK_UP,
@@ -646,6 +668,7 @@ void setupsetkeys(void) {
 			    sk=event.key.keysym.sym;
 #ifdef USE_SDL2
                 sk=getOldAsciiKeyCode(sk);
+                sk=pathKeysAndroidSDL2Bug(sk);
 #endif // USE_SDL2
 			    if (sk<SDLKEYS) {
 				j=sk;

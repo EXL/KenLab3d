@@ -6,6 +6,24 @@
 #include <SDL.h>
 #endif // !ANDROID_NDK
 
+int pathKeysAndroidSDL2Bug(int keyCode) {
+    switch (keyCode) {
+    case OLDK_w:
+        return OLDK_UP;
+    case OLDK_s:
+        return OLDK_DOWN;
+    case OLDK_a:
+        return OLDK_LEFT;
+    case OLDK_d:
+        return OLDK_RIGHT;
+    case OLDK_r:
+    case SDLK_AC_BACK:
+        return OLDK_ESCAPE;
+    default:
+        return keyCode;
+    }
+}
+
 int getUpperChar(int smallCharKeyCode) {
     return smallCharKeyCode - 0x20;
 }
@@ -13,6 +31,7 @@ int getUpperChar(int smallCharKeyCode) {
 int getOldAsciiKeyCode(int newKeyCode) {
     switch (newKeyCode) {
     default:
+        return newKeyCode;
     case SDLK_UNKNOWN:
         return OLDK_UNKNOWN;
     case SDLK_BACKSPACE:
