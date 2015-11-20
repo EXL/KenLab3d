@@ -681,7 +681,9 @@ void setupsetkeys(void) {
 			    sk=event.key.keysym.sym;
 #ifdef USE_SDL2
                 sk=getOldAsciiKeyCode(sk);
-                sk=pathKeysAndroidSDL2Bug(sk);
+#ifdef ANDROID_NDK
+                sk=patchKeysAndroidSDL2Bug(sk);
+#endif // ANDROID_NDK
 #endif // USE_SDL2
 			    if (sk<SDLKEYS) {
 				j=sk;

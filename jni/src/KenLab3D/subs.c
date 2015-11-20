@@ -2479,9 +2479,9 @@ void introduction(K_INT16 songnum)
 	    newkeystatus[SDLK_PAGEUP]=0;
 	    newkeystatus[SDLK_LEFT]=0;
 #else
-        newkeystatus[getOldAsciiKeyCode(SDLK_w)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_UP)]=0;
         newkeystatus[getOldAsciiKeyCode(SDLK_PAGEUP)]=0;
-        newkeystatus[getOldAsciiKeyCode(SDLK_a)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_LEFT)]=0;
 #endif // !USE_SDL2
 	}
 	if ((keystatus[0xd1]|keystatus[0xd0]|keystatus[0xcd]) != 0)
@@ -2503,9 +2503,9 @@ void introduction(K_INT16 songnum)
 	    newkeystatus[SDLK_PAGEDOWN]=0;
 	    newkeystatus[SDLK_RIGHT]=0;
 #else
-        newkeystatus[getOldAsciiKeyCode(SDLK_s)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_DOWN)]=0;
         newkeystatus[getOldAsciiKeyCode(SDLK_PAGEDOWN)]=0;
-        newkeystatus[getOldAsciiKeyCode(SDLK_d)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_RIGHT)]=0;
 #endif // !USE_SDL2
 	}
 	if (getkeydefstat(17) > 0)
@@ -5581,8 +5581,8 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)]=0;
     newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)]=0;
     newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)]=0;
-    newkeystatus[getOldAsciiKeyCode(SDLK_w)]=newkeystatus[getOldAsciiKeyCode(SDLK_s)]=newkeystatus[getOldAsciiKeyCode(SDLK_a)]=
-    newkeystatus[getOldAsciiKeyCode(SDLK_d)]=0;
+    newkeystatus[getOldAsciiKeyCode(SDLK_UP)]=newkeystatus[getOldAsciiKeyCode(SDLK_DOWN)]=newkeystatus[getOldAsciiKeyCode(SDLK_LEFT)]=
+    newkeystatus[getOldAsciiKeyCode(SDLK_RIGHT)]=0;
     newkeystatus[getOldAsciiKeyCode(SDLK_KP_2)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_8)]=0;
 #endif // !USE_SDL2
     animater6 = 0;
@@ -5632,8 +5632,8 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
         newkeystatus[SDLK_UP]=newkeystatus[SDLK_KP8]=
         newkeystatus[SDLK_LEFT]=0;
 #else
-        newkeystatus[getOldAsciiKeyCode(SDLK_w)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_8)]=
-        newkeystatus[getOldAsciiKeyCode(SDLK_a)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_UP)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_8)]=
+        newkeystatus[getOldAsciiKeyCode(SDLK_LEFT)]=0;
 #endif // !USE_SDL2
 	}
 	if (((keystatus[0xd0]|keystatus[0x50]|keystatus[0xcd]) != 0) || (mousy > 128))
@@ -5653,8 +5653,8 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 	    newkeystatus[SDLK_DOWN]=newkeystatus[SDLK_KP2]=
         newkeystatus[SDLK_RIGHT]=0;
 #else
-        newkeystatus[getOldAsciiKeyCode(SDLK_s)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_2)]=
-        newkeystatus[getOldAsciiKeyCode(SDLK_d)]=0;
+        newkeystatus[getOldAsciiKeyCode(SDLK_DOWN)]=newkeystatus[getOldAsciiKeyCode(SDLK_KP_2)]=
+        newkeystatus[getOldAsciiKeyCode(SDLK_RIGHT)]=0;
 #endif // !USE_SDL2
 	}
 	esckeystate = (keystatus[1]|(keystatus[0x1c]<<1)|(keystatus[0x9c]<<1)|(keystatus[0x39]<<1));
@@ -6431,10 +6431,12 @@ Uint16 getkeypress() {
 		quitgame=1;
 	    case SDL_KEYDOWN:
         sk=event.key.keysym.sym;
-        TO_DEBUG_LOG("Pushed Key is %d, code: %d.\n", sk, event.key.keysym.scancode );
+        // TO_DEBUG_LOG("Pushed Key is %d, code: %d.\n", sk, event.key.keysym.scancode );
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
-        sk=pathKeysAndroidSDL2Bug(sk);
+#ifdef ANDROID_NDK
+        sk=patchKeysAndroidSDL2Bug(sk);
+#endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=1;
@@ -6462,7 +6464,9 @@ Uint16 getkeypress() {
 		sk=event.key.keysym.sym;
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
-        sk=pathKeysAndroidSDL2Bug(sk);
+#ifdef ANDROID_NDK
+        sk=patchKeysAndroidSDL2Bug(sk);
+#endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=0;
@@ -6508,10 +6512,12 @@ void PollInputs() {
 		break;
 	    case SDL_KEYDOWN:
 		sk=event.key.keysym.sym;
-        TO_DEBUG_LOG("Pushed Key is %d, code: %d.\n", sk, event.key.keysym.scancode );
+        // TO_DEBUG_LOG("Pushed Key is %d, code: %d.\n", sk, event.key.keysym.scancode );
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
-        sk=pathKeysAndroidSDL2Bug(sk);
+#ifdef ANDROID_NDK
+        sk=patchKeysAndroidSDL2Bug(sk);
+#endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=1;
@@ -6523,7 +6529,9 @@ void PollInputs() {
 		sk=event.key.keysym.sym;
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
-        sk=pathKeysAndroidSDL2Bug(sk);
+#ifdef ANDROID_NDK
+        sk=patchKeysAndroidSDL2Bug(sk);
+#endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
 		    keystatus[PCkey[sk]]=0;
