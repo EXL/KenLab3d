@@ -291,7 +291,11 @@ static char configureinputmenu[4][30]={
 
 static char fullscreenmenu[2][30]={
     "Windowed",
+#ifndef ANDROID_NDK
     "Fullscreen"
+#else
+    "Fullscreen (Android)"
+#endif // !ANDROID_NDK
 };
 
 static char filtermenu[3][30]={
@@ -324,7 +328,11 @@ static char cheatmenu[3][30]={
 
 static char soundblockmenu[10][30]={
     "Default (11.6 ms)",
+#ifndef ANDROID_NDK
     "1.5 ms",
+#else
+    "Android (1.5 ms)",
+#endif // !ANDROID_NDK
     "2.9 ms",
     "5.8 ms",
     "11.6 ms",
@@ -342,7 +350,11 @@ static char timingmenu[2][30]={
 
 static char texturedepthmenu[3][30]={
     "Driver default",
+#ifndef ANDROID_NDK
     "32 bit",
+#else
+    "GL ES GL_RGBA",
+#endif // !ANDROID_NDK
     "16 bit"
 };
 
@@ -623,6 +635,7 @@ void setupsetmusicchannels(void) {
 
 void setupsoundblockmenu(void) {
     selectionmenu(10,soundblockmenu,&soundblock);
+    TO_DEBUG_LOG("Sound Block Size: %d", soundblock);
 }
 
 void setuptimingmenu(void) {
@@ -846,8 +859,18 @@ void setupmenu(void) {
     while(!quit) {
 	drawmenu(360,240,menu);
 
+    int offs = 81;
+#ifndef USE_SDL2
 	strcpy(textbuf,"LAB3D/SDL setup menu");
-	textprint(81,22,126);
+#else
+#ifndef ANDROID_NDK
+    strcpy(textbuf,"LAB3D/SDL2 setup menu");
+#else
+    offs = 31;
+    strcpy(textbuf,"Ken's Labyrinth (LAB3D/SDL2) setup menu");
+#endif // !ANDROID_NDK
+#endif // !USE_SDL2
+	textprint(offs,22,126);
 
 	strcpy(textbuf,"Input: ");
 	strcat(textbuf,inputdevicemenu[inputdevice]);
@@ -918,10 +941,14 @@ void setupmenu(void) {
 		    setupconfigureinput();
 		    break;
 		case 2:
+#ifndef ANDROID_NDK
 		    setupsetresolution();
+#endif // !ANDROID_NDK
 		    break;
 		case 3:
+#ifndef ANDROID_NDK
 		    setupsetfullscreen();
+#endif // !ANDROID_NDK
 		    break;
 		case 4:
 		    setupsetfiltering();
@@ -945,7 +972,9 @@ void setupmenu(void) {
 		    setupsoundblockmenu();
 		    break;
 		case 11:
+#ifndef ANDROID_NDK
 		    setuptexturedepthmenu();
+#endif // !ANDROID_NDK
 		    break;
 		case 12:
 		    setupscalingmodemenu();
@@ -1431,6 +1460,11 @@ void setup(void) {
 #ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
 #endif // !OPENGLES
+
+#ifdef ANDROID_NDK
+    resolutionnumber=_screen_w*10000+_screen_h;
+    soundblock=1;
+#endif // ANDROID_NDK
 
     setupmenu();
 
