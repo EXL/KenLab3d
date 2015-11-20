@@ -189,7 +189,7 @@ void initialize()
 	walltol=32; neardist=16;
     }
 
-    fprintf(stderr,
+    TO_DEBUG_LOG(
 	    "Opened GL at %d/%d/%d (R/G/B) bits, %d bit depth buffer.\n",
 	    realr,realg,realb,realz);
 
@@ -409,7 +409,7 @@ void initialize()
 
     if ((pic = malloc((numwalls-initialwalls)<<12)) == NULL)
     {
-	fprintf(stderr,
+    TO_DEBUG_LOG(
 		"Error #4: This computer does not have enough memory.\n");
 	SDL_Quit();
 	exit(-1);

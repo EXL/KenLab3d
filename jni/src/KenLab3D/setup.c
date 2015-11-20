@@ -1036,7 +1036,7 @@ void configure(void) {
 
 	    if (div2<div1) div1=div2;
 	    if (div1<1) {
-	        fprintf(stderr,
+            TO_DEBUG_LOG(
 		        "Warning: resolution must be 320x200 or more"
 		        " for integer scaling.\n");
 	        virtualscreenwidth=360;
@@ -1353,7 +1353,7 @@ void setup(void) {
 
     if ((pic = malloc((numwalls-initialwalls)<<12)) == NULL)
     {
-	fprintf(stderr,
+    TO_DEBUG_LOG(
 		"Error #4: This computer does not have enough memory.\n");
 	SDL_Quit();
 	exit(-1);
