@@ -5551,13 +5551,27 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     {
 #ifdef OPENGLES // TODO: Check SwapBuffers.
     drawOnScreen();
+    
+    // FIXME: Adreno fix Menus
+    drawmainmenu();
+    if (areyousureMenuRaise) {
+        drawmenu(224,64,menu);
+        strcpy(&textbuf[0],"Really want to quit?");
+        textprint(99,84+n+1,112);
+        strcpy(&textbuf[0],"Yes");
+        textprint(105,96+n+1,32);
+        strcpy(&textbuf[0],"No");
+        textprint(105,108+n+1,32);
+        finalisemenu();
+    }
 #endif // !OPENGLES
 	PollInputs();
 	animater6++;
 	if (animater6 == 6)
 	    animater6 = 0;
-
+#ifndef OPENGLES
 	SDL_Delay(10); /* Let's not soak up all CPU... */
+#endif // !OPENGLES
 
 	if (lab3dversion) {
 	    statusbardraw(16+(animater6/2)*16,0,15,15,xoffs+20-n,nowselector*12+yoffs+n-1,85);
@@ -5800,6 +5814,7 @@ K_INT16 areyousure()
 	n = 0;
     else
 	n = 20;
+#ifndef OPENGLES
     drawmenu(224,64,menu);
     strcpy(&textbuf[0],"Really want to quit?");
     textprint(99,84+n+1,112);
@@ -5808,7 +5823,14 @@ K_INT16 areyousure()
     strcpy(&textbuf[0],"No");
     textprint(105,108+n+1,32);
     finalisemenu();
+#else
+//#ifdef OPENGLES
+    areyousureMenuRaise = 1; // FIXME: Adreno fix
+#endif // OPENGLES
     i = getselection(60,95,0,2);
+#ifdef OPENGLES
+    areyousureMenuRaise = 0; // FIXME: Adreno fix
+#endif // OPENGLES
     if (i == 0)
 	return(1);
     else

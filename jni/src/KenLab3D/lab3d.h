@@ -601,6 +601,10 @@ EXTERN int statusbaryvisible;
 /* Faster menu drawing... */
 EXTERN int menuleft,menutop,menuwidth,menuheight,menuing;
 
+#ifdef OPENGLES
+EXTERN int areyousureMenuRaise; // FIXME: Adreno fix
+#endif // OPENGLES
+
 /* Fade level... */
 EXTERN GLfloat redfactor,bluefactor,greenfactor;
 

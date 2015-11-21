@@ -3,6 +3,10 @@
 #include "adlibemu.h"
 #include "math.h"
 
+#ifdef OPENGLES
+areyousureMenuRaise = 0; // FIXME: Adreno fix
+#endif // OPENGLES
+
 #ifdef USE_SDL2
 Uint16 *gammaRamp = NULL;
 #endif // USE_SDL2
