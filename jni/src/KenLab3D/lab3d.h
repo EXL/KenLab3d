@@ -609,12 +609,41 @@ enum MenuStates {
     eNewGameMenu,
     eHardnessMenu,
     eLoadSaveGameMenu,
-    eSodaMenu
+    eSodaMenu,
+    eSettingsMenu,
+    eInputDevicesMenu,
+    eSetupConfigureMenu,
+    eSetupKeys,
+    eSetupJButtons,
+    eSetupJAxes
 };
 
 EXTERN void clearCurrentMenuState();
 EXTERN int currentMenuState;
 EXTERN int qStateSaveOrLoad;
+
+// extern settings
+extern int inputdevice,resolutionnumber,nearest;
+extern int music,sound,fullscr,cheat,channel,musicchannel;
+extern int soundblock,timing,texturedepth,scaling;
+
+extern char channelmenu[2][30];
+extern char cheatmenu[3][30];
+extern char filtermenu[3][30];
+extern char fullscreenmenu[2][30];
+extern char inputdevicemenu[4][30];
+extern char musicmenu[3][30];
+extern char resolutionspecialmenu[11][30];
+extern char resolutionstandardmenu[8][30];
+extern char scalingtypemenu[4][30];
+extern char soundblockmenu[10][30];
+extern char soundmenu[2][30];
+extern char texturedepthmenu[3][30];
+extern char configureinputmenu[4][30];
+extern char keynames[numkeys][30];
+extern char axisnames[numaxes][30];
+extern char axisinst[numaxes][30];
+extern char jaxisnames[numjoyaxes][30];
 #endif // OPENGLES
 
 /* Fade level... */

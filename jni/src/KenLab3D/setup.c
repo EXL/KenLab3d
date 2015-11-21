@@ -94,11 +94,11 @@ void createshortcut(void) {
 }
 #endif
 
-static int inputdevice=1,resolutionnumber=3,nearest=0;
-static int music=1,sound=1,fullscr=1,cheat=0,channel=1,musicchannel=1;
-static int soundblock=0,timing=0,texturedepth=1,scaling=2;
+int inputdevice=1,resolutionnumber=3,nearest=0;
+int music=1,sound=1,fullscr=1,cheat=0,channel=1,musicchannel=1;
+int soundblock=0,timing=0,texturedepth=1,scaling=2;
 
-static char keynames[numkeys][30]={
+char keynames[numkeys][30]={
     "Move FORWARD",
     "Move BACKWARD",
     "Turn LEFT",
@@ -119,19 +119,19 @@ static char keynames[numkeys][30]={
     "SHOW MENU"
 };
 
-static char axisnames[numaxes][30]={
+char axisnames[numaxes][30]={
     "Move Forward/Back",
     "Turn Left/Right",
     "Strafe",
     "Stand High/Low"
 };
-static char axisinst[numaxes][30]={
+char axisinst[numaxes][30]={
     "FORWARD",
     "LEFT",
     "LEFT",
     "UP"
 };
-static char jaxisnames[numjoyaxes][30]={
+char jaxisnames[numjoyaxes][30]={
     "X Axis",
     "Y Axis",
     "Axis 3",
@@ -235,7 +235,7 @@ static int newdefaultaxis[numaxes]={
     0
 };
 
-static char inputdevicemenu[4][30]={
+char inputdevicemenu[4][30]={
     "Keyboard only",
     "Keyboard + mouse",
     "Keyboard + joystick",
@@ -257,7 +257,7 @@ static char resolutiontypemenu[3][30]={
     "Return to setup menu"
 };
 
-static char resolutionstandardmenu[8][30]={
+char resolutionstandardmenu[8][30]={
     "360x240",
     "512x384",
     "640x480",
@@ -268,7 +268,7 @@ static char resolutionstandardmenu[8][30]={
     "1600x1200"
 };
 
-static char resolutionspecialmenu[11][30]={
+char resolutionspecialmenu[11][30]={
     "320x200",
     "320x240",
     "400x300",
@@ -282,14 +282,14 @@ static char resolutionspecialmenu[11][30]={
     "1280x960"
 };
 
-static char configureinputmenu[4][30]={
+char configureinputmenu[4][30]={
     "Set Keys",
     "Set Joystick Buttons",
     "Set Axes",
     "Return to setup menu"
 };
 
-static char fullscreenmenu[2][30]={
+char fullscreenmenu[2][30]={
     "Windowed",
 #ifndef ANDROID_NDK
     "Fullscreen"
@@ -298,35 +298,35 @@ static char fullscreenmenu[2][30]={
 #endif // !ANDROID_NDK
 };
 
-static char filtermenu[3][30]={
+char filtermenu[3][30]={
     "Anisotropic filtering",
     "Trilinear filtering",
     "No filtering"
 };
 
-static char musicmenu[3][30]={
+char musicmenu[3][30]={
     "No music",
     "Adlib emulation",
     "General MIDI",
 };
 
-static char soundmenu[2][30]={
+char soundmenu[2][30]={
     "No sound",
     "Digital sound effects"
 };
 
-static char channelmenu[2][30]={
+char channelmenu[2][30]={
     "Mono",
     "Stereo"
 };
 
-static char cheatmenu[3][30]={
+char cheatmenu[3][30]={
     "No cheats",
     "LSHIFT-RSHIFT",
     "LSHIFT-LCTRL"
 };
 
-static char soundblockmenu[10][30]={
+char soundblockmenu[10][30]={
     "Default (11.6 ms)",
 #ifndef ANDROID_NDK
     "1.5 ms",
@@ -348,7 +348,7 @@ static char timingmenu[2][30]={
     "Sound output"
 };
 
-static char texturedepthmenu[3][30]={
+char texturedepthmenu[3][30]={
     "Driver default",
 #ifndef ANDROID_NDK
     "32 bit",
@@ -358,7 +358,7 @@ static char texturedepthmenu[3][30]={
     "16 bit"
 };
 
-static char scalingtypemenu[4][30]={
+char scalingtypemenu[4][30]={
     "Fill screen (4:3 view)",
     "Integer scale (4:3 view)",
     "Fill screen (square pixels)",
@@ -369,6 +369,7 @@ void selectionmenu(int alts,char titles[][30],int *value) {
     int i;
     int j=12*alts+24;
 
+#ifndef OPENGLES
     drawmenu(304,j,menu);
 
     for(i=0;i<alts;i++) {
@@ -377,6 +378,7 @@ void selectionmenu(int alts,char titles[][30],int *value) {
     }
 
     finalisemenu();
+#endif // OPENGLES
 
     if (j>240)
 	i=getselection(28,97-6*alts,*value,alts);
@@ -384,6 +386,16 @@ void selectionmenu(int alts,char titles[][30],int *value) {
 	i=getselection(28,99-6*alts,*value,alts);
 
     if (i>=0) *value=i;
+    
+#ifdef OPENGLES
+    switch (currentMenuState) {
+    case eInputDevicesMenu:
+        currentMenuState = eSettingsMenu;
+        break;
+    default:
+        break;
+    }
+#endif // OPENGLES
 }
 
 int resolutionmenu(int alts,int start,char titles[][30],int def) {
@@ -409,7 +421,7 @@ int resolutionmenu(int alts,int start,char titles[][30],int def) {
 	if (def<0) def=0;
 	if (def>=alts) def=0;
     }
-
+#ifndef OPENGLES
     drawmenu(304,j,menu);
 
     for(i=0;i<alts;i++) {
@@ -418,8 +430,18 @@ int resolutionmenu(int alts,int start,char titles[][30],int def) {
     }
 
     finalisemenu();
-
+#endif
     i=getselection(28,99-6*alts,def,alts);
+    
+#ifdef OPENGLES
+    switch (currentMenuState) {
+    case eSetupConfigureMenu:
+        currentMenuState = eSettingsMenu;
+        break;
+    default:
+        break;
+    }
+#endif // OPENGLES
 
     if (i>=0) return i; else return -1;
 }
@@ -516,6 +538,9 @@ void customresolution(void) {
 }
 
 void setupinputdevices(void) {
+#ifdef OPENGLES
+    currentMenuState = eInputDevicesMenu;
+#endif // OPENGLES
     selectionmenu(4,inputdevicemenu,&inputdevice);
 }
 
@@ -656,6 +681,7 @@ void setupsetkeys(void) {
 
     i=0;
     while(!quit) {
+#ifndef OPENGLES
 	drawmenu(360,240,menu);
 
 	for(j=0;j<numkeys;j++) {
@@ -667,6 +693,7 @@ void setupsetkeys(void) {
 	}
 
 	finalisemenu();
+#endif
 	i=getselection(-12,-9,i,numkeys);
 	if (i<0) quit=1;
 	else if (i>=numkeys) quit=1;
@@ -705,6 +732,7 @@ void setupsetbuttons(void) {
 
     i=0;
     while(!quit) {
+#ifndef OPENGLES
 	drawmenu(360,240,menu);
 
 	for(j=0;j<numkeys;j++) {
@@ -721,6 +749,7 @@ void setupsetbuttons(void) {
 	}
 
 	finalisemenu();
+#endif
 	i=getselection(-12,-9,i,numkeys);
 	if (i<0) quit=1;
 	else if (i>=numkeys) quit=1;
@@ -763,6 +792,7 @@ void setupsetaxes(void) {
 
     i=0;
     while(!quit) {
+#ifndef OPENGLES
 	drawmenu(360,240,menu);
 
 	for(j=0;j<numaxes;j++) {
@@ -782,10 +812,14 @@ void setupsetaxes(void) {
 	}
 
 	finalisemenu();
+#else
+        for(j=0;j<numaxes;j++);
+#endif
 	i=getselection(-12,-9,i,numaxes);
 	if (i<0) quit=1;
 	else if (i>=numaxes) quit=1;
 	else {
+#ifndef OPENGLES
 	    drawmenu(304,72,menu);
 	    strcpy(textbuf,"Move joystick in");
 	    textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+0*12,lab3dversion?32:34);
@@ -798,8 +832,23 @@ void setupsetaxes(void) {
 	    textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+3*12,lab3dversion?32:34);
 	    finalisemenu();
 	    glFlush();
+#endif
 	    jdone=0;
 	    while(!jdone) {
+#ifdef OPENGLES
+            drawmenu(304,72,menu);
+            strcpy(textbuf,"Move joystick in");
+            textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+0*12,lab3dversion?32:34);
+            strcpy(textbuf,axisinst[i]);
+            textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+1*12,0);
+            strcpy(textbuf,"direction, or press");
+            textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+2*12,lab3dversion?32:34);
+            
+            strcpy(textbuf,"any key to delete");
+            textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+3*12,lab3dversion?32:34);
+            finalisemenu();
+            glFlush();
+#endif
 		while(SDL_PollEvent(&event))
 		{
 		    switch(event.type)
@@ -829,29 +878,55 @@ void setupsetaxes(void) {
 		    }
 		}
 		SDL_Delay(10);
-	    }
+#ifdef OPENGLES
+        drawOnScreen();
+#endif
+        }
 	    axisdefs[i]=j;
 	}
     }
 }
 void setupconfigureinput(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupConfigureMenu;
+#endif // OPENGLES
     int a,quit=0;
     while (!quit) {
 	a=resolutionmenu(4,0,configureinputmenu,0);
 	switch(a) {
 	case 0:
+#ifdef OPENGLES
+    currentMenuState = eSetupKeys;
+#endif // OPENGLES
 	    setupsetkeys();
 	    break;
 	case 1:
+#ifdef OPENGLES
+    currentMenuState = eSetupJButtons;
+#endif // OPENGLES
 	    setupsetbuttons();
 	    break;
 	case 2:
+#ifdef OPENGLES
+    currentMenuState = eSetupJAxes;
+#endif // OPENGLES
 	    setupsetaxes();
 	    break;
 	default:
 	    quit=1;
 	    break;
 	}
+#ifdef OPENGLES
+    switch (currentMenuState) {
+    case eSetupKeys:
+    case eSetupJButtons:
+    case eSetupJAxes:
+        currentMenuState = eSetupConfigureMenu;
+        break;
+    default:
+        break;
+    }
+#endif // OPENGLES
     }
 }
 
@@ -859,6 +934,7 @@ void setupmenu(void) {
     int quit=0,sel=0;
 
     while(!quit) {
+#ifndef OPENGLES
 	drawmenu(360,240,menu);
 
     int offs = 81;
@@ -928,6 +1004,9 @@ void setupmenu(void) {
 	textprint(31,220,lab3dversion?32:34);
 
 	finalisemenu();
+#else
+        currentMenuState = eSettingsMenu;
+#endif // !OPENGLES
 #ifdef WIN32
 	if ((sel = getselection(12,15,sel,15)) < 0)
 #else
@@ -992,6 +1071,9 @@ void setupmenu(void) {
 	    }
 	}
     }
+#ifdef OPENGLES
+    currentMenuState = eNoMenu;
+#endif // OPENGLES
 }
 
 void configure(void) {

@@ -5790,6 +5790,135 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
         finalisemenu();
         break;
     }
+    case eSettingsMenu: {
+        drawmenu(360,240,menu);
+        int offs = 31;
+        strcpy(textbuf,"Ken's Labyrinth (LAB3D/SDL2) setup menu");
+        textprint(offs,22,126);
+        strcpy(textbuf,"Input: ");
+        strcat(textbuf,inputdevicemenu[inputdevice]);
+        textprint(51,36,lab3dversion?32:34);
+        strcpy(textbuf,"Configure Input");
+        textprint(51,48,lab3dversion?32:34);
+        strcpy(textbuf,"Resolution: ");
+        if (resolutionnumber<8)
+            strcat(textbuf,resolutionstandardmenu[resolutionnumber]);
+        else if (resolutionnumber<19)
+            strcat(textbuf,resolutionspecialmenu[resolutionnumber-8]);
+        else sprintf(textbuf,"Resolution: %dx%d",resolutionnumber/10000,
+                 resolutionnumber%10000);
+        textprint(51,60,64);
+            strcpy(textbuf,"Display type: ");
+        strcat(textbuf,fullscreenmenu[fullscr]);
+        textprint(51,72,64);
+            strcpy(textbuf,"Filtering: ");
+        strcat(textbuf,filtermenu[nearest]);
+        textprint(51,84,64);
+            strcpy(textbuf,"Music: ");
+        strcat(textbuf,musicmenu[music]);
+        textprint(51,96,96);
+            strcpy(textbuf,"Effects: ");
+        strcat(textbuf,soundmenu[sound]);
+        textprint(51,108,96);
+            strcpy(textbuf,"Sound channels: ");
+        strcat(textbuf,channelmenu[channel]);
+        textprint(51,120,96);
+            strcpy(textbuf,"Music channels: ");
+        strcat(textbuf,channelmenu[musicchannel]);
+        textprint(51,132,96);
+            strcpy(textbuf,"Cheats: ");
+        strcat(textbuf,cheatmenu[cheat]);
+        textprint(51,144,96);
+            strcpy(textbuf,"Sound block size: ");
+        strcat(textbuf,soundblockmenu[soundblock]);
+        textprint(51,156,lab3dversion?32:34);
+            strcpy(textbuf,"Texture colour depth: ");
+        strcat(textbuf,texturedepthmenu[texturedepth]);
+        textprint(51,168,lab3dversion?32:34);
+            strcpy(textbuf,"View: ");
+        strcat(textbuf,scalingtypemenu[scaling]);
+        textprint(51,180,lab3dversion?32:34);
+            strcpy(textbuf,"Exit setup");
+        textprint(51,192,lab3dversion?128:130);
+        strcpy(textbuf,"Use cursor keys and Return to select.");
+        textprint(31,220,lab3dversion?32:34);
+        finalisemenu();
+        break;
+    }
+    case eInputDevicesMenu: {
+        int i;
+        int j=12*4+24;
+        drawmenu(304,j,menu);
+        for(i=0;i<4;i++) {
+        strcpy(textbuf,inputdevicemenu[i]);
+        textprint(71,120-6*4+12*i,lab3dversion?32:34);
+        }
+        finalisemenu();
+        break;
+    }
+    case eSetupConfigureMenu: {
+        int i;
+        int j=12*4+24;
+        drawmenu(304,j,menu);
+        for(i=0;i<4;i++) {
+        strcpy(textbuf,configureinputmenu[i]);
+        textprint(71,120-6*4+12*i,lab3dversion?32:34);
+        }
+        finalisemenu();
+        break;
+    }
+    case eSetupKeys: {
+        int j;
+        drawmenu(360,240,menu);
+        for(j=0;j<numkeys;j++) {
+            strcpy(textbuf,keynames[j]);
+            textprint(31,13+12*j,lab3dversion?32:34);
+            strncpy(textbuf,SDL_GetKeyName(newkeydefs[j]),11);
+            textbuf[11]=0;
+            textprint(261,13+12*j,lab3dversion?32:34);
+        }
+        finalisemenu();
+        break;
+    }
+    case eSetupJButtons: {
+        int j, cb;
+        drawmenu(360,240,menu);
+        for(j=0;j<numkeys;j++) {
+            strcpy(textbuf,keynames[j]);
+            textprint(31,13+12*j,lab3dversion?32:34);
+            cb=buttondefs[j];
+            if (cb==-1) {
+            strcpy(textbuf,"None");
+            } else {
+            sprintf(textbuf,"Button %d",cb+1);
+            }
+            textbuf[11]=0;
+            textprint(261,13+12*j,lab3dversion?32:34);
+        }
+        finalisemenu();
+        break;
+    }
+    case eSetupJAxes: {
+        int j, cb;
+        drawmenu(360,240,menu);
+        for(j=0;j<numaxes;j++) {
+            strcpy(textbuf,axisnames[j]);
+            textprint(31,13+12*j,lab3dversion?32:34);
+            cb=axisdefs[j];
+            if (cb==0) {
+            strcpy(textbuf,"None");
+            } else {
+            strncpy(textbuf,jaxisnames[abs(cb)-1],11);
+            }
+            textbuf[11]=0;
+            if (cb < 0)
+            strcat(textbuf," INV");
+            textbuf[11]=0;
+            textprint(261,13+12*j,lab3dversion?32:34);
+        }
+        finalisemenu();
+        break;
+    }
     default:
         break;
     }
