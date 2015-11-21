@@ -4818,6 +4818,10 @@ void drawscorebox() {
 
     menuleft=18; menutop=20; menuwidth=320; menuheight=200;
     menuing=1;
+    
+#ifdef OPENGLES
+    drawOnScreen();
+#endif
 }
 
 /* Hiscore sequence; check for new hiscore and display hiscore box. */
@@ -4910,7 +4914,7 @@ void hiscorecheck()
 	    getname();
 	} else
 	    finalisemenu();
-
+    
 	if (hiscorenamstat == 0)
 	{
 	    for(i=0;i<22;i++)
@@ -5064,6 +5068,9 @@ void hiscorecheck()
     textprint(180-(strlen(textbuf)<<2),135+1,(char)65);
     finalisemenu();
     glFlush();
+#ifdef OPENGLES
+    drawOnScreen();
+#endif
 #ifndef OPENGLES
     glDrawBuffer(GL_BACK);
 #endif // !OPENGLES
@@ -5142,11 +5149,16 @@ void getname()
 #ifndef USE_SDL2
     SDL_EnableUNICODE(1);
 #endif // !USE_SDL2
+    
+#ifdef ANDROID_NDK
+    strncpy( hiscorenam, "APlayer", sizeof(textbuf)-1 );
+    j = strlen( hiscorenam );
+#else
     while ((ch != 13) && (ch != 27))
     {
-    #ifdef OPENGLES // TODO: Check SwapBuffers.
+#ifdef OPENGLES // TODO: Check SwapBuffers.
         drawOnScreen();
-    #endif // !OPENGLES
+#endif // !OPENGLES
 	while ((ch=getkeypress()) == 0)
 	{
 	    textbuf[0] = 95;
@@ -5193,6 +5205,7 @@ void getname()
 		j++;
 	}
     }
+#endif // ANDROID_NDK
 #ifndef USE_SDL2
     SDL_EnableUNICODE(0);
 #endif // !USE_SDL2
@@ -5221,6 +5234,10 @@ void getname()
 		textprint(70,20+statusbaryoffset,(char)177);
 	}
     }
+    
+#ifdef OPENGLES
+    drawOnScreen();
+#endif
 }
 
 /* Draw score... */
