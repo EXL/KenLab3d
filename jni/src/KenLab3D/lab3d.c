@@ -7,6 +7,25 @@
 Uint16 *gammaRamp = NULL;
 #endif // USE_SDL2
 
+void drawOnScreen() {
+#ifndef USE_SDL2
+    SDL_GL_SwapBuffers();
+#else
+    SDL_GL_SwapWindow(globalWindow);
+#ifdef OPENGLES
+    clearScreen();
+#endif // OPENGLES
+#endif // !USE_SDL2
+}
+
+void clearScreen() {
+    glColorMask(1,1,1,1);
+    glClearColor(255,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDepthMask(1);
+    glClear(GL_DEPTH_BUFFER_BIT);
+}
+
 unsigned char slotable[3][16] =
 {
     {5,2,4,5,3,0,4,1,2,4,5,3,5,4,1,3},
@@ -341,11 +360,8 @@ int main(int argc,char **argv)
 		    ingame=0;
 		    fade(fadewarpval);
 		    pictur(180,halfheight,144<<2,0,gameover);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+
+            drawOnScreen();
 
 		    SDL_Delay(1000);
 
@@ -354,11 +370,9 @@ int main(int argc,char **argv)
 			glClear(GL_COLOR_BUFFER_BIT);
 			fade(i);
 			pictur(180,halfheight,144<<2,0,gameover);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+
+            drawOnScreen();
+            
 			SDL_Delay(20);
 		    }
 		    fade(63);
@@ -3195,11 +3209,8 @@ int main(int argc,char **argv)
 
 		    mixing=0;
 
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+            drawOnScreen();
+            
 		}
 	    x = getkeydefstat(15);
 	    y = 1;
@@ -3225,11 +3236,9 @@ int main(int argc,char **argv)
 		    SDL_Delay(10); /* Close enough. */
 		    fade(i+64);
 		    picrot(posx,posy,posz,ang);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+            
+            drawOnScreen();
+
 		}
 	    wipeoverlay(0,0,361,statusbaryoffset);
 	    picrot(posx,posy,posz,ang);
@@ -3309,11 +3318,7 @@ int main(int argc,char **argv)
 
 		fade(27);
 
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 
 		SDL_LockMutex(timermutex);
 		while(clockspeed<4) {
@@ -3352,11 +3357,9 @@ int main(int argc,char **argv)
 		SDL_UnlockMutex(timermutex);
 		fade(i);
 		picrot(posx,posy,posz,ang);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+
+        drawOnScreen();
+        
 	    }
 	    SDL_LockMutex(timermutex);
 	    clockspeed = 0;
@@ -3394,11 +3397,9 @@ int main(int argc,char **argv)
 	    if (ototclock > 1)
 	    {
 		picrot(posx,posy,posz,ang);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+
+        drawOnScreen();
+        
 		j = mainmenu();
 		picrot(posx,posy,posz,ang);
 		if (j < 7)
@@ -3630,11 +3631,7 @@ int main(int argc,char **argv)
 	if ((scoreclock%240) < clockspd)
 	    drawtime(scoreclock);
 
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+    drawOnScreen();
     }
 
     /* End of main loop. End of game. Tidy up things... */

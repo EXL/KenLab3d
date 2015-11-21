@@ -1788,7 +1788,7 @@ void oldmain(void)
 		    kgif(n);
 		    SetVisibleScreenOffset(0);
 #ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
+    drawOnScreen();
 
     newkeystatus[SDLK_ESCAPE] = 0;
     newkeystatus[SDLK_SPACE] = 0;
@@ -1796,7 +1796,7 @@ void oldmain(void)
     bstatus = 0;
     while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0)) {
 #else
-    SDL_GL_SwapWindow(globalWindow);
+    drawOnScreen();
 
     newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] = 0;
     newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] = 0;
@@ -1860,7 +1860,7 @@ void oldmain(void)
 		picrot(posx,posy,posz,ang);
 		spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)79);
 #ifndef USE_SDL2
-        SDL_GL_SwapBuffers();
+        drawOnScreen();
 
         m = 0;
         n = 0;
@@ -1903,7 +1903,7 @@ void oldmain(void)
             newkeystatus[SDLK_8]=0;
             }
 #else
-        SDL_GL_SwapWindow(globalWindow);
+        drawOnScreen();
 
         m = 0;
         n = 0;
@@ -1981,7 +1981,7 @@ void oldmain(void)
 		picrot(posx,posy,posz,ang);
 		spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)78);
 #ifndef USE_SDL2
-        SDL_GL_SwapBuffers();
+        drawOnScreen();
         pageoffset = j;
         m = 0;
         ototclock = totalclock;
@@ -2024,7 +2024,7 @@ void oldmain(void)
             newkeystatus[SDLK_8]=0;
             }
 #else
-        SDL_GL_SwapWindow(globalWindow);
+        drawOnScreen();
         pageoffset = j;
         m = 0;
         ototclock = totalclock;
@@ -2120,10 +2120,10 @@ void oldmain(void)
 		ototclock = totalclock;
 		mixing=0;
 #ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
+    drawOnScreen();
     while ((newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0) && (bstatus == 0)) {
 #else
-    SDL_GL_SwapWindow(globalWindow);
+    drawOnScreen();
     while ((newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
            (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0) &&
            (newkeystatus[getOldAsciiKeyCode(SDLK_RETURN)] == 0) && (bstatus == 0)) {
@@ -2200,11 +2200,7 @@ void oldmain(void)
 
 		fade(27);
 
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 		SDL_LockMutex(timermutex);
 		while(clockspeed<4) {
 		    SDL_UnlockMutex(timermutex);
@@ -2242,11 +2238,8 @@ void oldmain(void)
 		SDL_UnlockMutex(timermutex);
 		fade(i);
 		picrot(posx,posy,posz,ang);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+
+        drawOnScreen();
 	    }
 	    clockspd = 0;
 	    totalclock = ototclock;
@@ -2274,11 +2267,7 @@ void oldmain(void)
 		mixing=1;
 		oldtextprint(200-(strlen(textbuf)<<2),28,0);
 		mixing=0;
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 		pageoffset = j;
 		j = 0;
 		ototclock = totalclock;
@@ -2326,11 +2315,7 @@ void oldmain(void)
 	scoreclock += clockspd;
 	if ((scoreclock%240) < clockspd)
 	    olddrawtime(scoreclock);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
     }
     musicoff();
 }
@@ -2758,7 +2743,7 @@ K_INT16 oldintroduction(void)
 	    pageoffset = plc;
 	    spridraw((int)180-64,(int)halfheight-64,(int)128<<2,(int)78);
 #ifndef USE_SDL2
-        SDL_GL_SwapBuffers();
+        drawOnScreen();
         m = 0;
         while ((m == 0) && (newkeystatus[SDLK_ESCAPE] == 0) && (newkeystatus[SDLK_SPACE] == 0) && (newkeystatus[SDLK_RETURN] == 0))
         {
@@ -2790,7 +2775,7 @@ K_INT16 oldintroduction(void)
                 newkeystatus[SDLK_8]=0;
             }
 #else
-        SDL_GL_SwapWindow(globalWindow);
+        drawOnScreen();
         m = 0;
         while ((m == 0) && (newkeystatus[getOldAsciiKeyCode(SDLK_ESCAPE)] == 0) &&
                (newkeystatus[getOldAsciiKeyCode(SDLK_SPACE)] == 0)
@@ -2896,11 +2881,7 @@ K_INT16 oldintroduction(void)
 	    lastshoot = 1;
 	    lastbarchange = 1;
 	}
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+    drawOnScreen();
     }
     musicoff();
 
@@ -3145,11 +3126,7 @@ void oldwingame(K_UINT16 mxpos, K_UINT16 mypos)
 	revtotalclock += clockspeed;
 	clockspeed = 0;
 	SDL_UnlockMutex(timermutex);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+    drawOnScreen();
     }
     musicoff();
     ksay(23);

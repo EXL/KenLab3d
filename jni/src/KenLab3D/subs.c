@@ -1575,11 +1575,7 @@ void loadwalls(int replace)
 	       Yes, I know I'm too clever for my own good. */
 
 	    if ((i<127) && ((i&1)==0))
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 	    else
 		glFlush();
 	    cwparam=&wparams[i];
@@ -2611,11 +2607,7 @@ void introduction(K_INT16 songnum)
 	if ((dai >= 128) && (dalasti < 128))
 	    fade(63);
 	drawintroduction();
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+    drawOnScreen();
     }
 
     spriteyoffset=0;
@@ -3435,11 +3427,7 @@ void wingame(K_INT16 episode)
 	    else
 		posy = starty+16384+512;
 	    picrot(posx,posy,posz,ang);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 	    sortcnt = 0;
 	    SDL_LockMutex(soundmutex);
 	    SDL_LockMutex(timermutex);
@@ -3532,11 +3520,7 @@ void wingame(K_INT16 episode)
 		    finalisemenu();
 
 		    ksay(23);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+            drawOnScreen();
 		    pressakey();
 		    glClear(GL_COLOR_BUFFER_BIT);
 		    drawmenu(304,192,menu);
@@ -3556,11 +3540,7 @@ void wingame(K_INT16 episode)
 		    if (episode == 2) loadstory(-18);
 		    finalisemenu();
 		    settransferpalette();
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+            drawOnScreen();
 		    pressakey();
 		}
 	    }
@@ -3662,11 +3642,7 @@ void winallgame()
 	    glClearColor( 0,0,0,0 );
 	    glClear(GL_COLOR_BUFFER_BIT);
 	    pictur(180,halfheight,4+(((int)revtotalclock)>>2),((int)((revtotalclock<<2))&2047)^2047,earth);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 	}
 	else
 	{
@@ -3680,11 +3656,7 @@ void winallgame()
 	    loadstory(-17);
 	    finalisemenu();
 	    ksay(23);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 	    pressakey();
 	    glClear(GL_COLOR_BUFFER_BIT);
 	    drawmenu(304,192,menu);
@@ -3703,11 +3675,7 @@ void winallgame()
 	    loadstory(-16);
 	    finalisemenu();
 	    settransferpalette();
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+        drawOnScreen();
 	    pressakey();
 	    leavewin = 1;
 	}
@@ -5176,9 +5144,9 @@ void getname()
 #endif // !USE_SDL2
     while ((ch != 13) && (ch != 27))
     {
-#ifdef OPENGLES // TODO: Check SwapBuffers.
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !OPENGLES
+    #ifdef OPENGLES // TODO: Check SwapBuffers.
+        drawOnScreen();
+    #endif // !OPENGLES
 	while ((ch=getkeypress()) == 0)
 	{
 	    textbuf[0] = 95;
@@ -5420,11 +5388,7 @@ K_INT16 mainmenu()
 	spriteyoffset=20;
 	drawintroduction();
 	spriteyoffset=0;
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+    drawOnScreen();
     } else {
 #ifndef OPENGLES
 	glDrawBuffer(GL_FRONT);
@@ -5501,11 +5465,7 @@ K_INT16 mainmenu()
 		    spriteyoffset=0;
 		    drawmainmenu();
             checkGLStatus( __FILE__, __LINE__ );
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+            drawOnScreen();
 #ifndef OPENGLES
 		    glDrawBuffer(GL_FRONT);
 #endif // !OPENGLES
@@ -5521,11 +5481,7 @@ K_INT16 mainmenu()
 		    picrot(posx,posy,posz,ang);
 		    drawmainmenu();
             checkGLStatus( __FILE__, __LINE__ );
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+            drawOnScreen();
 #ifndef OPENGLES
 		    glDrawBuffer(GL_FRONT);
 #endif // !OPENGLES
@@ -5594,7 +5550,7 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     while (esckeystate == 0)
     {
 #ifdef OPENGLES // TODO: Check SwapBuffers.
-    SDL_GL_SwapWindow(globalWindow);
+    drawOnScreen();
 #endif // !OPENGLES
 	PollInputs();
 	animater6++;
@@ -5765,7 +5721,7 @@ void creditsmenu()
     loadstory(-1);
     finalisemenu();
 #ifdef OPENGLES // TODO: Check SwapBuffers.
-    SDL_GL_SwapWindow(globalWindow);
+    drawOnScreen();
 #endif // !OPENGLES
     pressakey();
 }
@@ -5796,7 +5752,7 @@ void bigstorymenu()
 	lastenterstate = 1;
 	glFlush();
 #ifdef OPENGLES // TODO: Check SwapBuffers.
-    SDL_GL_SwapWindow(globalWindow);
+    drawOnScreen();
 #endif // !OPENGLES
 	while ((nowenterstate <= lastenterstate) && (bstatus <= obstatus))
 	{
@@ -5875,7 +5831,7 @@ void helpmenu()
     textprint(161,18+n+1,32);
     finalisemenu();
 #ifdef OPENGLES // TODO: Check SwapBuffers.
-    SDL_GL_SwapWindow(globalWindow);
+    drawOnScreen();
 #endif // !OPENGLES
     pressakey();
 }
@@ -6093,7 +6049,7 @@ void orderinfomenu() {
 
     finalisemenu();
 #ifdef OPENGLES // TODO: Check SwapBuffers.
-    SDL_GL_SwapWindow(globalWindow);
+    drawOnScreen();
 #endif // !OPENGLES
     pressakey();
 

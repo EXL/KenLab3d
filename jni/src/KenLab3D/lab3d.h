@@ -98,6 +98,9 @@ void SDL_GL_SwapBuffersDebug() {
 #define SDL_GL_SwapBuffers SDL_GL_SwapBuffersDebug
 #endif
 
+extern void drawOnScreen();
+extern void clearScreen();
+
 /* Assume that SDL has fixed data types... */
 
 typedef Uint32 K_UINT32;

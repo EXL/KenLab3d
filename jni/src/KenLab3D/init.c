@@ -497,11 +497,8 @@ void initialize()
     // TODO: Check this.
 #endif // !USE_SDL2
     SetVisibleScreenOffset(0);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+    
+    drawOnScreen();
 
     if (moustat == 0)
 	moustat = setupmouse();
@@ -582,11 +579,9 @@ void initialize()
 	    glClear( GL_COLOR_BUFFER_BIT);
 	    visiblescreenyoffset=(l/90)-20;
 	    ShowPartialOverlay(20,20+visiblescreenyoffset,320,200,0);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+
+        drawOnScreen();
+        
 	    SDL_LockMutex(timermutex);
 	}
 	PollInputs();
@@ -612,11 +607,9 @@ void initialize()
 	else
 	    visiblescreenyoffset=(l/90)-20;
 	ShowPartialOverlay(20,20+visiblescreenyoffset,320,200,0);
-#ifndef USE_SDL2
-    SDL_GL_SwapBuffers();
-#else
-    SDL_GL_SwapWindow(globalWindow);
-#endif // !USE_SDL2
+
+    drawOnScreen();
+    
 	SDL_LockMutex(timermutex);
 
 	while(clockspeed<oclockspeed+4) {
