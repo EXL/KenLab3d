@@ -607,11 +607,14 @@ enum MenuStates {
     eMainMenu,
     eAbortMenu,
     eNewGameMenu,
-    eHardnessMenu
+    eHardnessMenu,
+    eLoadSaveGameMenu,
+    eSodaMenu
 };
 
 EXTERN void clearCurrentMenuState();
 EXTERN int currentMenuState;
+EXTERN int qStateSaveOrLoad;
 #endif // OPENGLES
 
 /* Fade level... */

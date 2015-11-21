@@ -21,6 +21,7 @@ void drawOnScreen() {
 #ifdef OPENGLES
 void clearCurrentMenuState() {
     currentMenuState = eNoMenu;
+    qStateSaveOrLoad = 3; // Unknown
 }
 #endif // OPENGLES
 

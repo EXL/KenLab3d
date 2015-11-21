@@ -5635,6 +5635,144 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
         finalisemenu();
         break;
     }
+    case eLoadSaveGameMenu: {
+        char filename[20];
+        K_INT16 fil, i, j, k, n;
+        K_INT32 templong;
+        if (vidmode == 0)
+        n = 0;
+        else
+        n = 20;
+        drawmenu(320,160,menu);
+        if (qStateSaveOrLoad == 1)
+        {
+        strcpy(&textbuf[0],"Load game");
+        textprint(137,26+n+1,32);
+        }
+        else
+        {
+        strcpy(&textbuf[0],"Save game");
+        textprint(137,26+n+1,112);
+        }
+        strcpy(&textbuf[0],"#: Name:       Board: Score: Time:");
+        textprint(55,52+n+1,48);
+        if (gameheadstat == 0)
+        {
+        for(j=0;j<8;j++)
+        {
+            char path[256];
+            filename[0] = 'S', filename[1] = 'A', filename[2] = 'V';
+            filename[3] = 'G', filename[4] = 'A', filename[5] = 'M';
+            filename[6] = 'E', filename[7] = j+48;
+            filename[8] = '.', filename[9] = 'D', filename[10] = 'A';
+            filename[11] = 'T', filename[12] = 0;
+    
+            snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+            if((fil=open(path,O_RDONLY|O_BINARY,0))!=-1)
+            {
+            gamexist[j] = 1;
+            read(fil,&gamehead[j][0],27);
+            close(fil);
+            }
+            else {
+            filename[0] = 's', filename[1] = 'a', filename[2] = 'v';
+            filename[3] = 'g', filename[4] = 'a', filename[5] = 'm';
+            filename[6] = 'e', filename[7] = j+48;
+            filename[8] = '.', filename[9] = 'd', filename[10] = 'a';
+            filename[11] = 't', filename[12] = 0;
+    
+            snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+            if((fil=open(path,O_RDONLY|O_BINARY,0))!=-1)
+            {
+                gamexist[j] = 1;
+                read(fil,&gamehead[j][0],27);
+                close(fil);
+            }
+            else
+                gamexist[j] = 0;
+            }
+        }
+        gameheadstat = 1;
+        }
+        j = 0;
+        for(i=70+n;i<166+n;i+=12)
+        {
+        if (gamexist[j] == 1)
+        {
+            textbuf[0] = j+49, textbuf[1] = 32, textbuf[2] = 32;
+            for(k=0;k<12;k++)
+            {
+            textbuf[k+3] = gamehead[j][k];
+            if (textbuf[k+3] == 0)
+                textbuf[k+3] = 32;
+            }
+            textbuf[15] = 32;
+            textbuf[16] = ((gamehead[j][17]+1)/10)+48;
+            if (textbuf[16] == 48)
+            textbuf[16] = 32;
+            textbuf[17] = ((gamehead[j][17]+1)%10)+48;
+            textbuf[18] = 32;
+            textbuf[19] = 32;
+            textbuf[20] = 32;
+            k = j*27;
+            templong=readlong((unsigned char *)&gamehead[j][19]);
+    
+            textbuf[21] = (char)((templong/100000L)%10L)+48;
+            textbuf[22] = (char)((templong/10000L)%10L)+48;
+            textbuf[23] = (char)((templong/1000L)%10L)+48;
+            textbuf[24] = (char)((templong/100L)%10L)+48;
+            textbuf[25] = (char)((templong/10L)%10L)+48;
+            textbuf[26] = (char)(templong%10L)+48;
+            textbuf[27] = 32;
+            k = 21;
+            while ((textbuf[k] == 48) && (k < 26))
+            textbuf[k++] = 32;
+            k = j*27;
+            templong=readlong((unsigned char *)&gamehead[j][23]);
+    
+            templong /= 240;
+            textbuf[28] = (char)((templong/10000L)%10L)+48;
+            textbuf[29] = (char)((templong/1000L)%10L)+48;
+            textbuf[30] = (char)((templong/100L)%10L)+48;
+            textbuf[31] = (char)((templong/10L)%10L)+48;
+            textbuf[32] = (char)(templong%10L)+48;
+            textbuf[33] = 0;
+            k = 28;
+            while ((textbuf[k] == 48) && (k < 32))
+            textbuf[k++] = 32;
+            textprint(56,i-1+1,30);
+            textprint(55,i-1+1,32);
+        }
+        else
+        {
+            textbuf[0] = j+49;
+            textbuf[1] = 0;
+            textprint(56,i-1+1,28);
+            textprint(55,i-1+1,30);
+        }
+        j++;
+        }
+        finalisemenu();
+        break;
+    }
+    case eSodaMenu: {
+        K_INT16 n;
+        if (vidmode == 0)
+        n = 0;
+        else
+        n = 20;
+        drawmenu(256,160,menu);
+        if (boardnum < 10)
+        loadstory(-34);
+        else
+        loadstory(-33);
+        statusbardraw(0,0,12,36,85-n,49+n+1,sodapics);
+        statusbardraw(12,0,12,36,85-n,85+n+1,sodapics);
+        statusbardraw(24,0,12,36,85-n,121+n+1,sodapics);
+        statusbardraw(36,0,12,12,85-n,157+n+1,sodapics);
+        finalisemenu();
+        break;
+    }
     default:
         break;
     }
@@ -5942,12 +6080,11 @@ void sodamenu()
 {
     K_INT32 ototclocker;
     K_INT16 n, valid;
-
+#ifndef OPENGLES
     wipeoverlay(0,0,361,statusbaryoffset);
 #ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
 #endif // !OPENGLES
-    ototclocker = totalclock;
     if (vidmode == 0)
 	n = 0;
     else
@@ -5962,8 +6099,13 @@ void sodamenu()
     statusbardraw(12,0,12,36,85-n,85+n+1,sodapics);
     statusbardraw(24,0,12,36,85-n,121+n+1,sodapics);
     statusbardraw(36,0,12,12,85-n,157+n+1,sodapics);
-    valid = 0;
     finalisemenu();
+#else
+    currentMenuState = eSodaMenu;
+#endif // !OPENGLES
+    ksay(27);
+    ototclocker = totalclock;
+    valid = 0;
     while (valid == 0)
     {
 	sodaplace = getselection(46,49,sodaplace,10);
@@ -6102,6 +6244,9 @@ void sodamenu()
 #endif // !OPENGLES
     wipeoverlay(0,0,361,statusbaryoffset);
     linecompare(statusbar);
+#ifdef OPENGLES
+    currentMenuState = eNoMenu;
+#endif
 }
 
 /* New credits instead of ordering info. */
@@ -6162,7 +6307,7 @@ K_INT16 loadsavegamemenu(K_INT16 whichmenu)
     char filename[20];
     K_INT16 fil, i, j, k, n;
     K_INT32 templong;
-
+#ifndef OPENGLES
     if (vidmode == 0)
 	n = 0;
     else
@@ -6279,6 +6424,10 @@ K_INT16 loadsavegamemenu(K_INT16 whichmenu)
 	j++;
     }
     finalisemenu();
+#else
+    qStateSaveOrLoad = whichmenu;
+    currentMenuState = eLoadSaveGameMenu;
+#endif // !OPENGLES
     if (whichmenu == 1)
     {
 	do
@@ -6297,6 +6446,9 @@ K_INT16 loadsavegamemenu(K_INT16 whichmenu)
 	if (loadsavegameplace < 0)
 	    loadsavegameplace = (-loadsavegameplace)-1;
     }
+#ifdef OPENGLES
+    currentMenuState = eMainMenu;
+#endif
     return(j);
 }
 
