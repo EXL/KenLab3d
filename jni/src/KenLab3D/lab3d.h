@@ -602,7 +602,16 @@ EXTERN int statusbaryvisible;
 EXTERN int menuleft,menutop,menuwidth,menuheight,menuing;
 
 #ifdef OPENGLES
-EXTERN int areyousureMenuRaise; // FIXME: Adreno fix
+enum MenuStates {
+    eNoMenu,
+    eMainMenu,
+    eAbortMenu,
+    eNewGameMenu,
+    eHardnessMenu
+};
+
+EXTERN void clearCurrentMenuState();
+EXTERN int currentMenuState;
 #endif // OPENGLES
 
 /* Fade level... */

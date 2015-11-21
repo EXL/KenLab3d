@@ -3,10 +3,6 @@
 #include "adlibemu.h"
 #include "math.h"
 
-#ifdef OPENGLES
-areyousureMenuRaise = 0; // FIXME: Adreno fix
-#endif // OPENGLES
-
 #ifdef USE_SDL2
 Uint16 *gammaRamp = NULL;
 #endif // USE_SDL2
@@ -22,9 +18,15 @@ void drawOnScreen() {
 #endif // !USE_SDL2
 }
 
+#ifdef OPENGLES
+void clearCurrentMenuState() {
+    currentMenuState = eNoMenu;
+}
+#endif // OPENGLES
+
 void clearScreen() {
-    glColorMask(1,1,1,1);
-    glClearColor(255,0,0,0);
+//    glColorMask(1,1,1,1);
+//    glClearColor(255,0,0,0);
     glClear(GL_COLOR_BUFFER_BIT);
     glDepthMask(1);
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -144,6 +146,7 @@ int main(int argc,char **argv)
     globalDataDir = "./";
 #else
     globalDataDir = "/storage/sdcard0/KenLabData";
+    clearCurrentMenuState();
 #endif // !ANDROID_NDK
 
     clockspd=0;
@@ -376,7 +379,7 @@ int main(int argc,char **argv)
 			pictur(180,halfheight,144<<2,0,gameover);
 
             drawOnScreen();
-            
+
 			SDL_Delay(20);
 		    }
 		    fade(63);
@@ -3214,7 +3217,7 @@ int main(int argc,char **argv)
 		    mixing=0;
 
             drawOnScreen();
-            
+
 		}
 	    x = getkeydefstat(15);
 	    y = 1;
@@ -3240,7 +3243,7 @@ int main(int argc,char **argv)
 		    SDL_Delay(10); /* Close enough. */
 		    fade(i+64);
 		    picrot(posx,posy,posz,ang);
-            
+
             drawOnScreen();
 
 		}
@@ -3363,7 +3366,7 @@ int main(int argc,char **argv)
 		picrot(posx,posy,posz,ang);
 
         drawOnScreen();
-        
+
 	    }
 	    SDL_LockMutex(timermutex);
 	    clockspeed = 0;
@@ -3403,7 +3406,7 @@ int main(int argc,char **argv)
 		picrot(posx,posy,posz,ang);
 
         drawOnScreen();
-        
+
 		j = mainmenu();
 		picrot(posx,posy,posz,ang);
 		if (j < 7)

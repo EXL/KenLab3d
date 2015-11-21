@@ -5377,6 +5377,10 @@ K_INT16 mainmenu()
     K_INT16 j, k, done;
 
     spriteyoffset=0;
+    
+#ifdef OPENGLES
+    currentMenuState = eNoMenu; // First run.
+#endif // OPENGLES
 
     ksay(27);
     fade(63);
@@ -5452,6 +5456,7 @@ K_INT16 mainmenu()
 	    if (mainmenuplace == 8) done = areyousure();
 	    if (done == 0)
 	    {
+#ifndef ANDROID_NDK
 		/* Redraw whatever was beneath the menu. Double buffer to
 		   avoid annoying flicker. */
 		if (sortcnt == -1) {
@@ -5486,6 +5491,12 @@ K_INT16 mainmenu()
 		    glDrawBuffer(GL_FRONT);
 #endif // !OPENGLES
 		}
+//#else
+//            drawmainmenu();
+//            drawOnScreen();
+//            TO_DEBUG_LOG("sbo: %d\n", statusbaryoffset);
+//            wipeoverlay(0,0,361,statusbaryoffset); // Clear garbage
+#endif // ANDROID_NDK
 	    }
 	}
     }
@@ -5502,6 +5513,10 @@ K_INT16 mainmenu()
     glDrawBuffer(GL_BACK);
 #endif // !OPENGLES
     return(j);
+    
+#ifdef OPENGLES
+    currentMenuState = eNoMenu;
+#endif // OPENGLES
 }
 
 /* Get a selection from a menu with totselectors choices, defaulting to
@@ -5547,14 +5562,36 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     obstatus = 1;
     mousx = 0;
     mousy = 0;
+#ifdef OPENGLES
+    switch (currentMenuState) {
+    // Wipe Screen after all Menus.
+    default: {
+        wipeoverlay(0,0,361,statusbaryoffset);
+        break;
+    }
+    case eNoMenu: {
+        currentMenuState = eMainMenu;
+        break;
+    }
+    }
+#endif // OPENGLES
     while (esckeystate == 0)
     {
 #ifdef OPENGLES // TODO: Check SwapBuffers.
+    //SDL_Delay(1000);
     drawOnScreen();
-    
-    // FIXME: Adreno fix Menus
-    drawmainmenu();
-    if (areyousureMenuRaise) {
+
+    switch (currentMenuState) {
+    case eMainMenu: {
+        drawmainmenu();
+        break;
+    }
+    case eAbortMenu: {
+        K_INT16 n;
+        if (vidmode == 0)
+        n = 0;
+        else
+        n = 20;
         drawmenu(224,64,menu);
         strcpy(&textbuf[0],"Really want to quit?");
         textprint(99,84+n+1,112);
@@ -5563,15 +5600,52 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
         strcpy(&textbuf[0],"No");
         textprint(105,108+n+1,32);
         finalisemenu();
+        break;
+    }
+    case eNewGameMenu: {
+        K_INT16 j, n;
+        if (vidmode == 0)
+        n = 0;
+        else
+        n = 20;
+        drawmenu(288,64,menu);
+        strcpy(&textbuf[0],"New game");
+        textprint(137,74+n+1,112);
+        strcpy(&textbuf[0],"Episode 1: Search for Sparky");
+        textprint(67,88+n+1,32);
+        if (numboards >= 20) j = 32; else j = 28;
+        strcpy(&textbuf[0],"Episode 2: Sparky's Revenge");
+        textprint(67,100+n+1,((char)j));
+        if (numboards >= 30) j = 32; else j = 28;
+        strcpy(&textbuf[0],"Episode 3: Find the Way Home");
+        textprint(67,112+n+1,((char)j));
+        if (newgameplace < 0) newgameplace = 0;
+        if (newgameplace > 2) newgameplace = 2;
+        finalisemenu();
+        break;
+    }
+    case eHardnessMenu: {
+        drawmenu(288,64,menu);
+        strcpy(&textbuf[0],"New game");
+        textprint(137,74+n+1,112);
+        strcpy(&textbuf[0],"Easy: Don't touch me.");
+        textprint(67,92+n+1,32);
+        strcpy(&textbuf[0],"Hard: OUCH!");
+        textprint(67,104+n+1,32);
+        finalisemenu();
+        break;
+    }
+    default:
+        break;
     }
 #endif // !OPENGLES
 	PollInputs();
 	animater6++;
 	if (animater6 == 6)
 	    animater6 = 0;
-#ifndef OPENGLES
+//#ifndef OPENGLES
 	SDL_Delay(10); /* Let's not soak up all CPU... */
-#endif // !OPENGLES
+//#endif // !OPENGLES
 
 	if (lab3dversion) {
 	    statusbardraw(16+(animater6/2)*16,0,15,15,xoffs+20-n,nowselector*12+yoffs+n-1,85);
@@ -5695,6 +5769,11 @@ void drawmenu(K_INT16 xsiz, K_INT16 ysiz, K_INT16 walnume)
 	return;
     }
 
+//#ifdef OPENGLES
+//    wipeoverlay(menuleft+4, menutop+4, menuwidth+4, menuheight+4);
+//    TO_DEBUG_LOG("%dx%dx%dx%d", menuleft, menutop, menuwidth, menuheight);
+//#endif // OPENGLES
+
     if (ysiz<=240) {
 	statusbardraw(0,0,16,16,x1,y1+1,walnume);
 	statusbardraw(48,0,16,16,x2,y1+1,walnume);
@@ -5808,13 +5887,13 @@ void bigstorymenu()
 
 K_INT16 areyousure()
 {
-    K_INT16 i, n;
 
+    K_INT16 i, n;
+#ifndef OPENGLES
     if (vidmode == 0)
 	n = 0;
     else
 	n = 20;
-#ifndef OPENGLES
     drawmenu(224,64,menu);
     strcpy(&textbuf[0],"Really want to quit?");
     textprint(99,84+n+1,112);
@@ -5824,12 +5903,11 @@ K_INT16 areyousure()
     textprint(105,108+n+1,32);
     finalisemenu();
 #else
-//#ifdef OPENGLES
-    areyousureMenuRaise = 1; // FIXME: Adreno fix
+    currentMenuState = eAbortMenu;
 #endif // OPENGLES
     i = getselection(60,95,0,2);
 #ifdef OPENGLES
-    areyousureMenuRaise = 0; // FIXME: Adreno fix
+    currentMenuState = eMainMenu;
 #endif // OPENGLES
     if (i == 0)
 	return(1);
@@ -6227,7 +6305,7 @@ K_INT16 loadsavegamemenu(K_INT16 whichmenu)
 K_INT16 newgamemenu()
 {
     K_INT16 j, n;
-
+#ifndef OPENGLES
     if (vidmode == 0)
 	n = 0;
     else
@@ -6246,7 +6324,13 @@ K_INT16 newgamemenu()
     if (newgameplace < 0) newgameplace = 0;
     if (newgameplace > 2) newgameplace = 2;
     finalisemenu();
+#else
+    currentMenuState = eNewGameMenu;
+#endif // !OPENGLES
     newgameplace = getselection(28,87,newgameplace,3);
+#ifdef OPENGLES
+    currentMenuState = eMainMenu;
+#endif // OPENGLES
     if ((newgameplace == 1) && (numboards < 20))
 	return(newgameplace);
     if ((newgameplace == 2) && (numboards < 30))
@@ -6255,6 +6339,7 @@ K_INT16 newgamemenu()
 	newgameplace=(-newgameplace)-1;
 	return -1;
     }
+#ifndef OPENGLES
     drawmenu(288,64,menu);
     strcpy(&textbuf[0],"New game");
     textprint(137,74+n+1,112);
@@ -6263,9 +6348,15 @@ K_INT16 newgamemenu()
     strcpy(&textbuf[0],"Hard: OUCH!");
     textprint(67,104+n+1,32);
     finalisemenu();
+#else
+    currentMenuState = eHardnessMenu;
+#endif // !OPENGLES
     if (skilevel < 0) skilevel = 0;
     if (skilevel > 1) skilevel = 1;
     skilevel = getselection(28,91,skilevel,2);
+#ifdef OPENGLES
+    currentMenuState = eMainMenu;
+#endif // OPENGLES
     if (skilevel<0) {
 	skilevel=(-skilevel)-1;
 	return -1;
