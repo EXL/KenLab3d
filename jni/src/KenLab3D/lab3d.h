@@ -615,7 +615,15 @@ enum MenuStates {
     eSetupConfigureMenu,
     eSetupKeys,
     eSetupJButtons,
-    eSetupJAxes
+    eSetupJAxes,
+    eSetupFiltering,
+    eSetupMusic,
+    eSetupSound,
+    eSetupCheats,
+    eSetupMusicCh,
+    eSetupSoundCh,
+    eSetupSoundBlock,
+    eSetupScaling
 };
 
 EXTERN void clearCurrentMenuState();
@@ -644,6 +652,8 @@ extern char keynames[numkeys][30];
 extern char axisnames[numaxes][30];
 extern char axisinst[numaxes][30];
 extern char jaxisnames[numjoyaxes][30];
+
+EXTERN void fillSettingMenuHelper(int count, char titles[][30]);
 #endif // OPENGLES
 
 /* Fade level... */

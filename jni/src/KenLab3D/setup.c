@@ -390,6 +390,14 @@ void selectionmenu(int alts,char titles[][30],int *value) {
 #ifdef OPENGLES
     switch (currentMenuState) {
     case eInputDevicesMenu:
+    case eSetupFiltering:
+    case eSetupMusic:
+    case eSetupSound:
+    case eSetupSoundCh:
+    case eSetupMusicCh:
+    case eSetupCheats:
+    case eSetupSoundBlock:
+    case eSetupScaling:
         currentMenuState = eSettingsMenu;
         break;
     default:
@@ -635,30 +643,51 @@ void setupsetfullscreen(void) {
 }
 
 void setupsetfiltering(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupFiltering;
+#endif // OPENGLES
     selectionmenu(3,filtermenu,&nearest);
 }
 
 void setupsetmusic(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupMusic;
+#endif // OPENGLES
     selectionmenu(MUSIC_SOURCES,musicmenu,&music);
 }
 
 void setupsetsound(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupSound;
+#endif // OPENGLES
     selectionmenu(2,soundmenu,&sound);
 }
 
 void setupcheatmenu(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupCheats;
+#endif // OPENGLES
     selectionmenu(3,cheatmenu,&cheat);
 }
 
 void setupsetsoundchannels(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupSoundCh;
+#endif // OPENGLES
     selectionmenu(2,channelmenu,&channel);
 }
 
 void setupsetmusicchannels(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupMusicCh;
+#endif // OPENGLES
     selectionmenu(2,channelmenu,&musicchannel);
 }
 
 void setupsoundblockmenu(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupSoundBlock;
+#endif // OPENGLES
     selectionmenu(10,soundblockmenu,&soundblock);
     TO_DEBUG_LOG("Sound Block Size: %d", soundblock);
 }
@@ -672,6 +701,9 @@ void setuptexturedepthmenu(void) {
 }
 
 void setupscalingmodemenu(void) {
+#ifdef OPENGLES
+    currentMenuState = eSetupScaling;
+#endif // OPENGLES
     selectionmenu(4,scalingtypemenu,&scaling);
 }
 

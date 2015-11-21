@@ -5846,14 +5846,7 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
         break;
     }
     case eInputDevicesMenu: {
-        int i;
-        int j=12*4+24;
-        drawmenu(304,j,menu);
-        for(i=0;i<4;i++) {
-        strcpy(textbuf,inputdevicemenu[i]);
-        textprint(71,120-6*4+12*i,lab3dversion?32:34);
-        }
-        finalisemenu();
+        fillSettingMenuHelper(4, inputdevicemenu);
         break;
     }
     case eSetupConfigureMenu: {
@@ -5917,6 +5910,38 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
             textprint(261,13+12*j,lab3dversion?32:34);
         }
         finalisemenu();
+        break;
+    }
+    case eSetupFiltering: {
+        fillSettingMenuHelper(3, filtermenu);
+        break;
+    }
+    case eSetupMusic: {
+        fillSettingMenuHelper(2, musicmenu);
+        break;
+    }
+    case eSetupSound: {
+        fillSettingMenuHelper(2, soundmenu);
+        break;
+    }
+    case eSetupSoundCh: {
+        fillSettingMenuHelper(2, channelmenu);
+        break;
+    }
+    case eSetupMusicCh: {
+        fillSettingMenuHelper(2, channelmenu);
+        break;
+    }
+    case eSetupCheats: {
+        fillSettingMenuHelper(3, cheatmenu);
+        break;
+    }
+    case eSetupSoundBlock: {
+        fillSettingMenuHelper(10, soundblockmenu);
+        break;
+    }
+    case eSetupScaling: {
+        fillSettingMenuHelper(4, scalingtypemenu);
         break;
     }
     default:
@@ -6000,6 +6025,19 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     else
 	return((-nowselector)-1);
 }
+
+#ifdef OPENGLES
+void fillSettingMenuHelper(int count, char titles[][30]) {
+    int i;
+    int j=12*count+24;
+    drawmenu(304,j,menu);
+    for(i=0;i<count;i++) {
+	strcpy(textbuf,titles[i]);
+	textprint(71,120-6*count+12*i,lab3dversion?32:34);
+    }
+    finalisemenu();
+}
+#endif // OPENGLES
 
 void finalisemenu() {
     menuing=0;
