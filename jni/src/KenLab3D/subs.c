@@ -1526,12 +1526,19 @@ void loadwalls(int replace)
 		lborder[i+1] = 0;
 		rborder[i+1] = 4096;
 	    }
+#ifndef OPENGLES
 	    if ((i < 127) && ((i&1)==0)) {
+#else
+        if ((i < numwalls) && ((i&1)==0)) {
+#endif // !OPENGLES
 		if (debugmode)
 		    TO_DEBUG_LOG("Trying to draw screen buffer.\n");
 #ifndef OPENGLES
 		glDrawBuffer(GL_BACK);
 #endif // !OPENGLES
+#ifdef OPENGLES
+	    if (i < 127)
+#endif // OPENGLES
 		fade(64+(i>>1));
 		SetVisibleScreenOffset(0);
 		if (debugmode)
@@ -1574,7 +1581,11 @@ void loadwalls(int replace)
 	    /* Use double buffer when fading, single buffer when not.
 	       Yes, I know I'm too clever for my own good. */
 
+#ifndef OPENGLES
 	    if ((i<127) && ((i&1)==0))
+#else
+        if ((i<numwalls) && ((i&1)==0))
+#endif // !OPENGLES
         drawOnScreen();
 	    else
 		glFlush();
