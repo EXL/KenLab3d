@@ -978,7 +978,7 @@ void BuildMipmaps(Uint32* pix, int w, int h, int hasalpha, int maxlevel) {
     glPixelStorei (GL_UNPACK_ROW_LENGTH, w);
     gluBuild2DMipmaps(GL_TEXTURE_2D,hasalpha?GL_RGBA:GL_RGB,w,h,GL_RGBA,GL_UNSIGNED_BYTE,pix);
 #else
-    GLint format = (hasalpha > 0) ? GL_RGBA : GL_RGB;
+    GLint format = GL_RGBA;
     gluBuild2DMipmaps(GL_TEXTURE_2D,format,w,h,format,GL_UNSIGNED_BYTE,pix);
 #endif // !OPENGLES
 }
@@ -1154,7 +1154,7 @@ void UploadTexture(GLuint tex, void* pixels, int w, int h,  int repx, int repy, 
 	glTexImage2D (GL_TEXTURE_2D,0, hasalpha?GL_RGBA:GL_RGB, w, h, 0, GL_RGBA,
 			   GL_UNSIGNED_BYTE, pixels);
 #else
-    GLint format = (hasalpha > 0) ? GL_RGBA : GL_RGB;
+    GLint format = GL_RGBA;
 
     glTexImage2D (GL_TEXTURE_2D, 0, format, w, h, 0, format,
                   GL_UNSIGNED_BYTE, pixels);
