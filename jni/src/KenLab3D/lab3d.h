@@ -654,6 +654,16 @@ extern char axisinst[numaxes][30];
 extern char jaxisnames[numjoyaxes][30];
 
 EXTERN void fillSettingMenuHelper(int count, char titles[][30]);
+EXTERN void o_drawSetupJAxesHelper();
+EXTERN void o_drawSetupJButtonsHelper();
+EXTERN void o_drawSetupKeysHelper();
+EXTERN void o_drawSetupConfigureMenuHelper();
+EXTERN void o_drawSettingsMenuHelper();
+EXTERN void o_drawSodaMenuHelper();
+EXTERN void o_drawLoadSaveGameMenuHelper();
+EXTERN void o_drawHardnessMenuHelper();
+EXTERN void o_drawNewGameMenuHelper();
+EXTERN void o_drawAbortMenuHelper();
 #endif // OPENGLES
 
 /* Fade level... */

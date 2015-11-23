@@ -5602,370 +5602,83 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
         break;
     }
     }
-#endif // OPENGLES
-    while (esckeystate == 0)
-    {
-#ifdef OPENGLES // TODO: Check SwapBuffers.
-    //SDL_Delay(1000);
-    drawOnScreen();
-
+    
+    // Now Render necessary menus
     switch (currentMenuState) {
-    case eMainMenu: {
+    case eMainMenu:
         drawmainmenu();
         break;
-    }
-    case eAbortMenu: {
-        K_INT16 n;
-        if (vidmode == 0)
-        n = 0;
-        else
-        n = 20;
-        drawmenu(224,64,menu);
-        strcpy(&textbuf[0],"Really want to quit?");
-        textprint(99,84+n+1,112);
-        strcpy(&textbuf[0],"Yes");
-        textprint(105,96+n+1,32);
-        strcpy(&textbuf[0],"No");
-        textprint(105,108+n+1,32);
-        finalisemenu();
+    case eAbortMenu:
+        o_drawAbortMenuHelper();
         break;
-    }
-    case eNewGameMenu: {
-        K_INT16 j, n;
-        if (vidmode == 0)
-        n = 0;
-        else
-        n = 20;
-        drawmenu(288,64,menu);
-        strcpy(&textbuf[0],"New game");
-        textprint(137,74+n+1,112);
-        strcpy(&textbuf[0],"Episode 1: Search for Sparky");
-        textprint(67,88+n+1,32);
-        if (numboards >= 20) j = 32; else j = 28;
-        strcpy(&textbuf[0],"Episode 2: Sparky's Revenge");
-        textprint(67,100+n+1,((char)j));
-        if (numboards >= 30) j = 32; else j = 28;
-        strcpy(&textbuf[0],"Episode 3: Find the Way Home");
-        textprint(67,112+n+1,((char)j));
-        if (newgameplace < 0) newgameplace = 0;
-        if (newgameplace > 2) newgameplace = 2;
-        finalisemenu();
+    case eNewGameMenu:
+        o_drawNewGameMenuHelper();
         break;
-    }
-    case eHardnessMenu: {
-        drawmenu(288,64,menu);
-        strcpy(&textbuf[0],"New game");
-        textprint(137,74+n+1,112);
-        strcpy(&textbuf[0],"Easy: Don't touch me.");
-        textprint(67,92+n+1,32);
-        strcpy(&textbuf[0],"Hard: OUCH!");
-        textprint(67,104+n+1,32);
-        finalisemenu();
+    case eHardnessMenu:
+        o_drawHardnessMenuHelper();
         break;
-    }
-    case eLoadSaveGameMenu: {
-        char filename[20];
-        K_INT16 fil, i, j, k, n;
-        K_INT32 templong;
-        if (vidmode == 0)
-        n = 0;
-        else
-        n = 20;
-        drawmenu(320,160,menu);
-        if (qStateSaveOrLoad == 1)
-        {
-        strcpy(&textbuf[0],"Load game");
-        textprint(137,26+n+1,32);
-        }
-        else
-        {
-        strcpy(&textbuf[0],"Save game");
-        textprint(137,26+n+1,112);
-        }
-        strcpy(&textbuf[0],"#: Name:       Board: Score: Time:");
-        textprint(55,52+n+1,48);
-        if (gameheadstat == 0)
-        {
-        for(j=0;j<8;j++)
-        {
-            char path[256];
-            filename[0] = 'S', filename[1] = 'A', filename[2] = 'V';
-            filename[3] = 'G', filename[4] = 'A', filename[5] = 'M';
-            filename[6] = 'E', filename[7] = j+48;
-            filename[8] = '.', filename[9] = 'D', filename[10] = 'A';
-            filename[11] = 'T', filename[12] = 0;
-    
-            snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
-            if((fil=open(path,O_RDONLY|O_BINARY,0))!=-1)
-            {
-            gamexist[j] = 1;
-            read(fil,&gamehead[j][0],27);
-            close(fil);
-            }
-            else {
-            filename[0] = 's', filename[1] = 'a', filename[2] = 'v';
-            filename[3] = 'g', filename[4] = 'a', filename[5] = 'm';
-            filename[6] = 'e', filename[7] = j+48;
-            filename[8] = '.', filename[9] = 'd', filename[10] = 'a';
-            filename[11] = 't', filename[12] = 0;
-    
-            snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
-            if((fil=open(path,O_RDONLY|O_BINARY,0))!=-1)
-            {
-                gamexist[j] = 1;
-                read(fil,&gamehead[j][0],27);
-                close(fil);
-            }
-            else
-                gamexist[j] = 0;
-            }
-        }
-        gameheadstat = 1;
-        }
-        j = 0;
-        for(i=70+n;i<166+n;i+=12)
-        {
-        if (gamexist[j] == 1)
-        {
-            textbuf[0] = j+49, textbuf[1] = 32, textbuf[2] = 32;
-            for(k=0;k<12;k++)
-            {
-            textbuf[k+3] = gamehead[j][k];
-            if (textbuf[k+3] == 0)
-                textbuf[k+3] = 32;
-            }
-            textbuf[15] = 32;
-            textbuf[16] = ((gamehead[j][17]+1)/10)+48;
-            if (textbuf[16] == 48)
-            textbuf[16] = 32;
-            textbuf[17] = ((gamehead[j][17]+1)%10)+48;
-            textbuf[18] = 32;
-            textbuf[19] = 32;
-            textbuf[20] = 32;
-            k = j*27;
-            templong=readlong((unsigned char *)&gamehead[j][19]);
-    
-            textbuf[21] = (char)((templong/100000L)%10L)+48;
-            textbuf[22] = (char)((templong/10000L)%10L)+48;
-            textbuf[23] = (char)((templong/1000L)%10L)+48;
-            textbuf[24] = (char)((templong/100L)%10L)+48;
-            textbuf[25] = (char)((templong/10L)%10L)+48;
-            textbuf[26] = (char)(templong%10L)+48;
-            textbuf[27] = 32;
-            k = 21;
-            while ((textbuf[k] == 48) && (k < 26))
-            textbuf[k++] = 32;
-            k = j*27;
-            templong=readlong((unsigned char *)&gamehead[j][23]);
-    
-            templong /= 240;
-            textbuf[28] = (char)((templong/10000L)%10L)+48;
-            textbuf[29] = (char)((templong/1000L)%10L)+48;
-            textbuf[30] = (char)((templong/100L)%10L)+48;
-            textbuf[31] = (char)((templong/10L)%10L)+48;
-            textbuf[32] = (char)(templong%10L)+48;
-            textbuf[33] = 0;
-            k = 28;
-            while ((textbuf[k] == 48) && (k < 32))
-            textbuf[k++] = 32;
-            textprint(56,i-1+1,30);
-            textprint(55,i-1+1,32);
-        }
-        else
-        {
-            textbuf[0] = j+49;
-            textbuf[1] = 0;
-            textprint(56,i-1+1,28);
-            textprint(55,i-1+1,30);
-        }
-        j++;
-        }
-        finalisemenu();
+    case eLoadSaveGameMenu:
+        o_drawLoadSaveGameMenuHelper();
         break;
-    }
-    case eSodaMenu: {
-        K_INT16 n;
-        if (vidmode == 0)
-        n = 0;
-        else
-        n = 20;
-        drawmenu(256,160,menu);
-        if (boardnum < 10)
-        loadstory(-34);
-        else
-        loadstory(-33);
-        statusbardraw(0,0,12,36,85-n,49+n+1,sodapics);
-        statusbardraw(12,0,12,36,85-n,85+n+1,sodapics);
-        statusbardraw(24,0,12,36,85-n,121+n+1,sodapics);
-        statusbardraw(36,0,12,12,85-n,157+n+1,sodapics);
-        finalisemenu();
+    case eSodaMenu:
+        o_drawSodaMenuHelper();
         break;
-    }
-    case eSettingsMenu: {
-        drawmenu(360,240,menu);
-        int offs = 31;
-        strcpy(textbuf,"Ken's Labyrinth (LAB3D/SDL2) setup menu");
-        textprint(offs,22,126);
-        strcpy(textbuf,"Input: ");
-        strcat(textbuf,inputdevicemenu[inputdevice]);
-        textprint(51,36,lab3dversion?32:34);
-        strcpy(textbuf,"Configure Input");
-        textprint(51,48,lab3dversion?32:34);
-        strcpy(textbuf,"Resolution: ");
-        if (resolutionnumber<8)
-            strcat(textbuf,resolutionstandardmenu[resolutionnumber]);
-        else if (resolutionnumber<19)
-            strcat(textbuf,resolutionspecialmenu[resolutionnumber-8]);
-        else sprintf(textbuf,"Resolution: %dx%d",resolutionnumber/10000,
-                 resolutionnumber%10000);
-        textprint(51,60,64);
-            strcpy(textbuf,"Display type: ");
-        strcat(textbuf,fullscreenmenu[fullscr]);
-        textprint(51,72,64);
-            strcpy(textbuf,"Filtering: ");
-        strcat(textbuf,filtermenu[nearest]);
-        textprint(51,84,64);
-            strcpy(textbuf,"Music: ");
-        strcat(textbuf,musicmenu[music]);
-        textprint(51,96,96);
-            strcpy(textbuf,"Effects: ");
-        strcat(textbuf,soundmenu[sound]);
-        textprint(51,108,96);
-            strcpy(textbuf,"Sound channels: ");
-        strcat(textbuf,channelmenu[channel]);
-        textprint(51,120,96);
-            strcpy(textbuf,"Music channels: ");
-        strcat(textbuf,channelmenu[musicchannel]);
-        textprint(51,132,96);
-            strcpy(textbuf,"Cheats: ");
-        strcat(textbuf,cheatmenu[cheat]);
-        textprint(51,144,96);
-            strcpy(textbuf,"Sound block size: ");
-        strcat(textbuf,soundblockmenu[soundblock]);
-        textprint(51,156,lab3dversion?32:34);
-            strcpy(textbuf,"Texture colour depth: ");
-        strcat(textbuf,texturedepthmenu[texturedepth]);
-        textprint(51,168,lab3dversion?32:34);
-            strcpy(textbuf,"View: ");
-        strcat(textbuf,scalingtypemenu[scaling]);
-        textprint(51,180,lab3dversion?32:34);
-            strcpy(textbuf,"Exit setup");
-        textprint(51,192,lab3dversion?128:130);
-        strcpy(textbuf,"Use cursor keys and Return to select.");
-        textprint(31,220,lab3dversion?32:34);
-        finalisemenu();
+    case eSettingsMenu:
+        o_drawSettingsMenuHelper();
         break;
-    }
-    case eInputDevicesMenu: {
+    case eInputDevicesMenu:
         fillSettingMenuHelper(4, inputdevicemenu);
         break;
-    }
-    case eSetupConfigureMenu: {
-        int i;
-        int j=12*4+24;
-        drawmenu(304,j,menu);
-        for(i=0;i<4;i++) {
-        strcpy(textbuf,configureinputmenu[i]);
-        textprint(71,120-6*4+12*i,lab3dversion?32:34);
-        }
-        finalisemenu();
+    case eSetupConfigureMenu:
+        o_drawSetupConfigureMenuHelper();
         break;
-    }
-    case eSetupKeys: {
-        int j;
-        drawmenu(360,240,menu);
-        for(j=0;j<numkeys;j++) {
-            strcpy(textbuf,keynames[j]);
-            textprint(31,13+12*j,lab3dversion?32:34);
-            strncpy(textbuf,SDL_GetKeyName(newkeydefs[j]),11);
-            textbuf[11]=0;
-            textprint(261,13+12*j,lab3dversion?32:34);
-        }
-        finalisemenu();
+    case eSetupKeys:
+        o_drawSetupKeysHelper();
         break;
-    }
-    case eSetupJButtons: {
-        int j, cb;
-        drawmenu(360,240,menu);
-        for(j=0;j<numkeys;j++) {
-            strcpy(textbuf,keynames[j]);
-            textprint(31,13+12*j,lab3dversion?32:34);
-            cb=buttondefs[j];
-            if (cb==-1) {
-            strcpy(textbuf,"None");
-            } else {
-            sprintf(textbuf,"Button %d",cb+1);
-            }
-            textbuf[11]=0;
-            textprint(261,13+12*j,lab3dversion?32:34);
-        }
-        finalisemenu();
+    case eSetupJButtons:
+        o_drawSetupJButtonsHelper();
         break;
-    }
-    case eSetupJAxes: {
-        int j, cb;
-        drawmenu(360,240,menu);
-        for(j=0;j<numaxes;j++) {
-            strcpy(textbuf,axisnames[j]);
-            textprint(31,13+12*j,lab3dversion?32:34);
-            cb=axisdefs[j];
-            if (cb==0) {
-            strcpy(textbuf,"None");
-            } else {
-            strncpy(textbuf,jaxisnames[abs(cb)-1],11);
-            }
-            textbuf[11]=0;
-            if (cb < 0)
-            strcat(textbuf," INV");
-            textbuf[11]=0;
-            textprint(261,13+12*j,lab3dversion?32:34);
-        }
-        finalisemenu();
+    case eSetupJAxes:
+        o_drawSetupJAxesHelper();
         break;
-    }
-    case eSetupFiltering: {
+    case eSetupFiltering:
         fillSettingMenuHelper(3, filtermenu);
         break;
-    }
-    case eSetupMusic: {
+    case eSetupMusic:
         fillSettingMenuHelper(2, musicmenu);
         break;
-    }
-    case eSetupSound: {
+    case eSetupSound:
         fillSettingMenuHelper(2, soundmenu);
         break;
-    }
-    case eSetupSoundCh: {
+    case eSetupSoundCh:
         fillSettingMenuHelper(2, channelmenu);
         break;
-    }
-    case eSetupMusicCh: {
+    case eSetupMusicCh:
         fillSettingMenuHelper(2, channelmenu);
         break;
-    }
-    case eSetupCheats: {
+    case eSetupCheats:
         fillSettingMenuHelper(3, cheatmenu);
         break;
-    }
-    case eSetupSoundBlock: {
+    case eSetupSoundBlock:
         fillSettingMenuHelper(10, soundblockmenu);
         break;
-    }
-    case eSetupScaling: {
+    case eSetupScaling:
         fillSettingMenuHelper(4, scalingtypemenu);
         break;
-    }
     default:
         break;
     }
-#endif // !OPENGLES
+    
+    // Enter to Draw Loop
+#endif // OPENGLES
+    while (esckeystate == 0)
+    {
 	PollInputs();
 	animater6++;
 	if (animater6 == 6)
 	    animater6 = 0;
-//#ifndef OPENGLES
+
 	SDL_Delay(10); /* Let's not soak up all CPU... */
-//#endif // !OPENGLES
 
 	if (lab3dversion) {
 	    statusbardraw(16+(animater6/2)*16,0,15,15,xoffs+20-n,nowselector*12+yoffs+n-1,85);
@@ -6025,6 +5738,12 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 	if ((obstatus == 0) && (bstatus > 0))
 	    esckeystate |= (bstatus^3);
 	glFlush();
+    
+#ifdef OPENGLES
+    // Draw Texture
+    ShowPartialOverlay(0, 0, 361, statusbaryoffset, 0);
+    drawOnScreen();
+#endif // OPENGLES
     }
     ksay(27);
     if (lab3dversion)
@@ -6045,6 +5764,317 @@ void fillSettingMenuHelper(int count, char titles[][30]) {
     for(i=0;i<count;i++) {
 	strcpy(textbuf,titles[i]);
 	textprint(71,120-6*count+12*i,lab3dversion?32:34);
+    }
+    finalisemenu();
+}
+
+void o_drawAbortMenuHelper() {
+    K_INT16 n;
+    if (vidmode == 0)
+    n = 0;
+    else
+    n = 20;
+    drawmenu(224,64,menu);
+    strcpy(&textbuf[0],"Really want to quit?");
+    textprint(99,84+n+1,112);
+    strcpy(&textbuf[0],"Yes");
+    textprint(105,96+n+1,32);
+    strcpy(&textbuf[0],"No");
+    textprint(105,108+n+1,32);
+    finalisemenu();
+}
+
+void o_drawNewGameMenuHelper() {
+    K_INT16 j, n;
+    if (vidmode == 0)
+    n = 0;
+    else
+    n = 20;
+    drawmenu(288,64,menu);
+    strcpy(&textbuf[0],"New game");
+    textprint(137,74+n+1,112);
+    strcpy(&textbuf[0],"Episode 1: Search for Sparky");
+    textprint(67,88+n+1,32);
+    if (numboards >= 20) j = 32; else j = 28;
+    strcpy(&textbuf[0],"Episode 2: Sparky's Revenge");
+    textprint(67,100+n+1,((char)j));
+    if (numboards >= 30) j = 32; else j = 28;
+    strcpy(&textbuf[0],"Episode 3: Find the Way Home");
+    textprint(67,112+n+1,((char)j));
+    if (newgameplace < 0) newgameplace = 0;
+    if (newgameplace > 2) newgameplace = 2;
+    finalisemenu();
+}
+
+
+void o_drawHardnessMenuHelper() {
+    K_INT16 n;
+    if (vidmode == 0)
+    n = 0;
+    else
+    n = 20;
+    drawmenu(288,64,menu);
+    strcpy(&textbuf[0],"New game");
+    textprint(137,74+n+1,112);
+    strcpy(&textbuf[0],"Easy: Don't touch me.");
+    textprint(67,92+n+1,32);
+    strcpy(&textbuf[0],"Hard: OUCH!");
+    textprint(67,104+n+1,32);
+    finalisemenu();
+}
+
+void o_drawLoadSaveGameMenuHelper() {
+    char filename[20];
+    K_INT16 fil, i, j, k, n;
+    K_INT32 templong;
+    if (vidmode == 0)
+    n = 0;
+    else
+    n = 20;
+    drawmenu(320,160,menu);
+    if (qStateSaveOrLoad == 1)
+    {
+    strcpy(&textbuf[0],"Load game");
+    textprint(137,26+n+1,32);
+    }
+    else
+    {
+    strcpy(&textbuf[0],"Save game");
+    textprint(137,26+n+1,112);
+    }
+    strcpy(&textbuf[0],"#: Name:       Board: Score: Time:");
+    textprint(55,52+n+1,48);
+    if (gameheadstat == 0)
+    {
+    for(j=0;j<8;j++)
+    {
+        char path[256];
+        filename[0] = 'S', filename[1] = 'A', filename[2] = 'V';
+        filename[3] = 'G', filename[4] = 'A', filename[5] = 'M';
+        filename[6] = 'E', filename[7] = j+48;
+        filename[8] = '.', filename[9] = 'D', filename[10] = 'A';
+        filename[11] = 'T', filename[12] = 0;
+
+        snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+        if((fil=open(path,O_RDONLY|O_BINARY,0))!=-1)
+        {
+        gamexist[j] = 1;
+        read(fil,&gamehead[j][0],27);
+        close(fil);
+        }
+        else {
+        filename[0] = 's', filename[1] = 'a', filename[2] = 'v';
+        filename[3] = 'g', filename[4] = 'a', filename[5] = 'm';
+        filename[6] = 'e', filename[7] = j+48;
+        filename[8] = '.', filename[9] = 'd', filename[10] = 'a';
+        filename[11] = 't', filename[12] = 0;
+
+        snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+        if((fil=open(path,O_RDONLY|O_BINARY,0))!=-1)
+        {
+            gamexist[j] = 1;
+            read(fil,&gamehead[j][0],27);
+            close(fil);
+        }
+        else
+            gamexist[j] = 0;
+        }
+    }
+    gameheadstat = 1;
+    }
+    j = 0;
+    for(i=70+n;i<166+n;i+=12)
+    {
+    if (gamexist[j] == 1)
+    {
+        textbuf[0] = j+49, textbuf[1] = 32, textbuf[2] = 32;
+        for(k=0;k<12;k++)
+        {
+        textbuf[k+3] = gamehead[j][k];
+        if (textbuf[k+3] == 0)
+            textbuf[k+3] = 32;
+        }
+        textbuf[15] = 32;
+        textbuf[16] = ((gamehead[j][17]+1)/10)+48;
+        if (textbuf[16] == 48)
+        textbuf[16] = 32;
+        textbuf[17] = ((gamehead[j][17]+1)%10)+48;
+        textbuf[18] = 32;
+        textbuf[19] = 32;
+        textbuf[20] = 32;
+        k = j*27;
+        templong=readlong((unsigned char *)&gamehead[j][19]);
+
+        textbuf[21] = (char)((templong/100000L)%10L)+48;
+        textbuf[22] = (char)((templong/10000L)%10L)+48;
+        textbuf[23] = (char)((templong/1000L)%10L)+48;
+        textbuf[24] = (char)((templong/100L)%10L)+48;
+        textbuf[25] = (char)((templong/10L)%10L)+48;
+        textbuf[26] = (char)(templong%10L)+48;
+        textbuf[27] = 32;
+        k = 21;
+        while ((textbuf[k] == 48) && (k < 26))
+        textbuf[k++] = 32;
+        k = j*27;
+        templong=readlong((unsigned char *)&gamehead[j][23]);
+
+        templong /= 240;
+        textbuf[28] = (char)((templong/10000L)%10L)+48;
+        textbuf[29] = (char)((templong/1000L)%10L)+48;
+        textbuf[30] = (char)((templong/100L)%10L)+48;
+        textbuf[31] = (char)((templong/10L)%10L)+48;
+        textbuf[32] = (char)(templong%10L)+48;
+        textbuf[33] = 0;
+        k = 28;
+        while ((textbuf[k] == 48) && (k < 32))
+        textbuf[k++] = 32;
+        textprint(56,i-1+1,30);
+        textprint(55,i-1+1,32);
+    }
+    else
+    {
+        textbuf[0] = j+49;
+        textbuf[1] = 0;
+        textprint(56,i-1+1,28);
+        textprint(55,i-1+1,30);
+    }
+    j++;
+    }
+    finalisemenu();
+}
+
+void o_drawSodaMenuHelper() {
+    K_INT16 n;
+    if (vidmode == 0)
+    n = 0;
+    else
+    n = 20;
+    drawmenu(256,160,menu);
+    if (boardnum < 10)
+    loadstory(-34);
+    else
+    loadstory(-33);
+    statusbardraw(0,0,12,36,85-n,49+n+1,sodapics);
+    statusbardraw(12,0,12,36,85-n,85+n+1,sodapics);
+    statusbardraw(24,0,12,36,85-n,121+n+1,sodapics);
+    statusbardraw(36,0,12,12,85-n,157+n+1,sodapics);
+    finalisemenu();
+}
+
+void o_drawSettingsMenuHelper() {
+    drawmenu(360,240,menu);
+    int offs = 31;
+    strcpy(textbuf,"Ken's Labyrinth (LAB3D/SDL2) setup menu");
+    textprint(offs,22,126);
+    strcpy(textbuf,"Input: ");
+    strcat(textbuf,inputdevicemenu[inputdevice]);
+    textprint(51,36,lab3dversion?32:34);
+    strcpy(textbuf,"Configure Input");
+    textprint(51,48,lab3dversion?32:34);
+    strcpy(textbuf,"Resolution: ");
+    if (resolutionnumber<8)
+        strcat(textbuf,resolutionstandardmenu[resolutionnumber]);
+    else if (resolutionnumber<19)
+        strcat(textbuf,resolutionspecialmenu[resolutionnumber-8]);
+    else sprintf(textbuf,"Resolution: %dx%d",resolutionnumber/10000,
+             resolutionnumber%10000);
+    textprint(51,60,64);
+        strcpy(textbuf,"Display type: ");
+    strcat(textbuf,fullscreenmenu[fullscr]);
+    textprint(51,72,64);
+        strcpy(textbuf,"Filtering: ");
+    strcat(textbuf,filtermenu[nearest]);
+    textprint(51,84,64);
+        strcpy(textbuf,"Music: ");
+    strcat(textbuf,musicmenu[music]);
+    textprint(51,96,96);
+        strcpy(textbuf,"Effects: ");
+    strcat(textbuf,soundmenu[sound]);
+    textprint(51,108,96);
+        strcpy(textbuf,"Sound channels: ");
+    strcat(textbuf,channelmenu[channel]);
+    textprint(51,120,96);
+        strcpy(textbuf,"Music channels: ");
+    strcat(textbuf,channelmenu[musicchannel]);
+    textprint(51,132,96);
+        strcpy(textbuf,"Cheats: ");
+    strcat(textbuf,cheatmenu[cheat]);
+    textprint(51,144,96);
+        strcpy(textbuf,"Sound block size: ");
+    strcat(textbuf,soundblockmenu[soundblock]);
+    textprint(51,156,lab3dversion?32:34);
+        strcpy(textbuf,"Texture colour depth: ");
+    strcat(textbuf,texturedepthmenu[texturedepth]);
+    textprint(51,168,lab3dversion?32:34);
+        strcpy(textbuf,"View: ");
+    strcat(textbuf,scalingtypemenu[scaling]);
+    textprint(51,180,lab3dversion?32:34);
+        strcpy(textbuf,"Exit setup");
+    textprint(51,192,lab3dversion?128:130);
+    strcpy(textbuf,"Use cursor keys and Return to select.");
+    textprint(31,220,lab3dversion?32:34);
+    finalisemenu();
+}
+
+void o_drawSetupConfigureMenuHelper() {
+    int i;
+    int j=12*4+24;
+    drawmenu(304,j,menu);
+    for(i=0;i<4;i++) {
+    strcpy(textbuf,configureinputmenu[i]);
+    textprint(71,120-6*4+12*i,lab3dversion?32:34);
+    }
+    finalisemenu();
+}
+
+void o_drawSetupKeysHelper() {
+    int j;
+    drawmenu(360,240,menu);
+    for(j=0;j<numkeys;j++) {
+        strcpy(textbuf,keynames[j]);
+        textprint(31,13+12*j,lab3dversion?32:34);
+        strncpy(textbuf,SDL_GetKeyName(newkeydefs[j]),11);
+        textbuf[11]=0;
+        textprint(261,13+12*j,lab3dversion?32:34);
+    }
+    finalisemenu();
+}
+
+void o_drawSetupJButtonsHelper() {
+    int j, cb;
+    drawmenu(360,240,menu);
+    for(j=0;j<numkeys;j++) {
+        strcpy(textbuf,keynames[j]);
+        textprint(31,13+12*j,lab3dversion?32:34);
+        cb=buttondefs[j];
+        if (cb==-1) {
+        strcpy(textbuf,"None");
+        } else {
+        sprintf(textbuf,"Button %d",cb+1);
+        }
+        textbuf[11]=0;
+        textprint(261,13+12*j,lab3dversion?32:34);
+    }
+    finalisemenu();
+}
+
+void o_drawSetupJAxesHelper() {
+    int j, cb;
+    drawmenu(360,240,menu);
+    for(j=0;j<numaxes;j++) {
+        strcpy(textbuf,axisnames[j]);
+        textprint(31,13+12*j,lab3dversion?32:34);
+        cb=axisdefs[j];
+        if (cb==0) {
+        strcpy(textbuf,"None");
+        } else {
+        strncpy(textbuf,jaxisnames[abs(cb)-1],11);
+        }
+        textbuf[11]=0;
+        if (cb < 0)
+        strcat(textbuf," INV");
+        textbuf[11]=0;
+        textprint(261,13+12*j,lab3dversion?32:34);
     }
     finalisemenu();
 }
@@ -6101,11 +6131,6 @@ void drawmenu(K_INT16 xsiz, K_INT16 ysiz, K_INT16 walnume)
 
 	return;
     }
-
-//#ifdef OPENGLES
-//    wipeoverlay(menuleft+4, menutop+4, menuwidth+4, menuheight+4);
-//    TO_DEBUG_LOG("%dx%dx%dx%d", menuleft, menutop, menuwidth, menuheight);
-//#endif // OPENGLES
 
     if (ysiz<=240) {
 	statusbardraw(0,0,16,16,x1,y1+1,walnume);
