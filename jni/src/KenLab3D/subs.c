@@ -5484,14 +5484,12 @@ K_INT16 mainmenu()
 	    if (mainmenuplace == 8) done = areyousure();
 	    if (done == 0)
 	    {
-#ifndef ANDROID_NDK
+#ifndef OPENGLES
 		/* Redraw whatever was beneath the menu. Double buffer to
 		   avoid annoying flicker. */
 		if (sortcnt == -1) {
 		    spriteyoffset=20;
-#ifndef OPENGLES
 		    glDrawBuffer(GL_BACK);
-#endif // !OPENGLES
             checkGLStatus( __FILE__, __LINE__ );
 		    kgif(1);
 		    drawintroduction();
@@ -5499,14 +5497,10 @@ K_INT16 mainmenu()
 		    drawmainmenu();
             checkGLStatus( __FILE__, __LINE__ );
             drawOnScreen();
-#ifndef OPENGLES
 		    glDrawBuffer(GL_FRONT);
-#endif // !OPENGLES
 		}
 		else {
-#ifndef OPENGLES
 		    glDrawBuffer(GL_BACK);
-#endif // !OPENGLES
             checkGLStatus( __FILE__, __LINE__ );
 		    wipeoverlay(0,0,361,statusbaryoffset);
 		    statusbaralldraw();
@@ -5515,16 +5509,9 @@ K_INT16 mainmenu()
 		    drawmainmenu();
             checkGLStatus( __FILE__, __LINE__ );
             drawOnScreen();
-#ifndef OPENGLES
 		    glDrawBuffer(GL_FRONT);
-#endif // !OPENGLES
 		}
-//#else
-//            drawmainmenu();
-//            drawOnScreen();
-//            TO_DEBUG_LOG("sbo: %d\n", statusbaryoffset);
-//            wipeoverlay(0,0,361,statusbaryoffset); // Clear garbage
-#endif // ANDROID_NDK
+#endif // OPENGLES
 	    }
 	}
     }
@@ -5594,7 +5581,11 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     switch (currentMenuState) {
     // Wipe Screen after all Menus.
     default: {
-        wipeoverlay(0,0,361,statusbaryoffset);
+        if (sortcnt == -1) {
+            wipeoverlay(0,0,361,260);
+        } else {
+            wipeoverlay(0,0,361,statusbaryoffset);
+        }
         break;
     }
     case eNoMenu: {
@@ -5740,8 +5731,8 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 	glFlush();
     
 #ifdef OPENGLES
-    // Draw Texture
-    ShowPartialOverlay(0, 0, 361, statusbaryoffset, 0);
+    // Draw All on Texture
+    ShowPartialOverlay(-1, -1, 363, 262, 0);
     drawOnScreen();
 #endif // OPENGLES
     }
@@ -6161,7 +6152,6 @@ void drawmenu(K_INT16 xsiz, K_INT16 ysiz, K_INT16 walnume)
 void creditsmenu()
 {
     K_INT16 n;
-
     if (vidmode == 0)
 	n = 0;
     else
@@ -6472,52 +6462,88 @@ void sodamenu()
 /* New credits instead of ordering info. */
 
 void orderinfomenu() {
-    drawmenu(320,106,menu);
+    K_INT16 n;
+    if (vidmode == 0)
+	n = 0;
+    else
+	n = 20;
+    drawmenu(320,216,menu);
+    strcpy(&textbuf[0],"Copyright notice");
+    textprint(129,n+1,32);
 
     strcpy(textbuf,
 	   "\"Ken's Labyrinth\"");
-    textprint(30,76,32);
-    strcpy(textbuf,"Copyright (c) 1992-1993 Ken Silverman");
+    textprint(30,36,32);
+    strcpy(textbuf,"(c) 1992-1993 Ken Silverman");
 
-    textprint(30,86,32);
+    textprint(30,46,32);
 
     strcpy(textbuf,
 	   "\"LAB3D/SDL\" conversion");
-    textprint(30,96,32);
+    textprint(30,56,176);
 
     /* Fonts only have 7-bit ASCII, and my surname needs a character not in
        this set. Fake the dots. */
 
     strcpy(textbuf,
 	   ".");
-    textprint(260,100,32);
-    textprint(264,100,32);
+    textprint(180,60,176);
+    textprint(184,60,176);
     strcpy(textbuf,
-	   "Copyright (c) 2002-2004 Jan Lonnberg");
-    textprint(30,106,32);
+	   "(c) 2002-2004 Jan Lonnberg");
+    textprint(30,66,176);
 
     strcpy(textbuf,
 	   "http://icculus.org/LAB3D/");
-    textprint(30,116,32);
+    textprint(30,76,176);
+
+    strcpy(textbuf,
+	   "\"LAB3D-SDL-enhanced\"");
+    textprint(30,86,176);
+    strcpy(textbuf,
+	   "(c) 2011-2015 Jared Stafford");
+    textprint(30,96,176);
+    strcpy(textbuf,
+	   "http://jspenguin.org/software/lab3d/");
+    textprint(30,106,176);
+
+    strcpy(textbuf,
+	   "OpenGL ES port");
+    textprint(30,116,176);
+    strcpy(textbuf,
+	   "(c) 2014 Scott \"Pickle\" Smith");
+    textprint(30,126,176);
+    strcpy(textbuf,
+	   "https://github.com/Pickle/Lab3dGLES");
+    textprint(30,136,176);
+
+    strcpy(textbuf,
+	   "Android port");
+    textprint(30,146,176);
+    strcpy(textbuf,
+	   "(c) 2015 Serg \"EXL\" Koles");
+    textprint(30,156,176);
+    strcpy(textbuf,
+	   "http://exlmoto.ru/kenlab3d-droid");
+    textprint(30,166,176);
 
     strcpy(textbuf,
 	   "See readme.txt for license");
-    textprint(30,131,32);
+    textprint(30,186,32);
 
     strcpy(textbuf,
 	   "Ken Silverman's official web site:");
-    textprint(30,146,48);
+    textprint(30,196,48);
 
     strcpy(textbuf,
 	   "http://www.advsys.net/ken");
-    textprint(30,156,48);
+    textprint(30,206,48);
 
     finalisemenu();
 #ifdef OPENGLES // TODO: Check SwapBuffers.
     drawOnScreen();
 #endif // !OPENGLES
     pressakey();
-
 }
 
 /* Save/load game selector. */
