@@ -10,7 +10,7 @@ LOCAL_CPPFLAGS += -O3 -frtti -ffast-math -fomit-frame-pointer $(DEF)
 
 LOCAL_MODULE := KenLab3D
 
-SDL_PATH := ../SDL2-2.0.3
+SDL_PATH := ../SDL-2.0.4-9901
 
 LOCAL_C_INCLUDES :=	$(LOCAL_PATH)/$(SDL_PATH)/include \
 					$(LOCAL_PATH)/3rdparty/LodePNG \
