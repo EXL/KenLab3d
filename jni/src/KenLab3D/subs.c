@@ -9,7 +9,8 @@
 #include <SDL2/SDL_image.h>
 #else
 #include <SDL_endian.h>
-#include <SDL_image.h>
+
+#include "lodepng.h" // Use LodePNG library
 #endif // !ANDROID_NDK
 #else
 #include <SDL/SDL_endian.h>
@@ -1174,6 +1175,7 @@ int checkalpha(Uint32* tex, int w, int cw, int ch) {
     return 0;
 }
 imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfilt) {
+
     imgcache* cur=img_cache;
     while (cur) {
 	if (!strcmp(fname,cur->name)) {
@@ -1181,6 +1183,7 @@ imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfil
 	}
 	cur=cur->next;
     }
+#ifndef ANDROID_NDK
     SDL_Surface* tsurf=IMG_Load(fname);
 
     if (!tsurf) {
@@ -1190,10 +1193,10 @@ imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfil
 
     }
 
-    imgcache* new=(imgcache*)malloc(sizeof(imgcache));
-    new->name=strdup(fname);
+    imgcache* newImg=(imgcache*)malloc(sizeof(imgcache));
+    newImg->name=strdup(fname);
 
-    glGenTextures (1, &new->texnum);
+    glGenTextures (1, &newImg->texnum);
 
 #ifndef USE_SDL2
     SDL_SetAlpha(tsurf,0,255);
@@ -1217,17 +1220,48 @@ imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfil
 
     int hasalph=checkalpha((Uint32*) tsurf->pixels, tsurf->w, tsurf->w, tsurf->h);
 
-    new->w=tsurf->w;
-    new->h=tsurf->h;
-    UploadTexture(new->texnum,temptex,tsurf->h,tsurf->w,0,repeatx,hasalph,minfilt,magfilt);
+    newImg->w=tsurf->w;
+    newImg->h=tsurf->h;
+    UploadTexture(newImg->texnum,temptex,tsurf->h,tsurf->w,0,repeatx,hasalph,minfilt,magfilt);
     SDL_FreeSurface(tsurf);
     SDL_FreeSurface(conv);
     free(temptex);
+#else
+    unsigned int png_error;
+    unsigned char *png_image;
+    unsigned int png_width, png_height;
 
-    new->next=img_cache;
-    img_cache=new;
-    return new;
+    // Use LodePNG library
+    png_error = lodepng_decode32_file(&png_image, &png_width, &png_height, fname);
+    if (png_error) {
+        TO_DEBUG_LOG("LODEPNG Error %d: %s.\n", png_error, lodepng_error_text(png_error));
+    }
 
+    imgcache* newImg=(imgcache*)malloc(sizeof(imgcache));
+    newImg->name=strdup(fname);
+
+    glGenTextures (1, &newImg->texnum);
+
+    // Temp Buffer for convert PNG
+    Uint32* temptex=(Uint32*)malloc(png_width*png_height*4);
+
+    // Convert loop
+    int xx,yy;
+    Uint32* temp=(Uint32*)temptex;
+    for(xx=0;xx<png_width;xx++)
+	for(yy=0;yy<png_height;yy++)
+	    *temp++=((Uint32*)png_image)[xx+png_width*yy];
+
+    newImg->w=png_width;
+    newImg->h=png_height;
+    UploadTexture(newImg->texnum,temptex,png_height,png_width,0,repeatx,1,minfilt,magfilt);
+
+    free(temptex);
+    free(png_image);
+#endif // !ANDROID_NDK
+    newImg->next=img_cache;
+    img_cache=newImg;
+    return newImg;
 }
 
 typedef struct {

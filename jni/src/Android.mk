@@ -11,10 +11,9 @@ LOCAL_CPPFLAGS += -O3 -frtti -ffast-math -fomit-frame-pointer $(DEF)
 LOCAL_MODULE := KenLab3D
 
 SDL_PATH := ../SDL2-2.0.3
-SDL_IMAGE_PATH := ../SDL2_image-2.0.0
 
 LOCAL_C_INCLUDES :=	$(LOCAL_PATH)/$(SDL_PATH)/include \
-					$(LOCAL_PATH)/$(SDL_IMAGE_PATH) \
+					$(LOCAL_PATH)/3rdparty/LodePNG \
 					$(LOCAL_PATH)/KenLab3D \
 					$(LOCAL_PATH)/3rdparty/Glues
 
@@ -29,13 +28,25 @@ LOCAL_SRC_FILES :=	$(SDL_PATH)/src/main/android/SDL_android_main.c \
 					KenLab3D/subs.c \
 					KenLab3D/sdl2keyhelper.c
 
-LOCAL_SHARED_LIBRARIES := SDL2 SDL2_image
+LOCAL_SHARED_LIBRARIES := SDL2 LodePNG
 
 LOCAL_STATIC_LIBRARIES := Glues Tess
 
 LOCAL_LDLIBS := -lGLESv1_CM -lGLESv2 -llog
 
 include $(BUILD_SHARED_LIBRARY)
+
+# LodePNG Static Library
+include $(CLEAR_VARS)
+
+DEF := -DANDROID_NDK
+LOCAL_CFLAGS +=  -O3 -ffast-math -fomit-frame-pointer $(DEF)
+LOCAL_CPPFLAGS += -O3 -frtti -ffast-math -fomit-frame-pointer $(DEF)
+
+LOCAL_MODULE    := LodePNG
+LOCAL_SRC_FILES :=	3rdparty/LodePNG/lodepng.c
+
+include $(BUILD_STATIC_LIBRARY)
 
 # Tess Static Library
 include $(CLEAR_VARS)
