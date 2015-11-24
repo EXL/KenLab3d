@@ -148,6 +148,9 @@ int main(int argc,char **argv)
 #else
     globalDataDir = "/storage/sdcard0/KenLabData";
     clearCurrentMenuState();
+
+    TO_DEBUG_LOG("Android Internal Storage path is: %s", SDL_AndroidGetInternalStoragePath());
+    TO_DEBUG_LOG("Android External Storage path is: %s", SDL_AndroidGetExternalStoragePath());
 #endif // !ANDROID_NDK
 
     clockspd=0;

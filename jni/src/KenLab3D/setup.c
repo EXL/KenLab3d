@@ -386,7 +386,7 @@ void selectionmenu(int alts,char titles[][30],int *value) {
 	i=getselection(28,99-6*alts,*value,alts);
 
     if (i>=0) *value=i;
-    
+
 #ifdef OPENGLES
     switch (currentMenuState) {
     case eInputDevicesMenu:
@@ -440,7 +440,7 @@ int resolutionmenu(int alts,int start,char titles[][30],int def) {
     finalisemenu();
 #endif
     i=getselection(28,99-6*alts,def,alts);
-    
+
 #ifdef OPENGLES
     switch (currentMenuState) {
     case eSetupConfigureMenu:
@@ -618,8 +618,6 @@ void setupsetresolution(void) {
 		} while(a==resolutionmenusize);
 	    resolutionnumber=detectedresolution[a];
 	    free(modes);
-#else
-        // TODO: Rewrite here all
 #endif // !USE_SDL2
 	    break;
 	    /*
@@ -799,7 +797,7 @@ void setupsetbuttons(void) {
 			}
 			break;
             case SDL_KEYDOWN:
-                TO_DEBUG_LOG("s.c2: Scancode: %d.\n", sk); // TODO: Check this.
+                // TO_DEBUG_LOG("s.c2: Scancode: %d.\n", sk);
 			j=-1;
 			break;
 		    default:
@@ -875,7 +873,7 @@ void setupsetaxes(void) {
             textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+1*12,0);
             strcpy(textbuf,"direction, or press");
             textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+2*12,lab3dversion?32:34);
-            
+
             strcpy(textbuf,"any key to delete");
             textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+3*12,lab3dversion?32:34);
             finalisemenu();
@@ -1231,9 +1229,6 @@ void loadsettings(void) {
 
         if ((modes!=NULL)&&(modes!=(SDL_Rect **)-1)&&(modes[0]!=NULL))
         resolutionnumber=modes[0]->w*10000+modes[0]->h;
-#else
-        // TODO: Rewrite here all
-        // modes=SDL_ListModes(NULL,SDL_WINDOW_FULLSCREEN);
 #endif // !USE_SDL2
     i=0;
 
@@ -1380,10 +1375,13 @@ void setup(void) {
 
     screenwidth=360; screenheight=240;
 
+#ifndef ANDROID_NDK
     icon=SDL_LoadBMP("ken.bmp");
     if (icon==NULL) {
     TO_DEBUG_LOG("Warning: ken.bmp (icon file) not found.\n");
     }
+#endif // !ANDROID_NDK
+
 #ifndef USE_SDL2
     SDL_WM_SetIcon(icon,NULL);
 
@@ -1419,8 +1417,7 @@ void setup(void) {
         exit(-1);
     }
 
-    SDL_SetWindowIcon(globalWindow, icon);
-
+#ifndef ANDROID_NDK
     // Calculate gamma ramp
     /* Zap gamma correction. */
     if (!gammaRamp) {
@@ -1433,7 +1430,7 @@ void setup(void) {
     } else {
         TO_DEBUG_LOG("Warning: gammaRump is null!\n");
     }
-
+#endif // !ANDROID_NDK
     int _screen_w, _screen_h;
     SDL_GetWindowSize(globalWindow, &_screen_w, &_screen_h);
 
@@ -1463,6 +1460,10 @@ void setup(void) {
 
 #ifndef USE_SDL2
     SDL_WM_SetCaption("Ken's Labyrinth", "Ken's Labyrinth");
+#else
+#ifndef ANDROID_NDK
+    SDL_SetWindowIcon(globalWindow, icon);
+#endif // !ANDROID_NDK
 #endif // !USE_SDL2
 
     linecompare(479);
@@ -1587,13 +1588,15 @@ void setup(void) {
     savesettings();
 
 #ifdef USE_SDL2
-    TO_DEBUG_LOG("1. Delete gamma Ramp.\n");
+#ifndef ANDROID_NDK
+    TO_DEBUG_LOG("Delete gamma Ramp.\n");
     SDL_free(gammaRamp);
     gammaRamp = NULL;
-    TO_DEBUG_LOG("2. Delete GL contex.\n");
+#endif // !ANDROID_NDK
+    TO_DEBUG_LOG("Delete GL contex.\n");
     SDL_GL_DeleteContext(glContext);
     glContext = NULL;
-    TO_DEBUG_LOG("3. Destroy SDL Window.\n");
+    TO_DEBUG_LOG("Destroy SDL Window.\n");
     SDL_DestroyWindow(globalWindow);
     globalWindow = NULL;
 #endif // USE_SDL2

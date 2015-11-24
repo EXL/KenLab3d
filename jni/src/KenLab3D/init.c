@@ -65,19 +65,12 @@ void initialize()
 
     TO_DEBUG_LOG("Activating video...\n");
 
-    // TODO: Check this
-//#ifndef OPENGLES
-//    int flags = SDL_OPENGL;
-//    int bpp = 32;
-//#else
-//    int flags = fullscreen  ? (SDL_SWSURFACE|SDL_FULLSCREEN):SDL_SWSURFACE;
-//    int bpp = 16;
-//#endif // !OPENGLES
-
+#ifndef ANDROID_NDK
     icon=SDL_LoadBMP("ken.bmp");
     if (icon==NULL) {
     TO_DEBUG_LOG("Warning: ken.bmp (icon file) not found.\n");
     }
+#endif // !ANDROID_NDK
 #ifndef USE_SDL2
     SDL_WM_SetIcon(icon,NULL);
 
@@ -136,7 +129,11 @@ void initialize()
         exit(-1);
     }
 
+    // Clear screen
+    glClearColor(0, 0, 0, 0);
+#ifndef ANDROID_NDK
     SDL_SetWindowIcon(globalWindow, icon);
+#endif // !ANDROID_NDK
 #endif // !USE_SDL2
 
     SDL_GL_GetAttribute(SDL_GL_RED_SIZE,&realr);
@@ -169,6 +166,7 @@ void initialize()
 #ifndef USE_SDL2
     SDL_SetGamma(gammalevel,gammalevel,gammalevel);
 #else
+#ifndef ANDROID_NDK
     // Calculate gamma ramp
     if (!gammaRamp) {
         gammaRamp = (Uint16 *)SDL_malloc(256 * sizeof(Uint16));
@@ -181,6 +179,7 @@ void initialize()
     } else {
         TO_DEBUG_LOG("Error: gammaRamp isn't null!\n");
     }
+#endif // !ANDROID_NDK
 #endif // !USE_SDL2
 
     if (realz<24) {
@@ -374,8 +373,6 @@ void initialize()
 		(channels-1)?"stereo":"mono",
 		soundpan?"stereo":"mono");
 
-    // TODO: Check the musicsource is 2
-
 	want.freq=(musicsource==2)?44100:11025;
 	want.format=AUDIO_S16SYS;
 	want.channels=channels;
@@ -493,11 +490,9 @@ void initialize()
 
 #ifndef USE_SDL2
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-#else
-    // TODO: Check this.
 #endif // !USE_SDL2
     SetVisibleScreenOffset(0);
-    
+
     drawOnScreen();
 
     if (moustat == 0)
@@ -581,7 +576,7 @@ void initialize()
 	    ShowPartialOverlay(20,20+visiblescreenyoffset,320,200,0);
 
         drawOnScreen();
-        
+
 	    SDL_LockMutex(timermutex);
 	}
 	PollInputs();
@@ -609,7 +604,7 @@ void initialize()
 	ShowPartialOverlay(20,20+visiblescreenyoffset,320,200,0);
 
     drawOnScreen();
-    
+
 	SDL_LockMutex(timermutex);
 
 	while(clockspeed<oclockspeed+4) {

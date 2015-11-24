@@ -145,7 +145,7 @@ void writeshort(unsigned char *t,K_UINT16 v) {
 }
 
 int getkeydefstat(int keydef) {
-    int key=newkeystatus[newkeydefs[keydef]]; // TODO: Check this.
+    int key=newkeystatus[newkeydefs[keydef]];
     if (key) return key;
     if (keydef == 8 || keydef == 12) return 0;
     if (buttondefs[keydef]!=-1) {
@@ -163,7 +163,7 @@ int getaxispos(int axis, int deadzone) {
     return 0;
 }
 void clearkeydefstat(int keydef) {
-    newkeystatus[newkeydefs[keydef]] = 0; // TODO: Check this.
+    newkeystatus[newkeydefs[keydef]] = 0;
     if (buttondefs[keydef]!=-1) {
 	buttonstatus[buttondefs[keydef]] = 0;
     }
@@ -4863,7 +4863,7 @@ void drawscorebox() {
 
     menuleft=18; menutop=20; menuwidth=320; menuheight=200;
     menuing=1;
-    
+
 #ifdef OPENGLES
     drawOnScreen();
 #endif
@@ -4959,7 +4959,7 @@ void hiscorecheck()
 	    getname();
 	} else
 	    finalisemenu();
-    
+
 	if (hiscorenamstat == 0)
 	{
 	    for(i=0;i<22;i++)
@@ -5194,14 +5194,14 @@ void getname()
 #ifndef USE_SDL2
     SDL_EnableUNICODE(1);
 #endif // !USE_SDL2
-    
+
 #ifdef ANDROID_NDK
     strncpy( hiscorenam, "APlayer", sizeof(textbuf)-1 );
     j = strlen( hiscorenam );
 #else
     while ((ch != 13) && (ch != 27))
     {
-#ifdef OPENGLES // TODO: Check SwapBuffers.
+#ifdef OPENGLES
         drawOnScreen();
 #endif // !OPENGLES
 	while ((ch=getkeypress()) == 0)
@@ -5279,7 +5279,7 @@ void getname()
 		textprint(70,20+statusbaryoffset,(char)177);
 	}
     }
-    
+
 #ifdef OPENGLES
     drawOnScreen();
 #endif
@@ -5439,7 +5439,7 @@ K_INT16 mainmenu()
     K_INT16 j, k, done;
 
     spriteyoffset=0;
-    
+
 #ifdef OPENGLES
     currentMenuState = eNoMenu; // First run.
 #endif // OPENGLES
@@ -5562,7 +5562,7 @@ K_INT16 mainmenu()
     glDrawBuffer(GL_BACK);
 #endif // !OPENGLES
     return(j);
-    
+
 #ifdef OPENGLES
     currentMenuState = eNoMenu;
 #endif // OPENGLES
@@ -5623,11 +5623,14 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
         break;
     }
     case eNoMenu: {
+        if (sortcnt == -1) {
+            wipeoverlay(0,0,361,260);
+        }
         currentMenuState = eMainMenu;
         break;
     }
     }
-    
+
     // Now Render necessary menus
     switch (currentMenuState) {
     case eMainMenu:
@@ -5693,7 +5696,7 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
     default:
         break;
     }
-    
+
     // Enter to Draw Loop
 #endif // OPENGLES
     while (esckeystate == 0)
@@ -5763,7 +5766,7 @@ K_INT16 getselection(K_INT16 xoffs, K_INT16 yoffs, K_INT16 nowselector,
 	if ((obstatus == 0) && (bstatus > 0))
 	    esckeystate |= (bstatus^3);
 	glFlush();
-    
+
 #ifdef OPENGLES
     // Draw All on Texture
     ShowPartialOverlay(-1, -1, 363, 262, 0);
@@ -6195,7 +6198,7 @@ void creditsmenu()
     textprint(149,20+n+1,32);
     loadstory(-1);
     finalisemenu();
-#ifdef OPENGLES // TODO: Check SwapBuffers.
+#ifdef OPENGLES
     drawOnScreen();
 #endif // !OPENGLES
     pressakey();
@@ -6226,7 +6229,7 @@ void bigstorymenu()
 	nowenterstate = 1;
 	lastenterstate = 1;
 	glFlush();
-#ifdef OPENGLES // TODO: Check SwapBuffers.
+#ifdef OPENGLES
     drawOnScreen();
 #endif // !OPENGLES
 	while ((nowenterstate <= lastenterstate) && (bstatus <= obstatus))
@@ -6312,7 +6315,7 @@ void helpmenu()
     strcpy(&textbuf[0],"Help");
     textprint(161,18+n+1,32);
     finalisemenu();
-#ifdef OPENGLES // TODO: Check SwapBuffers.
+#ifdef OPENGLES
     drawOnScreen();
 #endif // !OPENGLES
     pressakey();
@@ -6574,7 +6577,7 @@ void orderinfomenu() {
     textprint(30,206,48);
 
     finalisemenu();
-#ifdef OPENGLES // TODO: Check SwapBuffers.
+#ifdef OPENGLES
     drawOnScreen();
 #endif // !OPENGLES
     pressakey();
@@ -6930,6 +6933,7 @@ Uint16 getkeypress() {
 	{
 	    case SDL_QUIT:
 		quitgame=1;
+		break;
 	    case SDL_KEYDOWN:
         sk=event.key.keysym.sym;
         // TO_DEBUG_LOG("Pushed Key is %d, code: %d.\n", sk, event.key.keysym.scancode );
@@ -6997,6 +7001,7 @@ void PollInputs() {
 	{
 	    case SDL_QUIT:
 		quitgame=1;
+		break;
 	    case SDL_JOYBUTTONDOWN:
 	    case SDL_JOYBUTTONUP:
 		sk=event.jbutton.button;
@@ -7126,13 +7131,15 @@ void quit() {
 	SDL_JoystickClose(joystick);
 
 #ifdef USE_SDL2
-    TO_DEBUG_LOG("1. Delete gamma Ramp.\n");
+#ifndef ANDROID_NDK
+    TO_DEBUG_LOG("Delete gamma Ramp.\n");
     SDL_free(gammaRamp);
     gammaRamp = NULL;
-    TO_DEBUG_LOG("2. Delete GL contex.\n");
+#endif // !ANDROID_NDK
+    TO_DEBUG_LOG("Delete GL contex.\n");
     SDL_GL_DeleteContext(glContext);
     glContext = NULL;
-    TO_DEBUG_LOG("3. Destroy SDL Window.\n");
+    TO_DEBUG_LOG("Destroy SDL Window.\n");
     SDL_DestroyWindow(globalWindow);
     globalWindow = NULL;
 #endif // USE_SDL2
