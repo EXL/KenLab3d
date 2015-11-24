@@ -241,7 +241,7 @@ typedef enum {
 
 int getOldAsciiKeyCode(int newKeyCode);
 int getUpperChar(int smallCharKeyCode);
-int patchKeysAndroidSDL2Bug(int keyCode);
+int patchAndroidKeysDpadSDL2(int keyCode);
 
 #endif // SDL2KEYHELPER_H
 

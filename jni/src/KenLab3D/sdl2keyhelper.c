@@ -6,7 +6,7 @@
 #include <SDL.h>
 #endif // !ANDROID_NDK
 
-int patchKeysAndroidSDL2Bug(int keyCode) {
+int patchAndroidKeysDpadSDL2(int keyCode) {
     switch (keyCode) {
     case OLDK_w:
         return OLDK_UP;
@@ -16,6 +16,8 @@ int patchKeysAndroidSDL2Bug(int keyCode) {
         return OLDK_LEFT;
     case OLDK_d:
         return OLDK_RIGHT;
+    case SDLK_SELECT:
+        return OLDK_RETURN;
     case OLDK_r:
     case SDLK_AC_BACK:
         return OLDK_ESCAPE;

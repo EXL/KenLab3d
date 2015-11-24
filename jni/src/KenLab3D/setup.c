@@ -741,7 +741,7 @@ void setupsetkeys(void) {
 #ifdef USE_SDL2
                 sk=getOldAsciiKeyCode(sk);
 #ifdef ANDROID_NDK
-                sk=patchKeysAndroidSDL2Bug(sk);
+                sk=patchAndroidKeysDpadSDL2(sk);
 #endif // ANDROID_NDK
 #endif // USE_SDL2
 			    if (sk<SDLKEYS) {

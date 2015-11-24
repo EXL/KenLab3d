@@ -6936,7 +6936,7 @@ Uint16 getkeypress() {
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
 #ifdef ANDROID_NDK
-        sk=patchKeysAndroidSDL2Bug(sk);
+        sk=patchAndroidKeysDpadSDL2(sk);
 #endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
@@ -6966,7 +6966,7 @@ Uint16 getkeypress() {
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
 #ifdef ANDROID_NDK
-        sk=patchKeysAndroidSDL2Bug(sk);
+        sk=patchAndroidKeysDpadSDL2(sk);
 #endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
@@ -7017,7 +7017,7 @@ void PollInputs() {
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
 #ifdef ANDROID_NDK
-        sk=patchKeysAndroidSDL2Bug(sk);
+        sk=patchAndroidKeysDpadSDL2(sk);
 #endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
@@ -7031,7 +7031,7 @@ void PollInputs() {
 #ifdef USE_SDL2
         sk=getOldAsciiKeyCode(sk);
 #ifdef ANDROID_NDK
-        sk=patchKeysAndroidSDL2Bug(sk);
+        sk=patchAndroidKeysDpadSDL2(sk);
 #endif // ANDROID_NDK
 #endif // USE_SDL2
 		if ((sk<SDLKEYS)&&(PCkey[sk]>=0)) {
