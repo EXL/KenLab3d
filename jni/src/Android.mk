@@ -28,9 +28,9 @@ LOCAL_SRC_FILES :=	$(SDL_PATH)/src/main/android/SDL_android_main.c \
 					KenLab3D/subs.c \
 					KenLab3D/sdl2keyhelper.c
 
-LOCAL_SHARED_LIBRARIES := SDL2 LodePNG
+LOCAL_SHARED_LIBRARIES := SDL2
 
-LOCAL_STATIC_LIBRARIES := Glues Tess
+LOCAL_STATIC_LIBRARIES := Glues LodePNG
 
 LOCAL_LDLIBS := -lGLESv1_CM -lGLESv2 -llog
 
@@ -45,29 +45,6 @@ LOCAL_CPPFLAGS += -O3 -frtti -ffast-math -fomit-frame-pointer $(DEF)
 
 LOCAL_MODULE    := LodePNG
 LOCAL_SRC_FILES :=	3rdparty/LodePNG/lodepng.c
-
-include $(BUILD_STATIC_LIBRARY)
-
-# Tess Static Library
-include $(CLEAR_VARS)
-
-DEF := -DANDROID_NDK
-LOCAL_CFLAGS +=  -O3 -ffast-math -fomit-frame-pointer $(DEF)
-LOCAL_CPPFLAGS += -O3 -frtti -ffast-math -fomit-frame-pointer $(DEF)
-
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/3rdparty/Glues
-
-LOCAL_MODULE    := Tess
-LOCAL_SRC_FILES :=	3rdparty/Tess/dict.c \
-					3rdparty/Tess/geom.c \
-					3rdparty/Tess/memalloc.c \
-					3rdparty/Tess/mesh.c \
-					3rdparty/Tess/normal.c \
-					3rdparty/Tess/priorityq.c \
-					3rdparty/Tess/render.c \
-					3rdparty/Tess/sweep.c \
-					3rdparty/Tess/tess.c \
-					3rdparty/Tess/tessmono.c
 
 include $(BUILD_STATIC_LIBRARY)
 

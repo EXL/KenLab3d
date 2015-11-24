@@ -88,6 +88,4 @@ gen-external-apklibs
 
 ### External symlinks ###
 assets/KenLabData
-jni/src/3rdparty/Tess
-jni/src/3rdparty/Glues
 jni/SDL-2.0.4-9901
