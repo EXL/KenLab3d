@@ -146,7 +146,7 @@ int main(int argc,char **argv)
 #ifndef ANDROID_NDK
     globalDataDir = "./";
 #else
-    globalDataDir = "/storage/sdcard0/KenLabData";
+    globalDataDir = "KenLabData"; // There is directory in assets from APK-package of game
     clearCurrentMenuState();
 
     TO_DEBUG_LOG("Android Internal Storage path is: %s", SDL_AndroidGetInternalStoragePath());

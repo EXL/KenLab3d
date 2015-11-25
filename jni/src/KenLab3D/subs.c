@@ -195,11 +195,22 @@ void loadboard()
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/boards.dat", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/BOARDS.DAT", globalDataDir);
+#ifdef ANDROID_NDK
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (io) {
+    	SDL_RWseek(io, ((long)boardnum)<<13,SEEK_SET);
+    	SDL_RWread(io, &board[0],8192, 1);
+    	SDL_RWclose(io);
+#else
     if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
         ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1)) {
 	    lseek(fil,((long)boardnum)<<13,SEEK_SET);
 	    read(fil,&board[0],8192);
 	    close(fil);
+#endif // ANDROID_NDK
 	    numwarps=0;
 	    justwarped=0;
 	} else {
@@ -212,9 +223,17 @@ void loadboard()
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/boards.kzp", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/BOARDS.KZP", globalDataDir);
+#ifdef ANDROID_NDK
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (io) {
+#else
     if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
         ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1))
 	{
+#endif // ANDROID_NDK
 	    prepdie = 0;
 	    numwarps = 0;
 	    justwarped = 0;
@@ -222,8 +241,11 @@ void loadboard()
 	    templong = (long)(30*4);
 	    for(i=0;i<(boardnum<<1);i++)
 		templong += ((long)(boleng[i]+2));
+#ifndef ANDROID_NDK
 	    lseek(fil,templong,SEEK_SET);
-
+#else
+	    SDL_RWseek(io, templong, SEEK_SET);
+#endif // ANDROID_NDK
 	    for(i=1;i<=256;i++) {
 		lzwbuf[i]=i&255;
 		lzwbuf2[i]=i;
@@ -234,9 +256,13 @@ void loadboard()
 	    for(i=0;i<2;i++)
 	    {
 		compleng = boleng[(boardnum<<1)+i];
+#ifndef ANDROID_NDK
 		readLE16(fil,&strtot,2);
 		read(fil,&tempbuf[0],compleng);
-
+#else
+	    SDL_RWread(io, &strtot, 2, 1);
+	    SDL_RWread(io, &tempbuf[0],compleng, 1);
+#endif // ANDROID_NDK
 		if (strtot > 0)
 		{
 		    tempbuf[compleng] = 0;
@@ -301,7 +327,11 @@ void loadboard()
 		    memcpy(board[32*i], tempbuf, 4096);
 		}
 	    }
+#ifndef ANDROID_NDK
 	    close(fil);
+#else
+	    SDL_RWclose(io);
+#endif // ANDROID_NDK
 	} else {
 	    TO_DEBUG_LOG("Can't find boards.kzp.\n");
 	    SDL_Quit();
@@ -511,12 +541,24 @@ void loadtables()
     snprintf(path1, sizeof(path1), "%s/tables.dat", globalDataDir);
     snprintf(path2, sizeof(path2), "%s/TABLES.DAT", globalDataDir);
 
+#ifdef ANDROID_NDK
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (io) {
+    SDL_RWread(io, &sintable[0], 8192, 1);
+    SDL_RWread(io, &tantable[0], 4096, 1);
+    SDL_RWread(io, &radarang[0], 720, 1);
+	SDL_RWclose(io);
+#else
     if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
     ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1))
     {
 	readLE32(fil,&sintable[0],8192);
 	readLE32(fil,&tantable[0],4096);
 	readLE16(fil,&radarang[0],720);
+
 /*	read(fil,&option[0],numoptions);
 	read(fil,&keydefs[0],numkeys);
 	readLE16(fil,&joyx1,2);
@@ -527,7 +569,7 @@ void loadtables()
 	readLE16(fil,&joyy3,2);
 	readLE16(fil,&ksayfreq,2);*/
 	close(fil);
-
+#endif // ANDROID_NDK
 	/* Override joystick values with SDL limits... */
 
 	joyx1=joyy1=-32768;
@@ -1445,14 +1487,31 @@ void loadwalls(int replace)
     char path2[256];
     snprintf(path1, sizeof(path1), "%s/walls.kzp", globalDataDir);
     snprintf(path2, sizeof(path2), "%s/WALLS.KZP", globalDataDir);
+
+#ifdef ANDROID_NDK
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (io) {
+#else
     if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
     ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1))
     {
+#endif // ANDROID_NDK
 	bmpkind[0] = 0;
 	wallheader[0] = 8;
+#ifndef ANDROID_NDK
 	read(fil,&wallheader[1],rnumwalls);
+#else
+	SDL_RWread(io, &wallheader[1], rnumwalls, 1);
+#endif // !ANDROID_NDK
 	if (lab3dversion==0)
-	    readLE16(fil,&tileng[0],numwalls*2);
+#ifndef ANDROID_NDK
+		readLE16(fil,&tileng[0],numwalls*2);
+#else
+		SDL_RWread(io, &tileng[0], numwalls*2, 1);
+#endif // !ANDROID_NDK
 	tioffs[0] = (long)(numwalls+numwalls+numwalls);
 	for(i=1;i<=rnumwalls;i++)
 	{
@@ -1473,13 +1532,24 @@ void loadwalls(int replace)
 
 	for(i=0;i<rnumwalls;i++)
 	{
-	    readLE16(fil,&strtot,2);
+#ifndef ANDROID_NDK
+		readLE16(fil,&strtot,2);
+#else
+		SDL_RWread(io, &strtot, 2, 1);
+#endif // !ANDROID_NDK
 	    if (lab3dversion)
-		readLE16(fil, &compleng, 2);
+#ifndef ANDROID_NDK
+			readLE16(fil, &compleng, 2);
+#else
+			SDL_RWread(io, &compleng, 2, 1);
+#endif // !ANDROID_NDK
 	    else
 		compleng = tileng[i];
+#ifndef ANDROID_NDK
 	    read(fil,&tempbuf[0],compleng);
-
+#else
+		SDL_RWread(io, &tempbuf[0], compleng, 1);
+#endif // !ANDROID_NDK
 	    walsegg=walseg[i];
 
 	    if (strtot > 0)
@@ -1736,7 +1806,11 @@ printf("\n");
 printf("\n");*/
 	    }
 	}
+#ifndef ANDROID_NDK
 	close(fil);
+#else
+	SDL_RWclose(io);
+#endif // !ANDROID_NDK
     } else {
 	TO_DEBUG_LOG("Can't find walls.kzp.\n");
 	SDL_Quit();
@@ -3908,6 +3982,10 @@ K_INT16 kgif(K_INT16 filenum)
     memset(screenbuffer,(filenum==2)?255:((filenum==1)?0x50:0),
 	   screenbufferwidth*screenbufferheight);
 
+#ifdef ANDROID
+    SDL_RWops *io;
+#endif
+
     if (filenum<0) {
 	switch(filenum) {
         case -1: {
@@ -3915,8 +3993,16 @@ K_INT16 kgif(K_INT16 filenum)
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/lab3d.gif", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/LAB3D.GIF", globalDataDir);
+#ifdef ANDROID_NDK
+        io = SDL_RWFromFile(path2, "rb");
+        if (!io) {
+        	io = SDL_RWFromFile(path1, "rb");
+        }
+        if (!io)
+#else
         if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
             ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
+#endif // ANDROID_NDK
 		    return(-1);
 		break;
     }
@@ -3925,8 +4011,16 @@ K_INT16 kgif(K_INT16 filenum)
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/end1.gif", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/END1.GIF", globalDataDir);
+#ifdef ANDROID_NDK
+        io = SDL_RWFromFile(path2, "rb");
+        if (!io) {
+        	io = SDL_RWFromFile(path1, "rb");
+        }
+        if (!io)
+#else
         if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
             ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
+#endif // ANDROID_NDK
 		    return(-1);
 		break;
     }
@@ -3935,8 +4029,16 @@ K_INT16 kgif(K_INT16 filenum)
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/end2.gif", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/END2.GIF", globalDataDir);
+#ifdef ANDROID_NDK
+        io = SDL_RWFromFile(path2, "rb");
+        if (!io) {
+        	io = SDL_RWFromFile(path1, "rb");
+        }
+        if (!io)
+#else
         if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
             ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
+#endif // ANDROID_NDK
 		    return(-1);
 		break;
     }
@@ -3945,8 +4047,16 @@ K_INT16 kgif(K_INT16 filenum)
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/end3.gif", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/END3.GIF", globalDataDir);
+#ifdef ANDROID_NDK
+        io = SDL_RWFromFile(path2, "rb");
+        if (!io) {
+        	io = SDL_RWFromFile(path1, "rb");
+        }
+        if (!io)
+#else
         if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
             ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
+#endif // ANDROID_NDK
 		    return(-1);
 		break;
 	    default:
@@ -3958,22 +4068,41 @@ K_INT16 kgif(K_INT16 filenum)
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/lab3d.kzp", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/LAB3D.KZP", globalDataDir);
+#ifdef ANDROID_NDK
+        io = SDL_RWFromFile(path2, "rb");
+        if (!io) {
+        	io = SDL_RWFromFile(path1, "rb");
+        }
+        if (!io)
+#else
     if (((fil = open(path1,O_RDONLY|O_BINARY,0)) == -1)&&
         ((fil = open(path2,O_RDONLY|O_BINARY,0)) == -1))
+#endif // ANDROID_NDK
 	    return(-1);
     }
 
     rowpos = 0;
     if (filenum == 1)
     {
-	lseek(fil,giflen1,SEEK_SET);
+#ifndef ANDROID_NDK
+    	lseek(fil,giflen1,SEEK_SET);
+#else
+    	SDL_RWseek(io, giflen1,SEEK_SET);
+#endif
 	rowpos = 5;
     }
     if (filenum == 2)
+#ifndef ANDROID_NDK
 	lseek(fil,giflen1+giflen2,SEEK_SET);
-
+#else
+    SDL_RWseek(io, giflen1+giflen2,SEEK_SET);
+#endif
     gifdatacnt = 0;
+#ifndef ANDROID_NDK
     read(fil,&tempbuf[0],(unsigned)gifbuflen);
+#else
+    SDL_RWread(io, &tempbuf[0],(unsigned)gifbuflen, 1);
+#endif
     for(j=0;j<13;j++)
 	header[j] = tempbuf[j+gifdatacnt];
     gifdatacnt += 13;
@@ -4089,9 +4218,13 @@ K_INT16 kgif(K_INT16 filenum)
 		    memcpy(((unsigned char *)lincalc)+i,
 			   tempbuf+gifdatacnt,
 			   (k+1)&~1);
-
+#ifndef ANDROID_NDK
 		    read(fil,&tempbuf[0],
 			 (unsigned)gifbuflen);
+#else
+		    SDL_RWread(io, &tempbuf[0],
+			 (unsigned)gifbuflen, 1);
+#endif
 		    memcpy(((unsigned char *)lincalc)+i+k,
 			   tempbuf,
 			   ((gifdatacnt=blocklen-k)+1)&~1);
@@ -4143,7 +4276,11 @@ K_INT16 kgif(K_INT16 filenum)
 	    }
 	}
     }
+#ifndef ANDROID_NDK
     close(fil);
+#else
+    SDL_RWclose(io);
+#endif
 
     UploadOverlay();
 

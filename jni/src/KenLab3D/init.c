@@ -328,13 +328,25 @@ void initialize()
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/sounds.kzp", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/SOUNDS.KZP", globalDataDir);
+#ifdef ANDROID_NDK
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (io) {
+    sndsize = SDL_RWsize(io);
 
+    TO_DEBUG_LOG("Sound size is: %ld\n", sndsize);
+
+	SDL_RWclose(io);
+#else
     if (((i = open(path1,O_BINARY|O_RDONLY,0)) != -1)||
         ((i = open(path2,O_BINARY|O_RDONLY,0)) != -1)) {
 	    fstat(i, &fstats);
 	    sndsize = (int)(fstats.st_size);
         TO_DEBUG_LOG("Detected %ld byte sounds.\n", sndsize);
 	    close(i);
+#endif // !ANDROID_NDK
 	} else sndsize=0;
 
 	SoundFile=malloc(sndsize);
