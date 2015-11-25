@@ -36,7 +36,6 @@ void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const cha
 
 	long int size = SDL_RWsize(io_in);
 	char *in = (char *)malloc(size);
-	char *out = (char *)malloc(size);
 
 	SDL_RWread(io_in, in, size, 1);
 	SDL_RWwrite(io_out, in, size, 1);
@@ -45,7 +44,6 @@ void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const cha
 	SDL_FreeRW(io_out);
 
 	free(in);
-	free(out);
 }
 #endif // ANDROID_NDK
 

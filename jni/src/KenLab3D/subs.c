@@ -1270,10 +1270,22 @@ imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfil
 #else
     unsigned int png_error;
     unsigned char *png_image;
+    char *png_file;
     unsigned int png_width, png_height;
 
+    // Load PNG from assets to RAM
+    SDL_RWops *imgRAM = SDL_RWFromFile(fname, "rb");
+    if (!imgRAM) {
+    	TO_DEBUG_LOG("ERROR LOADING PNG FILE: %s\n", fname);
+    	SDL_Quit();
+    	exit(1);
+    }
+    long int png_size = SDL_RWsize(imgRAM);
+    png_file = (char *)malloc(png_size);
+    SDL_RWread(imgRAM, png_file, png_size, 1);
+
     // Use LodePNG library
-    png_error = lodepng_decode32_file(&png_image, &png_width, &png_height, fname);
+    png_error = lodepng_decode32(&png_image, &png_width, &png_height, png_file, png_size);
     if (png_error) {
         TO_DEBUG_LOG("LODEPNG Error %d: %s.\n", png_error, lodepng_error_text(png_error));
     }
@@ -1296,6 +1308,9 @@ imgcache* LoadImageCache(const char* fname, int repeatx, int minfilt, int magfil
     newImg->w=png_width;
     newImg->h=png_height;
     UploadTexture(newImg->texnum,temptex,png_height,png_width,0,repeatx,1,minfilt,magfilt);
+
+    free(png_file);
+    SDL_FreeRW(imgRAM);
 
     free(temptex);
     free(png_image);
@@ -1382,8 +1397,11 @@ void loadwalls(int replace)
     memset(shadow,0,sizeof(shadow));
 
     char path[256];
+#ifndef ANDROID_NDK
     snprintf(path, sizeof(path), "%s/wallparams.ini", globalDataDir);
-
+#else
+    snprintf(path, sizeof(path), "%s/wallparams.ini", globalAndroidRWdir);
+#endif // !ANDROID_NDK
     if (replace && (params=fopen(path,"rt"))!=NULL) {
 	dotransition=0;
 	int curwall=0;
@@ -2863,7 +2881,11 @@ K_INT16 loadmusic(char *filename)
 	{
 	    /* Open KSM->MIDI instrument translation table... */
         char path[256];
+#ifndef ANDROID_NDK
         snprintf(path, sizeof(path), "%s/ksmmidi.txt", globalDataDir);
+#else
+        snprintf(path, sizeof(path), "%s/ksmmidi.txt", globalAndroidRWdir);
+#endif
         file=fopen(path,"rt");
 	    if (file==NULL) {
 		TO_DEBUG_LOG("ksmmidi.txt not found; music disabled.\n");
@@ -5097,8 +5119,10 @@ void hiscorecheck()
 #endif // ANDROID_NDK
 
     if (((fil = open(path1,O_RDWR|O_BINARY,0)) == -1)&&
-    ((fil = open(path2,O_RDWR|O_BINARY,0)) == -1))
-	return;
+    ((fil = open(path2,O_RDWR|O_BINARY,0)) == -1)) {
+    	TO_DEBUG_LOG("Warning, highscores disabled.");
+    	return;
+    }
 #ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
 #endif //!OPENGLES

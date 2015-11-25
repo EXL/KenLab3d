@@ -162,12 +162,14 @@ int main(int argc,char **argv)
 
     globalAndroidRWdir = SDL_AndroidGetInternalStoragePath();
 
-    TO_DEBUG_LOG("Copying files from assets to: %s\n", globalAndroidRWdir);
+    TO_DEBUG_LOG("Copying RW files from assets to: %s\n", globalAndroidRWdir);
     copyFileFromAssetsToInternalRWDirAndroid("HISCORE.DAT", "rb", "wb");
     copyFileFromAssetsToInternalRWDirAndroid("SAVGAME4.DAT", "rb", "wb");
     copyFileFromAssetsToInternalRWDirAndroid("SAVGAME5.DAT", "rb", "wb");
     copyFileFromAssetsToInternalRWDirAndroid("SAVGAME6.DAT", "rb", "wb");
     copyFileFromAssetsToInternalRWDirAndroid("SAVGAME7.DAT", "rb", "wb");
+    copyFileFromAssetsToInternalRWDirAndroid("wallparams.ini", "rt", "wt");
+    copyFileFromAssetsToInternalRWDirAndroid("ksmmidi.txt", "rt", "wt");
     TO_DEBUG_LOG("End copying files.");
 #endif // !ANDROID_NDK
 
