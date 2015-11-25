@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Ken\'s Labyrinth</string>
+    <string name="checkBoxTouch">Touch Controls</string>
+    <string name="checkBoxVibration">Vibration Haptics</string>
+    <string name="checkBoxHiresTextures">Hi-Res PNG Textures</string>
+    <string name="imageDesc">Ken\'s Labyrinth Box Art</string>
+    <string name="buttonReconfigure">Reconfigure Game</string>
+    <string name="buttonRunKen">Run Ken\'s Labyrinth!</string>
+    <string name="aboutButton">About Game</string>
+    <string name="buttonRunSetup">Setup Ken\'s Labyrinth!</string>
 </resources>

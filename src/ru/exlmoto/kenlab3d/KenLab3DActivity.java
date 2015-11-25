@@ -2,8 +2,44 @@ package ru.exlmoto.kenlab3d;
 
 import org.libsdl.app.SDLActivity;
 
-/*
- * A sample wrapper class that just calls SDLActivity
- */
+import ru.exlmoto.kenlab3d.KenLab3DLauncherActivity.KenLab3DSettings;
+import android.content.Context;
+import android.os.Bundle;
+import android.os.Vibrator;
+import android.util.Log;
 
-public class KenLab3DActivity extends SDLActivity { }
+public class KenLab3DActivity extends SDLActivity {
+
+	private static final String APP_TAG = "KenLab3D_App";
+
+	private static Vibrator m_vibrator;
+
+	private static void toDebugLog(String debugMessage) {
+		Log.d(APP_TAG, debugMessage);
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		toDebugLog("Start SDL Activity from KenLab3DActivity");
+		super.onCreate(savedInstanceState);
+
+		toDebugLog("Setting Vibration");
+		m_vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+	}
+
+	// JNI-method
+	public static void doVibrate(int duration) {
+		if (KenLab3DSettings.s_VibrationHaptics) {
+			final int delay = duration;
+
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					m_vibrator.vibrate(delay);
+				}
+
+			}).start();
+		}
+	}
+}
