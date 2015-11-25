@@ -1214,8 +1214,11 @@ void configure(void) {
 
 void loadsettings(void) {
     char path[256];
+#ifndef ANDROID_NDK
     snprintf(path, sizeof(path), "%s/settings.ini", globalDataDir);
-
+#else
+    snprintf(path, sizeof(path), "%s/settings.ini", globalAndroidRWdir);
+#endif
     FILE *file=fopen(path,"r");
     int i,versflag,version;
 
@@ -1298,7 +1301,11 @@ void loadsettings(void) {
 
 void savesettings(void) {
     char path[256];
+#ifndef ANDROID_NDK
     snprintf(path, sizeof(path), "%s/settings.ini", globalDataDir);
+#else
+    snprintf(path, sizeof(path), "%s/settings.ini", globalAndroidRWdir);
+#endif // ANDROID_NDK
     FILE *file=fopen(path,"w");
     int i;
 

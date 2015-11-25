@@ -2371,8 +2371,11 @@ K_INT16 oldloadgame(K_INT16 gamenum)
     filename[6] = 'E', filename[7] = gamenum+48;
     filename[8] = '.', filename[9] = 'D', filename[10] = 'A';
     filename[11] = 'T', filename[12] = 0;
-
+#ifndef ANDROID_NDK
     snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+#else
+    snprintf(path, sizeof(path), "%s/%s", globalAndroidRWdir, filename);
+#endif // !ANDROID_NDK
     if((fil=open(path,O_BINARY|O_RDONLY,
 		 S_IWRITE|S_IREAD|S_IRGRP|S_IROTH))==-1) {
 	filename[0] = 's', filename[1] = 'a', filename[2] = 'v';
@@ -2381,7 +2384,11 @@ K_INT16 oldloadgame(K_INT16 gamenum)
 	filename[8] = '.', filename[9] = 'd', filename[10] = 'a';
 	filename[11] = 't', filename[12] = 0;
 
+#ifndef ANDROID_NDK
     snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+#else
+    snprintf(path, sizeof(path), "%s/%s", globalAndroidRWdir, filename);
+#endif // !ANDROID_NDK
     if((fil=open(path,O_BINARY|O_RDONLY,
 		     S_IWRITE|S_IREAD|S_IRGRP|S_IROTH))==-1)
 	    return(-1);
@@ -2530,7 +2537,11 @@ K_INT16 oldsavegame(K_INT16 gamenum)
     filename[6] = 'E', filename[7] = gamenum+48;
     filename[8] = '.', filename[9] = 'D', filename[10] = 'A';
     filename[11] = 'T', filename[12] = 0;
+#ifndef ANDROID_NDK
     snprintf(path, sizeof(path), "%s/%s", globalDataDir, filename);
+#else
+    snprintf(path, sizeof(path), "%s/%s", globalAndroidRWdir, filename);
+#endif // !ANDROID_NDK
     if((fil=open(path,O_BINARY|O_CREAT|O_WRONLY,
 		 S_IWRITE|S_IREAD|S_IRGRP|S_IROTH))==-1)
 	return(-1);
@@ -2816,19 +2827,39 @@ K_INT16 oldintroduction(void)
 		    if (oldloadgame(i) != -1)
 		    {
 			if (numboards == 0)
+#ifndef ANDROID_NDK
                 if ((fil = open(path1,O_BINARY|O_RDONLY,
 					    S_IREAD)) != -1)
 			    {
 				numboards = 27;
 				close(fil);
 			    }
+#else
+			{
+				SDL_RWops *io = SDL_RWFromFile(path1, "rb");
+				if (io) {
+					numboards = 27;
+					SDL_FreeRW(io);
+				}
+			}
+#endif
 			if (numboards == 0)
+#ifndef ANDROID_NDK
                 if ((fil = open(path2,O_BINARY|O_RDONLY,
 					    S_IREAD)) != -1)
 			    {
 				numboards = 27;
 				close(fil);
 			    }
+#else
+			{
+				SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+				if (io) {
+					numboards = 27;
+					SDL_FreeRW(io);
+				}
+			}
+#endif
 #ifndef USE_SDL2
 			newkeystatus[SDLK_SPACE] = 0;
 			newkeystatus[SDLK_RETURN] = 0;
@@ -3155,13 +3186,23 @@ K_INT16 oldloadstory()
     char path2[256];
     snprintf(path1, sizeof(path1), "%s/story.kzp", globalDataDir);
     snprintf(path2, sizeof(path2), "%s/STORY.KZP", globalDataDir);
-
+#ifdef ANDROID_NDK
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (!io) { return (-1); }
+    SDL_RWread(io, &storyoffs[0],256, 1);
+    SDL_RWseek(io, (long)(storyoffs[boardnum+1]),SEEK_SET);
+    SDL_RWread(io, &tempbuf[0],4096, 1);
+#else
     if ((fil = open(path1,O_BINARY|O_RDONLY,S_IREAD)) == -1)
     if ((fil = open(path2,O_BINARY|O_RDONLY,S_IREAD)) == -1)
 	    return(-1);
     read(fil,&storyoffs[0],256);
     lseek(fil,(long)(storyoffs[boardnum+1]),SEEK_SET);
     read(fil,&tempbuf[0],4096);
+#endif // ANDROID_NDK
     k = pageoffset;
     pageoffset = lastpageoffset;
     i = 0;
@@ -3188,8 +3229,11 @@ K_INT16 oldloadstory()
     }
     textbuf[textbufcnt] = 0;
     textprint(180-(textbufcnt<<2),textypos,0);
-
+#ifndef ANDROID_NDK
     close(fil);
+#else
+    SDL_FreeRW(io);
+#endif // ANDROID_NDK
     pageoffset = k;
 
     return 0;

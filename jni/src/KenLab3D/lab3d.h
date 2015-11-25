@@ -288,7 +288,10 @@ typedef Sint16 K_INT16;
 
 /* Global variables that actually get initialised here... */
 
-EXTERN char *globalDataDir;
+EXTERN const char *globalDataDir;
+#ifdef ANDROID_NDK
+EXTERN const char *globalAndroidRWdir;
+#endif // ANDROID_NDK
 
 #ifdef MAIN
 EXTERN unsigned char bultype[26] =
@@ -664,6 +667,8 @@ EXTERN void o_drawLoadSaveGameMenuHelper();
 EXTERN void o_drawHardnessMenuHelper();
 EXTERN void o_drawNewGameMenuHelper();
 EXTERN void o_drawAbortMenuHelper();
+
+void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const char *desc1, const char *desc2);
 #endif // OPENGLES
 
 /* Fade level... */

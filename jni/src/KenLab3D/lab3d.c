@@ -143,16 +143,6 @@ int main(int argc,char **argv)
     K_INT16 soundvolumevisible=0,musicvolumevisible=0;
     int fil;
 
-#ifndef ANDROID_NDK
-    globalDataDir = "./";
-#else
-    globalDataDir = "KenLabData"; // There is directory in assets from APK-package of game
-    clearCurrentMenuState();
-
-    TO_DEBUG_LOG("Android Internal Storage path is: %s", SDL_AndroidGetInternalStoragePath());
-    TO_DEBUG_LOG("Android External Storage path is: %s", SDL_AndroidGetExternalStoragePath());
-#endif // !ANDROID_NDK
-
     clockspd=0;
 
     /* Initialisation... */
@@ -164,6 +154,23 @@ int main(int argc,char **argv)
     SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO|/*SDL_INIT_NOPARACHUTE|*/
 	     SDL_INIT_JOYSTICK);
 
+#ifndef ANDROID_NDK
+    globalDataDir = "./";
+#else
+    globalDataDir = "KenLabData"; // There is directory in assets from APK-package of game
+    clearCurrentMenuState();
+
+    globalAndroidRWdir = SDL_AndroidGetInternalStoragePath();
+
+    TO_DEBUG_LOG("Copying files from assets to: %s\n", globalAndroidRWdir);
+    copyFileFromAssetsToInternalRWDirAndroid("HISCORE.DAT", "rb", "wb");
+    copyFileFromAssetsToInternalRWDirAndroid("SAVGAME4.DAT", "rb", "wb");
+    copyFileFromAssetsToInternalRWDirAndroid("SAVGAME5.DAT", "rb", "wb");
+    copyFileFromAssetsToInternalRWDirAndroid("SAVGAME6.DAT", "rb", "wb");
+    copyFileFromAssetsToInternalRWDirAndroid("SAVGAME7.DAT", "rb", "wb");
+    TO_DEBUG_LOG("End copying files.");
+#endif // !ANDROID_NDK
+
     char path1[256];
     char path2[256];
     char path3[256];
@@ -172,16 +179,29 @@ int main(int argc,char **argv)
     snprintf(path2, sizeof(path2), "%s/END.TXT", globalDataDir);
     snprintf(path3, sizeof(path3), "%s/boards.dat", globalDataDir);
     snprintf(path4, sizeof(path4), "%s/BOARDS.DAT", globalDataDir);
-
+#ifdef ANDROID_NDK
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (io) {
+    	SDL_FreeRW(io);
+#else
     if (((fil = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
     ((fil = open(path2,O_RDONLY|O_BINARY,0)) != -1)) {
 	close(fil);
+#endif // ANDROID_NDK
 	lab3dversion=2; /* Version 1.0 detected. */
 	rnumwalls=192;
 	TO_DEBUG_LOG("Ken's Labyrinth version 1.0 detected.\n");
+#ifdef ANDROID_NDK
+    } else if (((io = SDL_RWFromFile(path4, "rb")) != NULL) || ((io = SDL_RWFromFile(path3, "rb")) != NULL)) {
+    	SDL_FreeRW(io);
+#else
     } else if (((fil = open(path3,O_RDONLY|O_BINARY,0)) != -1)||
            ((fil = open(path4,O_RDONLY|O_BINARY,0)) != -1)) {
 	close(fil);
+#endif // ANDROID_NDK
 	lab3dversion=1; /* Version 1.1 detected. */
 	rnumwalls=0xe0;
 	TO_DEBUG_LOG("Ken's Labyrinth version 1.1 detected.\n");

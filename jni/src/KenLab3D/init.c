@@ -6,6 +6,49 @@
 
 /* Initialise the game: set up most I/O and data... */
 
+#ifdef ANDROID_NDK
+void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const char *desc1, const char *desc2) {
+	char path1[256];
+	char path2[256];
+	snprintf(path1, sizeof(path1), "%s/%s", globalDataDir, source_file);
+	snprintf(path2, sizeof(path2), "%s/%s", globalAndroidRWdir, source_file);
+
+	SDL_RWops *io_in = SDL_RWFromFile(path1, desc1);
+	if (!io_in) {
+		TO_DEBUG_LOG("cFFATIRWDA: Error opening in file: %s.\n", path1);
+	}
+
+	SDL_RWops *io_out = SDL_RWFromFile(path2, desc1);
+	if (io_out) {
+		TO_DEBUG_LOG("cFFATIRWDA: File: %s found.\n", source_file);
+		SDL_FreeRW(io_in);
+		SDL_FreeRW(io_out);
+		return;
+	} else {
+		TO_DEBUG_LOG("cFFATIRWDA: Copying file %s.\n", source_file);
+	}
+	SDL_FreeRW(io_out);
+
+	io_out = SDL_RWFromFile(path2, desc2);
+	if (!io_out) {
+		TO_DEBUG_LOG("cFFATIRWDA: Error opening out file: %s.\n", path2);
+	}
+
+	long int size = SDL_RWsize(io_in);
+	char *in = (char *)malloc(size);
+	char *out = (char *)malloc(size);
+
+	SDL_RWread(io_in, in, size, 1);
+	SDL_RWwrite(io_out, in, size, 1);
+
+	SDL_FreeRW(io_in);
+	SDL_FreeRW(io_out);
+
+	free(in);
+	free(out);
+}
+#endif // ANDROID_NDK
+
 void initialize()
 {
     K_INT16 i, j, k, walcounter, oclockspeed;
@@ -335,10 +378,8 @@ void initialize()
     }
     if (io) {
     sndsize = SDL_RWsize(io);
-
-    TO_DEBUG_LOG("Sound size is: %ld\n", sndsize);
-
-	SDL_RWclose(io);
+    TO_DEBUG_LOG("Detected %ld byte sounds.\n", sndsize);
+	SDL_FreeRW(io);
 #else
     if (((i = open(path1,O_BINARY|O_RDONLY,0)) != -1)||
         ((i = open(path2,O_BINARY|O_RDONLY,0)) != -1)) {
@@ -363,7 +404,19 @@ void initialize()
     char path4[256];
     snprintf(path3, sizeof(path3), "%s/sounds.kzp", globalDataDir);
     snprintf(path4, sizeof(path4), "%s/SOUNDS.KZP", globalDataDir);
-
+#ifdef ANDROID_NDK
+    io = SDL_RWFromFile(path3, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path4, "rb");
+        if (!io) {
+            TO_DEBUG_LOG("Can not find sounds.kzp.\n");
+            SDL_Quit();
+            exit(-1);
+        }
+    }
+    SDL_RWread(io, SoundFile, sndsize, 1);
+    SDL_FreeRW(io);
+#else
     file=fopen(path3,"rb");
 	if (file==NULL) {
         file=fopen(path4,"rb");
@@ -379,7 +432,7 @@ void initialize()
 	    exit(-1);
 	}
 	fclose(file);
-
+#endif // ANDROID_NDK
 	SDL_LockMutex(soundmutex);
     TO_DEBUG_LOG("Opening sound output in %s for %s sound effects...\n",
 		(channels-1)?"stereo":"mono",
@@ -647,13 +700,23 @@ void initialize()
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/boards.dat", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/BOARDS.DAT", globalDataDir);
-
+#ifndef ANDROID_NDK
     if (((i = open(path1,O_BINARY|O_RDONLY,0)) != -1)||
         ((i = open(path2,O_BINARY|O_RDONLY,0)) != -1)) {
 	    fstat(i, &fstats);
 	    numboards = (int)(fstats.st_size>>13);
         TO_DEBUG_LOG("Detected %d boards.\n", numboards);
 	    close(i);
+#else
+    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+    if (!io) {
+        io = SDL_RWFromFile(path1, "rb");
+    }
+    if (io) {
+    	numboards = (int)(SDL_RWsize(io)>>13);
+    	TO_DEBUG_LOG("Detected %d boards.\n", numboards);
+    	SDL_FreeRW(io);
+#endif // !ANDROID_NDK
 	} else {
         TO_DEBUG_LOG("boards.dat not found.\n");
 	    SDL_Quit();
@@ -664,16 +727,28 @@ void initialize()
         char path2[256];
         snprintf(path1, sizeof(path1), "%s/boards.kzp", globalDataDir);
         snprintf(path2, sizeof(path2), "%s/BOARDS.KZP", globalDataDir);
-
+#ifndef ANDROID_NDK
     if (((i = open(path1,O_RDONLY|O_BINARY,0)) != -1)||
         ((i = open(path2,O_RDONLY|O_BINARY,0)) != -1)) {
 	    readLE16(i,&boleng[0],30*4);
+#else
+	    SDL_RWops *io = SDL_RWFromFile(path2, "rb");
+	    if (!io) {
+	    	io = SDL_RWFromFile(path1, "rb");
+	    }
+	    if (io) {
+	    	SDL_RWread(io, &boleng[0],30*4, 1);
+#endif // ANDROID_NDK
 	    numboards = 30;
 	    if ((boleng[40]|boleng[41]) == 0)
 		numboards = 20;
 	    if ((boleng[20]|boleng[21]) == 0)
 		numboards = 10;
+#ifndef ANDROID_NDK
 	    close(i);
+#else
+	    SDL_FreeRW(io);
+#endif // ANDROID_NDK
 	} else {
         TO_DEBUG_LOG("boards.kzp not found.\n");
 	    SDL_Quit();
