@@ -669,6 +669,8 @@ EXTERN void o_drawNewGameMenuHelper();
 EXTERN void o_drawAbortMenuHelper();
 
 void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const char *desc1, const char *desc2);
+void doVibrateFromJNI(int duration);
+int getHiresSettingsValue();
 #endif // OPENGLES
 
 /* Fade level... */

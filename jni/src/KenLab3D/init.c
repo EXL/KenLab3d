@@ -45,6 +45,52 @@ void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const cha
 
 	free(in);
 }
+
+
+#include <jni.h> // For JNI
+
+void doVibrateFromJNI(int duration) {
+	JNIEnv *javaEnviron = SDL_AndroidGetJNIEnv();
+	if (javaEnviron != NULL) {
+		jclass clazz = (*javaEnviron)->FindClass(javaEnviron, "ru/exlmoto/kenlab3d/KenLab3DActivity");
+		if (clazz == 0) {
+			TO_DEBUG_LOG("Error JNI: Class ru/exlmoto/kenlab3d/KenLab3DActivity not found!");
+			return;
+		}
+
+		jmethodID methodId = (*javaEnviron)->GetStaticMethodID(javaEnviron, clazz, "doVibrate", "(I)V");
+		if (methodId == 0) {
+			LOGI("Error JNI: methodId is 0, method doVibrate (I)V not found!");
+			return;
+		}
+
+		// Call Java-method
+		(*javaEnviron)->CallStaticVoidMethod(javaEnviron, clazz, methodId, (jint)duration);
+	}
+}
+
+int getHiresSettingsValue() {
+	JNIEnv *javaEnviron = SDL_AndroidGetJNIEnv();
+	if (javaEnviron != NULL) {
+		jclass clazz = (*javaEnviron)->FindClass(javaEnviron, "ru/exlmoto/kenlab3d/KenLab3DActivity");
+		if (clazz == 0) {
+			TO_DEBUG_LOG("Error JNI: Class ru/exlmoto/kenlab3d/KenLab3DActivity not found!");
+			return 0;
+		}
+
+		jfieldID fieldID = (*javaEnviron)->GetStaticFieldID(javaEnviron, clazz, "m_hiResState", "Z");
+		if (fieldID == 0) {
+			TO_DEBUG_LOG("Error JNI: fieldID is 0, field m_hiResState Z not found!");
+			return 0;
+		}
+
+		jboolean hiresState = (*javaEnviron)->GetStaticIntField(javaEnviron, clazz, fieldID);
+		TO_DEBUG_LOG("JNI: hiresState is: %d", (int)hiresState);
+
+		return (int)hiresState;
+	}
+	return 0;
+}
 #endif // ANDROID_NDK
 
 void initialize()
@@ -532,7 +578,11 @@ void initialize()
 		spritepalette[k++] = (opaldef[i][2]*j)/17;
 	    }
     TO_DEBUG_LOG("Loading old graphics...\n");
+#ifndef ANDROID_NDK
 	loadwalls(1);
+#else
+	loadwalls(getHiresSettingsValue());
+#endif // ANDROID_NDK
     } else {
 	/* The ingame palette is stored in this GIF! */
 	kgif(1);
@@ -542,7 +592,11 @@ void initialize()
 
 	kgif(0);
     TO_DEBUG_LOG("Loading graphics...\n");
+#ifndef ANDROID_NDK
 	loadwalls(1);
+#else
+	loadwalls(getHiresSettingsValue());
+#endif // ANDROID_NDK
 
 	/* Ken's Labyrinth logo. */
 	if (!kgif(2))

@@ -161,6 +161,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 			public void onClick(View buttonView) {
 				writeSettings();
 
+				KenLab3DActivity.m_hiResState = KenLab3DSettings.s_HiResTextures;
 				Intent intent = new Intent(buttonView.getContext(), KenLab3DActivity.class);
 				startActivity(intent);
 			}

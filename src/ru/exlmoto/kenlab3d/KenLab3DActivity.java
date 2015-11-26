@@ -14,6 +14,9 @@ public class KenLab3DActivity extends SDLActivity {
 
 	private static Vibrator m_vibrator;
 
+	// Access from JNI
+	public static boolean m_hiResState;
+
 	public static void toDebugLog(String debugMessage) {
 		Log.d(APP_TAG, "=== " + debugMessage);
 	}
