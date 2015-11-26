@@ -11,4 +11,7 @@
     <string name="buttonRunSetup">Setup Ken\'s Labyrinth!</string>
     <string name="toastFileDeleted">File \&quot;settings.ini\&quot; was deleted. Please setup the game again.</string>
     <string name="toastFileNotFound">File \&quot;settings.ini\&quot; not found.</string>
+    <string name="aboutIconDesc">Ken\'s Labyrinth Android Icon</string>
+    <string name="versionString">v1.0</string>
+    <string name="aboutString">&#169; 1992&#8211;1993 Ken Silverman\n\nLAB3D/SDL conversion:\n&#169; 2002&#8211;2004 Jan L&#246;nnberg\nhttp://icculus.org/LAB3D\n\nLAB3D-SDL-enhanced:\n&#169; 2011&#8211;2015 Jared Stafford\nhttp://jspenguin.org/software/lab3d_sdl\n\nOpenGL ES port:\n&#169; 2014 Scott \"Pickle\" Smith\nhttps://github.com/Pickle/Lab3dGLES\n\nAndroid port:\n&#169; 2015 Serg \"EXL\" Koles\nhttp://exlmoto.ru/kenlab3d-droid\n\nGithub repository:\nhttps://github.com/EXL/KenLab3d</string>
 </resources>

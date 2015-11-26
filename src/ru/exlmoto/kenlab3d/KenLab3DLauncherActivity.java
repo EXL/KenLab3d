@@ -3,6 +3,7 @@ package ru.exlmoto.kenlab3d;
 import java.io.File;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 	private Button buttonAbout;
 	private Button buttonReconfigure;
 	private Button buttonRunOrSetup;
+
+	private Dialog aboutDialog;
 
 	private SharedPreferences settingsStorage = null;
 
@@ -70,10 +73,19 @@ public class KenLab3DLauncherActivity extends Activity  {
 		buttonRunOrSetup.setText((settingsIniFile.exists()) ? R.string.buttonRunKen : R.string.buttonRunSetup);
 	}
 
+	private void showAboutDialog() {
+		aboutDialog.setContentView(R.layout.about_layout);
+		aboutDialog.setCancelable(true);
+		aboutDialog.setTitle(R.string.app_name);
+		aboutDialog.show();
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		KenLab3DActivity.toDebugLog("Start KenLab3DLauncher");
+
+		aboutDialog = new Dialog(this);
 
 		settingsIniFile = new File(getFilesDir().getAbsolutePath() + "/settings.ini");
 
@@ -133,7 +145,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 			@Override
 			public void onClick(View buttonView) {
-				// TODO Auto-generated method stub
+				showAboutDialog();
 			}
 
 		});
@@ -172,6 +184,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 	@Override
 	protected void onDestroy() {
 		writeSettings();
+
+		aboutDialog.dismiss();
 
 		super.onDestroy();
 	}
