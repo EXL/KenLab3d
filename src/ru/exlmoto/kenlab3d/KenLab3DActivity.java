@@ -33,16 +33,7 @@ public class KenLab3DActivity extends SDLActivity {
 	// JNI-method
 	public static void doVibrate(int duration) {
 		if (KenLab3DSettings.s_VibrationHaptics) {
-			final int delay = duration;
-
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					m_vibrator.vibrate(delay);
-				}
-
-			}).start();
+			m_vibrator.vibrate(duration);
 		}
 	}
 }

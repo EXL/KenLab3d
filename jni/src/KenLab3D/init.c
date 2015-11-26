@@ -66,6 +66,7 @@ void doVibrateFromJNI(int duration) {
 
 		// Call Java-method
 		(*javaEnviron)->CallStaticVoidMethod(javaEnviron, clazz, methodId, (jint)duration);
+		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
 	}
 }
 
@@ -86,6 +87,8 @@ int getHiresSettingsValue() {
 
 		jboolean hiresState = (*javaEnviron)->GetStaticIntField(javaEnviron, clazz, fieldID);
 		TO_DEBUG_LOG("JNI: hiresState is: %d", (int)hiresState);
+
+		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
 
 		return (int)hiresState;
 	}

@@ -606,6 +606,14 @@ K_INT16 ksaypan(K_UINT16 filenum,K_UINT16 pan) {
     sndfiloffs=readlong(SoundFile+(2+filenum*6));
     leng=readshort(SoundFile+(6+filenum*6));
 
+#ifdef ANDROID_NDK
+    if (filenum == 14) { /* 14 - ouch! sound */
+        doVibrateFromJNI(5);
+    } else if (filenum == 10) { /* 10 - explosion sound */
+        doVibrateFromJNI(25);
+    }
+#endif // ANDROID_NDK
+
     DumpSound(SoundFile+sndfiloffs, leng,((FeedPoint+blocksize)&65535),pan);
     SDL_UnlockMutex(soundmutex);
     return 0;
