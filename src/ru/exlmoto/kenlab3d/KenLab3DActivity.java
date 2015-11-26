@@ -14,8 +14,8 @@ public class KenLab3DActivity extends SDLActivity {
 
 	private static Vibrator m_vibrator;
 
-	private static void toDebugLog(String debugMessage) {
-		Log.d(APP_TAG, debugMessage);
+	public static void toDebugLog(String debugMessage) {
+		Log.d(APP_TAG, "=== " + debugMessage);
 	}
 
 	@Override

@@ -9,4 +9,6 @@
     <string name="buttonRunKen">Run Ken\'s Labyrinth!</string>
     <string name="aboutButton">About Game</string>
     <string name="buttonRunSetup">Setup Ken\'s Labyrinth!</string>
+    <string name="toastFileDeleted">File \&quot;settings.ini\&quot; was deleted. Please setup the game again.</string>
+    <string name="toastFileNotFound">File \&quot;settings.ini\&quot; not found.</string>
 </resources>

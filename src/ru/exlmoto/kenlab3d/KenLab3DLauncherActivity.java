@@ -1,7 +1,10 @@
 package ru.exlmoto.kenlab3d;
 
+import java.io.File;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Toast;
 
 public class KenLab3DLauncherActivity extends Activity  {
 
@@ -28,17 +32,60 @@ public class KenLab3DLauncherActivity extends Activity  {
 	private Button buttonReconfigure;
 	private Button buttonRunOrSetup;
 
-	private void fillLayoutBySettings() {
-		// TODO: fill
+	private SharedPreferences settingsStorage = null;
 
+	private File settingsIniFile = null;
+
+	private void readSettings() {
+		KenLab3DSettings.s_TouchControls = settingsStorage.getBoolean("s_TouchControls", false);
+		KenLab3DSettings.s_VibrationHaptics = settingsStorage.getBoolean("s_VibrationHaptics", true);
+		KenLab3DSettings.s_HiResTextures = settingsStorage.getBoolean("s_HiResTextures", true);
+	}
+
+	private void writeSettings() {
+		KenLab3DActivity.toDebugLog("Write Settings!");
+
+		fillSettingsByLayout();
+
+		SharedPreferences.Editor editor = settingsStorage.edit();
+		editor.putBoolean("s_TouchControls", KenLab3DSettings.s_TouchControls);
+		editor.putBoolean("s_VibrationHaptics", KenLab3DSettings.s_VibrationHaptics);
+		editor.putBoolean("s_HiResTextures", KenLab3DSettings.s_HiResTextures);
+		editor.commit();
+	}
+
+	private void fillSettingsByLayout() {
+		KenLab3DSettings.s_TouchControls = checkBoxTouchControls.isChecked();
+		KenLab3DSettings.s_VibrationHaptics = checkBoxVibrationHaptics.isChecked();
+		KenLab3DSettings.s_HiResTextures = checkBoxHiResTextures.isChecked();
+	}
+
+	private void fillLayoutBySettings() {
 		checkBoxTouchControls.setChecked(KenLab3DSettings.s_TouchControls);
 		checkBoxVibrationHaptics.setChecked(KenLab3DSettings.s_VibrationHaptics);
 		checkBoxHiResTextures.setChecked(KenLab3DSettings.s_HiResTextures);
 	}
 
+	private void updateRunOrSetupButton() {
+		buttonRunOrSetup.setText((settingsIniFile.exists()) ? R.string.buttonRunKen : R.string.buttonRunSetup);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		KenLab3DActivity.toDebugLog("Start KenLab3DLauncher");
+
+		settingsIniFile = new File(getFilesDir().getAbsolutePath() + "/settings.ini");
+
+		settingsStorage = getSharedPreferences("ru.exlmoto.kenlab3d", MODE_PRIVATE);
+		// Check the first run
+		if (settingsStorage.getBoolean("firstrun", true)) {
+			// The first run, fill GUI layout with default values
+			settingsStorage.edit().putBoolean("firstrun", false).commit();
+		} else {
+			// Read settings from Shared Preferences
+			readSettings();
+		}
 
 		setContentView(R.layout.activity_kenlab3dlauncher);
 
@@ -51,6 +98,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 		buttonRunOrSetup = (Button)findViewById(R.id.buttonRun);
 
 		fillLayoutBySettings();
+
+		updateRunOrSetupButton();
 
 		// Set Listeners
 		checkBoxTouchControls.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -93,7 +142,15 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 			@Override
 			public void onClick(View buttonView) {
-				// TODO Auto-generated method stub
+				Toast notificationTost;
+				if (settingsIniFile.delete()) {
+					notificationTost = Toast.makeText(getApplicationContext(), R.string.toastFileDeleted, Toast.LENGTH_LONG);
+				} else {
+					notificationTost = Toast.makeText(getApplicationContext(), R.string.toastFileNotFound, Toast.LENGTH_LONG);
+				}
+				updateRunOrSetupButton();
+
+				notificationTost.show();
 			}
 
 		});
@@ -102,7 +159,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 			@Override
 			public void onClick(View buttonView) {
-				// TODO: Write Settings
+				writeSettings();
+
 				Intent intent = new Intent(buttonView.getContext(), KenLab3DActivity.class);
 				startActivity(intent);
 			}
@@ -112,13 +170,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 	@Override
 	protected void onDestroy() {
-		// TODO: Write Settings
+		writeSettings();
+
 		super.onDestroy();
 	}
-
-//	@Override
-//	public void onBackPressed() {
-//		// TODO: Write Settings
-//		//System.exit(0);
-//	}
 }
