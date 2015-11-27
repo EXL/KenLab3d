@@ -608,9 +608,9 @@ K_INT16 ksaypan(K_UINT16 filenum,K_UINT16 pan) {
 
 #ifdef ANDROID_NDK
     if (filenum == 14) { /* 14 - ouch! sound */
-        doVibrateFromJNI(5);
+        doVibrateFromJNI(10);
     } else if (filenum == 10) { /* 10 - explosion sound */
-        doVibrateFromJNI(25);
+        doVibrateFromJNI(30);
     }
 #endif // ANDROID_NDK
 

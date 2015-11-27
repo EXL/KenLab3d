@@ -74,10 +74,15 @@ public class KenLab3DLauncherActivity extends Activity  {
 	}
 
 	private void showAboutDialog() {
-		aboutDialog.setContentView(R.layout.about_layout);
-		aboutDialog.setCancelable(true);
-		aboutDialog.setTitle(R.string.app_name);
-		aboutDialog.show();
+		this.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				aboutDialog.setContentView(R.layout.about_layout);
+				aboutDialog.setCancelable(true);
+				aboutDialog.setTitle(R.string.app_name);
+				aboutDialog.show();
+			}
+		});
 	}
 
 	@Override
