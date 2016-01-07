@@ -133,10 +133,10 @@ void initialize()
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,8);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
 #else
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,6);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,5);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,16);
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,8);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
 #endif // !OPENGLES
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,1);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,0);
@@ -247,10 +247,10 @@ void initialize()
     }
 
     if (realz<16) {
-    TO_DEBUG_LOG("Warning: Depth buffer resolution too low; expect\n");
+    TO_DEBUG_LOG("Warning: Depth buffer resolution too low: %d; expect\n", realz);
     TO_DEBUG_LOG("graphical glitches.\n");
-	SDL_Quit();
-	exit(-1);
+	// SDL_Quit();
+	// exit(-1);
     }
 
 #ifndef USE_SDL2
