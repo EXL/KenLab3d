@@ -86,5 +86,3 @@ lint.xml
 ### Android Patch ###
 gen-external-apklibs
 
-### External symlinks ###
-jni/SDL-2.0.4-9901
