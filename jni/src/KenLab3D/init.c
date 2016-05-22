@@ -85,7 +85,7 @@ int getHiresSettingsValue() {
 			return 0;
 		}
 
-		jboolean hiresState = (*javaEnviron)->GetStaticIntField(javaEnviron, clazz, fieldID);
+		jboolean hiresState = (*javaEnviron)->GetStaticBooleanField(javaEnviron, clazz, fieldID);
 		TO_DEBUG_LOG("JNI: hiresState is: %d", (int)hiresState);
 
 		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
