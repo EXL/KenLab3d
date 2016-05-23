@@ -49,6 +49,31 @@ void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const cha
 
 #include <jni.h> // For JNI
 
+int getVibarateDelayFromJNI() {
+	JNIEnv *javaEnviron = SDL_AndroidGetJNIEnv();
+	if (javaEnviron != NULL) {
+		jclass clazz = (*javaEnviron)->FindClass(javaEnviron, "ru/exlmoto/kenlab3d/KenLab3DActivity");
+		if (clazz == 0) {
+			TO_DEBUG_LOG("Error JNI: Class ru/exlmoto/kenlab3d/KenLab3DActivity not found!");
+			return 0;
+		}
+
+		jfieldID fieldID = (*javaEnviron)->GetStaticFieldID(javaEnviron, clazz, "m_vibrateDelay", "I");
+		if (fieldID == 0) {
+			TO_DEBUG_LOG("Error JNI: fieldID is 0, field m_vibrateDelay I not found!");
+			return 0;
+		}
+
+		jint vibrateDelay = (*javaEnviron)->GetStaticIntField(javaEnviron, clazz, fieldID);
+		TO_DEBUG_LOG("JNI: vibrateDelay is: %d", (int)vibrateDelay);
+
+		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
+
+		return (int)vibrateDelay;
+	}
+	return 0;
+}
+
 void doVibrateFromJNI(int duration) {
 	JNIEnv *javaEnviron = SDL_AndroidGetJNIEnv();
 	if (javaEnviron != NULL) {
@@ -570,6 +595,11 @@ void initialize()
     musicon();
     TO_DEBUG_LOG("Loading intro pictures...\n");
 
+#ifdef ANDROID_NDK
+	// Init Vibrate Delay
+	c_VIBRATE_DELAY = getVibarateDelayFromJNI();
+#endif // ANDROID_NDK
+
     if (lab3dversion) {
 	kgif(-1);
 	k=0;
@@ -586,7 +616,7 @@ void initialize()
 #else
 	loadwalls(getHiresSettingsValue());
 #endif // ANDROID_NDK
-    } else {
+	} else {
 	/* The ingame palette is stored in this GIF! */
 	kgif(1);
 	memcpy(spritepalette,palette,768);

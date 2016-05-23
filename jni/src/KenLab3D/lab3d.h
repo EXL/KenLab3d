@@ -671,6 +671,9 @@ EXTERN void o_drawAbortMenuHelper();
 void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const char *desc1, const char *desc2);
 void doVibrateFromJNI(int duration);
 int getHiresSettingsValue();
+int getVibarateDelayFromJNI();
+
+EXTERN int c_VIBRATE_DELAY;
 #endif // OPENGLES
 
 /* Fade level... */

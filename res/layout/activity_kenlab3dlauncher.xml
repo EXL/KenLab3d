@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/scrollView"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/image_dimens"
+            android:layout_marginLeft="@dimen/image_dimens"
+            android:layout_marginRight="@dimen/image_dimens"
+            android:layout_marginTop="@dimen/image_top_dimens"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/imageDesc"
+            android:src="@drawable/kens_labyrinth_boxart" />
+
+        <CheckBox
+            android:id="@+id/checkBoxTouchControls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/image_dimens"
+            android:text="@string/checkBoxTouch" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/image_dimens"
-                android:layout_marginLeft="@dimen/image_dimens"
-                android:layout_marginRight="@dimen/image_dimens"
-                android:layout_marginTop="@dimen/image_top_dimens"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/imageDesc"
-                android:src="@drawable/kens_labyrinth_boxart" />
-
-            <CheckBox
-                android:id="@+id/checkBoxTouchControls"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/image_dimens"
-                android:text="@string/checkBoxTouch" />
+            android:layout_height="wrap_content" >
 
             <CheckBox
                 android:id="@+id/checkBoxVibrationHaptics"
@@ -35,35 +40,55 @@
                 android:layout_marginLeft="@dimen/image_dimens"
                 android:text="@string/checkBoxVibration" />
 
-            <CheckBox
-                android:id="@+id/checkBoxHiresTextures"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/vibrateEdit"
+                android:layout_width="70dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/image_dimens"
-                android:text="@string/checkBoxHiresTextures" />
+                android:layout_weight="0"
+                android:ems="10"
+                android:inputType="number"
+                android:text="@string/defaultVibro"
+                tools:ignore="InefficientWeight" >
+            </EditText>
 
-            <Button
-                android:id="@+id/buttonAbout"
+            <TextView
+                android:id="@+id/msecLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/image_dimens"
-                android:layout_marginTop="@dimen/image_dimens"
-                android:text="@string/aboutButton" />
-
-            <Button
-                android:id="@+id/buttonReconfigure"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/image_dimens"
-                android:text="@string/buttonReconfigure" />
-
-            <Button
-                android:id="@+id/buttonRun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/image_top_dimens"
-                android:layout_marginLeft="@dimen/image_dimens"
-                android:text="@string/buttonRunSetup" />
+                android:text="@string/msec"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/checkBoxHiresTextures"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/image_dimens"
+            android:text="@string/checkBoxHiresTextures" />
+
+        <Button
+            android:id="@+id/buttonAbout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/image_dimens"
+            android:layout_marginTop="@dimen/image_dimens"
+            android:text="@string/aboutButton" />
+
+        <Button
+            android:id="@+id/buttonReconfigure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/image_dimens"
+            android:text="@string/buttonReconfigure" />
+
+        <Button
+            android:id="@+id/buttonRun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/image_top_dimens"
+            android:layout_marginLeft="@dimen/image_dimens"
+            android:text="@string/buttonRunSetup" />
+    </LinearLayout>
+
 </ScrollView>

@@ -94,7 +94,7 @@ void createshortcut(void) {
 }
 #endif
 
-int inputdevice=1,resolutionnumber=3,nearest=0;
+int inputdevice=0,resolutionnumber=3,nearest=0;
 int music=1,sound=1,fullscr=1,cheat=0,channel=1,musicchannel=1;
 int soundblock=0,timing=0,texturedepth=1,scaling=2;
 

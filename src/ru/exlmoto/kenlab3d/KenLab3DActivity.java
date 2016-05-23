@@ -7,6 +7,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
 
 public class KenLab3DActivity extends SDLActivity {
 
@@ -16,11 +18,13 @@ public class KenLab3DActivity extends SDLActivity {
 
 	// Access from JNI
 	public static boolean m_hiResState;
+	public static int m_vibrateDelay;
 
 	public static void toDebugLog(String debugMessage) {
 		Log.d(APP_TAG, "=== " + debugMessage);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		toDebugLog("Start SDL Activity from KenLab3DActivity");
@@ -28,6 +32,14 @@ public class KenLab3DActivity extends SDLActivity {
 
 		toDebugLog("Setting Vibration");
 		m_vibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+		
+		if (KenLab3DSettings.s_TouchControls) {
+			LinearLayout ll = new LinearLayout(this);
+			// if settings/run
+			ll.setBackgroundDrawable(getResources().getDrawable(R.drawable.overlay_controls));
+			addContentView(ll, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+					LayoutParams.MATCH_PARENT));
+		}
 	}
 
 	// JNI-method

@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class KenLab3DLauncherActivity extends Activity  {
@@ -32,6 +33,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 	private Button buttonAbout;
 	private Button buttonReconfigure;
 	private Button buttonRunOrSetup;
+	
+	private EditText editVibrate;
 
 	private Dialog aboutDialog;
 
@@ -117,6 +120,10 @@ public class KenLab3DLauncherActivity extends Activity  {
 		fillLayoutBySettings();
 
 		updateRunOrSetupButton();
+
+		// TODO: test
+		editVibrate = (EditText)findViewById(R.id.vibrateEdit);
+		KenLab3DActivity.m_vibrateDelay = Integer.parseInt(editVibrate.getText().toString());
 
 		// Set Listeners
 		checkBoxTouchControls.setOnCheckedChangeListener(new OnCheckedChangeListener() {
