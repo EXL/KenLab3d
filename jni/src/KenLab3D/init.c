@@ -52,20 +52,20 @@ void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const cha
 int getVibarateDelayFromJNI() {
 	JNIEnv *javaEnviron = SDL_AndroidGetJNIEnv();
 	if (javaEnviron != NULL) {
-		jclass clazz = (*javaEnviron)->FindClass(javaEnviron, "ru/exlmoto/kenlab3d/KenLab3DActivity");
+		jclass clazz = (*javaEnviron)->FindClass(javaEnviron, "ru/exlmoto/kenlab3d/KenLab3DLauncherActivity$KenLab3DSettings");
 		if (clazz == 0) {
-			TO_DEBUG_LOG("Error JNI: Class ru/exlmoto/kenlab3d/KenLab3DActivity not found!");
+			TO_DEBUG_LOG("Error JNI: Class ru/exlmoto/kenlab3d/KenLab3DLauncherActivity$KenLab3DSettings not found!");
 			return 0;
 		}
 
-		jfieldID fieldID = (*javaEnviron)->GetStaticFieldID(javaEnviron, clazz, "m_vibrateDelay", "I");
+		jfieldID fieldID = (*javaEnviron)->GetStaticFieldID(javaEnviron, clazz, "s_VibroDelay", "I");
 		if (fieldID == 0) {
-			TO_DEBUG_LOG("Error JNI: fieldID is 0, field m_vibrateDelay I not found!");
+			TO_DEBUG_LOG("Error JNI: fieldID is 0, field s_VibroDelay I not found!");
 			return 0;
 		}
 
 		jint vibrateDelay = (*javaEnviron)->GetStaticIntField(javaEnviron, clazz, fieldID);
-		TO_DEBUG_LOG("JNI: vibrateDelay is: %d", (int)vibrateDelay);
+		TO_DEBUG_LOG("JNI: s_VibroDelay is: %d", (int)vibrateDelay);
 
 		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
 
@@ -111,7 +111,7 @@ int getHiresSettingsValue() {
 		}
 
 		jboolean hiresState = (*javaEnviron)->GetStaticBooleanField(javaEnviron, clazz, fieldID);
-		TO_DEBUG_LOG("JNI: hiresState is: %d", (int)hiresState);
+		TO_DEBUG_LOG("JNI: m_hiResState is: %d", (int)hiresState);
 
 		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
 

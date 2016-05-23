@@ -23,6 +23,9 @@ public class KenLab3DLauncherActivity extends Activity  {
 		public static boolean s_TouchControls = false;
 		public static boolean s_VibrationHaptics = true;
 		public static boolean s_HiResTextures = true;
+		
+		// Access from JNI
+		public static int s_VibroDelay = 50;
 	}
 	// END DEFAULT SETTINGS CLASS
 
@@ -34,18 +37,20 @@ public class KenLab3DLauncherActivity extends Activity  {
 	private Button buttonReconfigure;
 	private Button buttonRunOrSetup;
 	
-	private EditText editVibrate;
+	private EditText editVibrateDelay;
 
 	private Dialog aboutDialog;
+	private Dialog rangeDialog;
 
 	private SharedPreferences settingsStorage = null;
 
 	private File settingsIniFile = null;
 
 	private void readSettings() {
-		KenLab3DSettings.s_TouchControls = settingsStorage.getBoolean("s_TouchControls", false);
+		KenLab3DSettings.s_TouchControls = settingsStorage.getBoolean("s_TouchControls", true);
 		KenLab3DSettings.s_VibrationHaptics = settingsStorage.getBoolean("s_VibrationHaptics", true);
 		KenLab3DSettings.s_HiResTextures = settingsStorage.getBoolean("s_HiResTextures", true);
+		KenLab3DSettings.s_VibroDelay = settingsStorage.getInt("s_VibroDelay", 50);
 	}
 
 	private void writeSettings() {
@@ -57,6 +62,11 @@ public class KenLab3DLauncherActivity extends Activity  {
 		editor.putBoolean("s_TouchControls", KenLab3DSettings.s_TouchControls);
 		editor.putBoolean("s_VibrationHaptics", KenLab3DSettings.s_VibrationHaptics);
 		editor.putBoolean("s_HiResTextures", KenLab3DSettings.s_HiResTextures);
+		if (KenLab3DSettings.s_VibroDelay < 30 || KenLab3DSettings.s_VibroDelay > 300) {
+			editor.putInt("s_VibroDelay", 50);
+		} else {
+			editor.putInt("s_VibroDelay", KenLab3DSettings.s_VibroDelay);
+		}
 		editor.commit();
 	}
 
@@ -64,12 +74,17 @@ public class KenLab3DLauncherActivity extends Activity  {
 		KenLab3DSettings.s_TouchControls = checkBoxTouchControls.isChecked();
 		KenLab3DSettings.s_VibrationHaptics = checkBoxVibrationHaptics.isChecked();
 		KenLab3DSettings.s_HiResTextures = checkBoxHiResTextures.isChecked();
+
+		String _toParse = editVibrateDelay.getText().toString();
+		KenLab3DSettings.s_VibroDelay = _toParse.compareTo("") == 0 ? 50 : Integer.parseInt(_toParse);
 	}
 
 	private void fillLayoutBySettings() {
 		checkBoxTouchControls.setChecked(KenLab3DSettings.s_TouchControls);
 		checkBoxVibrationHaptics.setChecked(KenLab3DSettings.s_VibrationHaptics);
 		checkBoxHiResTextures.setChecked(KenLab3DSettings.s_HiResTextures);
+		editVibrateDelay.setText(Integer.toString(KenLab3DSettings.s_VibroDelay));
+		editVibrateDelay.setEnabled(KenLab3DSettings.s_VibrationHaptics);
 	}
 
 	private void updateRunOrSetupButton() {
@@ -78,6 +93,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 	private void showAboutDialog() {
 		this.runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
 				aboutDialog.setContentView(R.layout.about_layout);
@@ -88,12 +104,26 @@ public class KenLab3DLauncherActivity extends Activity  {
 		});
 	}
 
+	private void showErrorVibroRangeDialog() {
+		this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				rangeDialog.setContentView(R.layout.range_error_layout);
+				rangeDialog.setCancelable(true);
+				rangeDialog.setTitle(R.string.errorString);
+				rangeDialog.show();
+			}
+		});
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		KenLab3DActivity.toDebugLog("Start KenLab3DLauncher");
 
 		aboutDialog = new Dialog(this);
+		rangeDialog = new Dialog(this);
 
 		settingsIniFile = new File(getFilesDir().getAbsolutePath() + "/settings.ini");
 
@@ -117,13 +147,11 @@ public class KenLab3DLauncherActivity extends Activity  {
 		buttonReconfigure = (Button)findViewById(R.id.buttonReconfigure);
 		buttonRunOrSetup = (Button)findViewById(R.id.buttonRun);
 
+		editVibrateDelay = (EditText)findViewById(R.id.vibrateEdit);
+
 		fillLayoutBySettings();
 
 		updateRunOrSetupButton();
-
-		// TODO: test
-		editVibrate = (EditText)findViewById(R.id.vibrateEdit);
-		KenLab3DActivity.m_vibrateDelay = Integer.parseInt(editVibrate.getText().toString());
 
 		// Set Listeners
 		checkBoxTouchControls.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -140,6 +168,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				KenLab3DSettings.s_VibrationHaptics = isChecked;
+				editVibrateDelay.setEnabled(isChecked);
 			}
 
 		});
@@ -183,11 +212,19 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 			@Override
 			public void onClick(View buttonView) {
-				writeSettings();
 
-				KenLab3DActivity.m_hiResState = KenLab3DSettings.s_HiResTextures;
-				Intent intent = new Intent(buttonView.getContext(), KenLab3DActivity.class);
-				startActivity(intent);
+				String _toParse = editVibrateDelay.getText().toString();
+				int value = _toParse.compareTo("") == 0 ? 50 : Integer.parseInt(_toParse);
+
+				if (value < 30 || value > 300) {
+					showErrorVibroRangeDialog();
+				} else {
+					writeSettings();
+
+					KenLab3DActivity.m_hiResState = KenLab3DSettings.s_HiResTextures;
+					Intent intent = new Intent(buttonView.getContext(), KenLab3DActivity.class);
+					startActivity(intent);
+				}
 			}
 
 		});
@@ -198,6 +235,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 		writeSettings();
 
 		aboutDialog.dismiss();
+		rangeDialog.dismiss();
 
 		super.onDestroy();
 	}
