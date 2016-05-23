@@ -34,8 +34,11 @@ public class KenLab3DActivity extends SDLActivity {
 		
 		if (KenLab3DSettings.s_TouchControls) {
 			LinearLayout ll = new LinearLayout(this);
-			// if settings/run
-			ll.setBackgroundDrawable(getResources().getDrawable(R.drawable.overlay_controls));
+			if (KenLab3DLauncherActivity.g_isStateGame) {
+				ll.setBackgroundDrawable(getResources().getDrawable(R.drawable.overlay_controls_game));
+			} else {
+				ll.setBackgroundDrawable(getResources().getDrawable(R.drawable.overlay_controls_settings));
+			}
 			addContentView(ll, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 					LayoutParams.MATCH_PARENT));
 		}

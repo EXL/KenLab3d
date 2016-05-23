@@ -18,9 +18,11 @@ import android.widget.Toast;
 
 public class KenLab3DLauncherActivity extends Activity  {
 
+	public static boolean g_isStateGame = false;
+
 	// DEFAULT SETTINGS CLASS
 	public static class KenLab3DSettings {
-		public static boolean s_TouchControls = false;
+		public static boolean s_TouchControls = true;
 		public static boolean s_VibrationHaptics = true;
 		public static boolean s_HiResTextures = true;
 		
@@ -88,7 +90,13 @@ public class KenLab3DLauncherActivity extends Activity  {
 	}
 
 	private void updateRunOrSetupButton() {
-		buttonRunOrSetup.setText((settingsIniFile.exists()) ? R.string.buttonRunKen : R.string.buttonRunSetup);
+		if (settingsIniFile.exists()) {
+			buttonRunOrSetup.setText(R.string.buttonRunKen);
+			g_isStateGame = true;
+		} else {
+			buttonRunOrSetup.setText(R.string.buttonRunSetup);
+			g_isStateGame = false;
+		}
 	}
 
 	private void showAboutDialog() {
