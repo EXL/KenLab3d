@@ -306,13 +306,21 @@ char filtermenu[3][30]={
 
 char musicmenu[3][30]={
     "No music",
+#ifndef ANDROID_NDK
     "Adlib emulation",
+#else
+    "See Android GUI Settings",
+#endif // !ANDROID_NDK
     "General MIDI",
 };
 
 char soundmenu[2][30]={
     "No sound",
-    "Digital sound effects"
+#ifndef ANDROID_NDK
+	"Digital sound effects",
+#else
+    "See Android GUI Settings",
+#endif // !ANDROID_NDK
 };
 
 char channelmenu[2][30]={
@@ -1065,10 +1073,14 @@ void setupmenu(void) {
 		    setupsetfiltering();
 		    break;
 		case 5:
+#ifndef ANDROID_NDK
 		    setupsetmusic();
+#endif // !ANDROID_NDK
 		    break;
 		case 6:
+#ifndef ANDROID_NDK
 		    setupsetsound();
+#endif // !ANDROID_NDK
 		    break;
 		case 7:
 		    setupsetsoundchannels();
@@ -1136,6 +1148,22 @@ void configure(void) {
 	    musicsource=-1;
 	    break;
     }
+
+#ifdef ANDROID_NDK
+    // Patch Sound and Music Settings
+    if (getSoundSettingsValue()) {
+        speechstatus = 2;
+    } else {
+        speechstatus = 0;
+    }
+
+    if (getMusicSettingsValue()) {
+        musicsource = 2;
+    } else {
+        musicsource = -1;
+    }
+#endif // ANDROID_NDK
+
     moustat = ((3-inputdevice)&1);
     joystat = ((3-inputdevice)>>1);
     cheatenable=cheat;

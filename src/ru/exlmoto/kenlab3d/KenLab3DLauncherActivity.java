@@ -26,7 +26,9 @@ public class KenLab3DLauncherActivity extends Activity  {
 		public static boolean s_TouchControls = true;
 		public static boolean s_VibrationHaptics = true;
 		public static boolean s_HiResTextures = true;
-		
+		public static boolean s_Sound = true;
+		public static boolean s_Music = true;
+
 		// Access from JNI
 		public static int s_VibroDelay = 50;
 	}
@@ -35,11 +37,13 @@ public class KenLab3DLauncherActivity extends Activity  {
 	private CheckBox checkBoxTouchControls;
 	private CheckBox checkBoxVibrationHaptics;
 	private CheckBox checkBoxHiResTextures;
+	private CheckBox checkBoxSound;
+	private CheckBox checkBoxMusic;
 
 	private Button buttonAbout;
 	private Button buttonReconfigure;
 	private Button buttonRunOrSetup;
-	
+
 	private EditText editVibrateDelay;
 
 	private Dialog aboutDialog;
@@ -54,6 +58,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 		KenLab3DSettings.s_TouchControls = settingsStorage.getBoolean("s_TouchControls", true);
 		KenLab3DSettings.s_VibrationHaptics = settingsStorage.getBoolean("s_VibrationHaptics", true);
 		KenLab3DSettings.s_HiResTextures = settingsStorage.getBoolean("s_HiResTextures", true);
+		KenLab3DSettings.s_Sound = settingsStorage.getBoolean("s_Sound", true);
+		KenLab3DSettings.s_Music = settingsStorage.getBoolean("s_Music", true);
 		KenLab3DSettings.s_VibroDelay = settingsStorage.getInt("s_VibroDelay", 50);
 	}
 
@@ -66,6 +72,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 		editor.putBoolean("s_TouchControls", KenLab3DSettings.s_TouchControls);
 		editor.putBoolean("s_VibrationHaptics", KenLab3DSettings.s_VibrationHaptics);
 		editor.putBoolean("s_HiResTextures", KenLab3DSettings.s_HiResTextures);
+		editor.putBoolean("s_Sound", KenLab3DSettings.s_Sound);
+		editor.putBoolean("s_Music", KenLab3DSettings.s_Music);
 		if (KenLab3DSettings.s_VibroDelay < 30 || KenLab3DSettings.s_VibroDelay > 300) {
 			editor.putInt("s_VibroDelay", 50);
 		} else {
@@ -78,6 +86,12 @@ public class KenLab3DLauncherActivity extends Activity  {
 		KenLab3DSettings.s_TouchControls = checkBoxTouchControls.isChecked();
 		KenLab3DSettings.s_VibrationHaptics = checkBoxVibrationHaptics.isChecked();
 		KenLab3DSettings.s_HiResTextures = checkBoxHiResTextures.isChecked();
+		KenLab3DSettings.s_Sound = checkBoxSound.isChecked();
+		if (!KenLab3DSettings.s_Sound) {
+			KenLab3DSettings.s_Music = false;
+		} else {
+			KenLab3DSettings.s_Music = checkBoxMusic.isChecked();
+		}
 
 		String _toParse = editVibrateDelay.getText().toString();
 		KenLab3DSettings.s_VibroDelay = _toParse.compareTo("") == 0 ? 50 : Integer.parseInt(_toParse);
@@ -87,6 +101,13 @@ public class KenLab3DLauncherActivity extends Activity  {
 		checkBoxTouchControls.setChecked(KenLab3DSettings.s_TouchControls);
 		checkBoxVibrationHaptics.setChecked(KenLab3DSettings.s_VibrationHaptics);
 		checkBoxHiResTextures.setChecked(KenLab3DSettings.s_HiResTextures);
+		checkBoxSound.setChecked(KenLab3DSettings.s_Sound);
+		if (!KenLab3DSettings.s_Sound) {
+			checkBoxMusic.setEnabled(false);
+			checkBoxMusic.setChecked(false);
+		} else {
+			checkBoxMusic.setChecked(KenLab3DSettings.s_Music);
+		}
 		editVibrateDelay.setText(Integer.toString(KenLab3DSettings.s_VibroDelay));
 		editVibrateDelay.setEnabled(KenLab3DSettings.s_VibrationHaptics);
 	}
@@ -152,13 +173,15 @@ public class KenLab3DLauncherActivity extends Activity  {
 		checkBoxTouchControls = (CheckBox)findViewById(R.id.checkBoxTouchControls);
 		checkBoxVibrationHaptics = (CheckBox)findViewById(R.id.checkBoxVibrationHaptics);
 		checkBoxHiResTextures = (CheckBox)findViewById(R.id.checkBoxHiresTextures);
+		checkBoxSound = (CheckBox)findViewById(R.id.checkBoxSound);
+		checkBoxMusic = (CheckBox)findViewById(R.id.checkBoxMusic);
 
 		buttonAbout = (Button)findViewById(R.id.buttonAbout);
 		buttonReconfigure = (Button)findViewById(R.id.buttonReconfigure);
 		buttonRunOrSetup = (Button)findViewById(R.id.buttonRun);
 
 		editVibrateDelay = (EditText)findViewById(R.id.vibrateEdit);
-		
+
 		coverArt = (ImageView)findViewById(R.id.imageView);
 		coverArt.setFocusable(true);
 		coverArt.setFocusableInTouchMode(true);
@@ -193,6 +216,28 @@ public class KenLab3DLauncherActivity extends Activity  {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				KenLab3DSettings.s_HiResTextures = isChecked;
+			}
+
+		});
+
+		checkBoxSound.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				KenLab3DSettings.s_Sound = isChecked;
+				checkBoxMusic.setEnabled(isChecked);
+				if (!isChecked && !checkBoxMusic.isEnabled()) {
+					checkBoxMusic.setChecked(false);
+				}
+			}
+
+		});
+
+		checkBoxMusic.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				KenLab3DSettings.s_Music = isChecked;
 			}
 
 		});

@@ -119,6 +119,56 @@ int getHiresSettingsValue() {
 	}
 	return 0;
 }
+
+int getSoundSettingsValue() {
+	JNIEnv *javaEnviron = SDL_AndroidGetJNIEnv();
+	if (javaEnviron != NULL) {
+		jclass clazz = (*javaEnviron)->FindClass(javaEnviron, "ru/exlmoto/kenlab3d/KenLab3DLauncherActivity$KenLab3DSettings");
+		if (clazz == 0) {
+			TO_DEBUG_LOG("Error JNI: Class ru/exlmoto/kenlab3d/KenLab3DLauncherActivity$KenLab3DSettings not found!");
+			return 0;
+		}
+
+		jfieldID fieldID = (*javaEnviron)->GetStaticFieldID(javaEnviron, clazz, "s_Sound", "Z");
+		if (fieldID == 0) {
+			TO_DEBUG_LOG("Error JNI: fieldID is 0, field s_Sound Z not found!");
+			return 0;
+		}
+
+		jboolean sound = (*javaEnviron)->GetStaticBooleanField(javaEnviron, clazz, fieldID);
+		TO_DEBUG_LOG("JNI: s_Sound is: %d", (int)sound);
+
+		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
+
+		return (int)sound;
+	}
+	return 0;
+}
+
+int getMusicSettingsValue() {
+	JNIEnv *javaEnviron = SDL_AndroidGetJNIEnv();
+	if (javaEnviron != NULL) {
+		jclass clazz = (*javaEnviron)->FindClass(javaEnviron, "ru/exlmoto/kenlab3d/KenLab3DLauncherActivity$KenLab3DSettings");
+		if (clazz == 0) {
+			TO_DEBUG_LOG("Error JNI: Class ru/exlmoto/kenlab3d/KenLab3DLauncherActivity$KenLab3DSettings not found!");
+			return 0;
+		}
+
+		jfieldID fieldID = (*javaEnviron)->GetStaticFieldID(javaEnviron, clazz, "s_Music", "Z");
+		if (fieldID == 0) {
+			TO_DEBUG_LOG("Error JNI: fieldID is 0, field s_Music Z not found!");
+			return 0;
+		}
+
+		jboolean music = (*javaEnviron)->GetStaticBooleanField(javaEnviron, clazz, fieldID);
+		TO_DEBUG_LOG("JNI: s_Music is: %d", (int)music);
+
+		(*javaEnviron)->DeleteLocalRef(javaEnviron, clazz);
+
+		return (int)music;
+	}
+	return 0;
+}
 #endif // ANDROID_NDK
 
 void initialize()
