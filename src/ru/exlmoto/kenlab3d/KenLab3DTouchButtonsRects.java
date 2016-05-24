@@ -154,15 +154,17 @@ public class KenLab3DTouchButtonsRects {
 		************************************************************************************/
 
 		initializedButtons = new ArrayList<KenLab3DTouchButtonsRects.KenLab3DButton>();
-		initializedButtons.add(new KenLab3DButton("Left", 0.0292f, 0.6354f, 0.1757f, 0.3125f, KeyEvent.KEYCODE_DPAD_LEFT));
-		initializedButtons.add(new KenLab3DButton("Down", 0.2166f, 0.6354f, 0.1757f, 0.3125f, KeyEvent.KEYCODE_DPAD_DOWN));
-		initializedButtons.add(new KenLab3DButton("Right", 0.4039f, 0.6354f, 0.1757f, 0.3125f, KeyEvent.KEYCODE_DPAD_RIGHT));
-		initializedButtons.add(new KenLab3DButton("Up", 0.2166f, 0.3020f, 0.1757f, 0.3125f, KeyEvent.KEYCODE_DPAD_UP));
-		initializedButtons.add(new KenLab3DButton("Center", 0.7786f, 0.2291f, 0.1757f, 0.3125f, KeyEvent.KEYCODE_DPAD_CENTER));
+		initializedButtons.add(new KenLab3DButton("Left", 0.0421f, 0.6583f, 0.1569f, 0.2792f, KeyEvent.KEYCODE_DPAD_LEFT));
+		initializedButtons.add(new KenLab3DButton("Down", 0.2295f, 0.6583f, 0.1569f, 0.2792f, KeyEvent.KEYCODE_DPAD_DOWN));
+		initializedButtons.add(new KenLab3DButton("Right", 0.4180f, 0.6583f, 0.1569f, 0.2792f, KeyEvent.KEYCODE_DPAD_RIGHT));
+		initializedButtons.add(new KenLab3DButton("Up", 0.2295f, 0.3250f, 0.1569f, 0.2792f, KeyEvent.KEYCODE_DPAD_UP));
+		initializedButtons.add(new KenLab3DButton("Center", 0.8079f, 0.3250f, 0.1569f, 0.2792f, KeyEvent.KEYCODE_DPAD_CENTER));
 		if (KenLab3DLauncherActivity.g_isStateGame) {
-			initializedButtons.add(new KenLab3DButton("Space", 0.7786f, 0.6354f, 0.1757f, 0.3125f, KeyEvent.KEYCODE_SPACE));
-			initializedButtons.add(new KenLab3DButton("E", 0.5386f, 0.1458f, 0.1112f, 0.1979f, KeyEvent.KEYCODE_E));
-			initializedButtons.add(new KenLab3DButton("M", 0.6088f, 0.3958f, 0.1112f, 0.1979f, KeyEvent.KEYCODE_M));
+			initializedButtons.add(new KenLab3DButton("Space", 0.8079f, 0.6604f, 0.1569f, 0.2792f, KeyEvent.KEYCODE_SPACE));
+			initializedButtons.add(new KenLab3DButton("E", 0.5503f, 0.3583f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_E));
+			initializedButtons.add(new KenLab3DButton("Z", 0.5503f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_Z));
+			initializedButtons.add(new KenLab3DButton("X", 0.7025f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_X));
+			initializedButtons.add(new KenLab3DButton("C", 0.8548f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_C));
 		}
 	}
 }
