@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class KenLab3DLauncherActivity extends Activity  {
@@ -43,6 +44,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 	private Dialog aboutDialog;
 	private Dialog rangeDialog;
+	private ImageView coverArt;
 
 	private SharedPreferences settingsStorage = null;
 
@@ -156,6 +158,11 @@ public class KenLab3DLauncherActivity extends Activity  {
 		buttonRunOrSetup = (Button)findViewById(R.id.buttonRun);
 
 		editVibrateDelay = (EditText)findViewById(R.id.vibrateEdit);
+		
+		coverArt = (ImageView)findViewById(R.id.imageView);
+		coverArt.setFocusable(true);
+		coverArt.setFocusableInTouchMode(true);
+		coverArt.requestFocus();
 
 		fillLayoutBySettings();
 
