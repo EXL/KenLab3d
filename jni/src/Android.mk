@@ -26,7 +26,8 @@ LOCAL_SRC_FILES :=	$(SDL_PATH)/src/main/android/SDL_android_main.c \
 					KenLab3D/oldlab3d.c \
 					KenLab3D/setup.c \
 					KenLab3D/subs.c \
-					KenLab3D/sdl2keyhelper.c
+					KenLab3D/sdl2keyhelper.c \
+					KenLab3D/androidutils.c
 
 LOCAL_SHARED_LIBRARIES := SDL2
 

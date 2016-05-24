@@ -668,12 +668,12 @@ EXTERN void o_drawHardnessMenuHelper();
 EXTERN void o_drawNewGameMenuHelper();
 EXTERN void o_drawAbortMenuHelper();
 
-void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const char *desc1, const char *desc2);
-void doVibrateFromJNI(int duration);
-int getHiresSettingsValue();
-int getSoundSettingsValue();
-int getMusicSettingsValue();
-int getVibarateDelayFromJNI();
+EXTERN void copyFileFromAssetsToInternalRWDirAndroid(const char *source_file, const char *desc1, const char *desc2);
+EXTERN void doVibrateFromJNI(int duration);
+EXTERN int getHiresSettingsValue();
+EXTERN int getSoundSettingsValue();
+EXTERN int getMusicSettingsValue();
+EXTERN int getVibarateDelayFromJNI();
 
 EXTERN int c_VIBRATE_DELAY;
 #endif // OPENGLES

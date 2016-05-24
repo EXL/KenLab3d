@@ -6812,7 +6812,7 @@ void orderinfomenu() {
 	   "Android port");
     textprint(30,146,176);
     strcpy(textbuf,
-	   "(c) 2015 Serg \"EXL\" Koles");
+	   "(c) 2015-2016 Serg \"EXL\" Koles");
     textprint(30,156,176);
     strcpy(textbuf,
 	   "http://exlmoto.ru/kenlab3d-droid");
