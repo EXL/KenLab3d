@@ -21,6 +21,9 @@ import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import ru.exlmoto.kenlab3d.KenLab3DLauncherActivity;
+import ru.exlmoto.kenlab3d.KenLab3DLauncherActivity.KenLab3DSettings;
+import ru.exlmoto.kenlab3d.KenLab3DTouchButtonsRects;
 import android.os.*;
 import android.util.Log;
 import android.util.SparseArray;
@@ -970,6 +973,9 @@ class SDLMain implements Runnable {
 class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     View.OnKeyListener, View.OnTouchListener, SensorEventListener  {
 
+    // Rectangles for Buttons class
+    private KenLab3DTouchButtonsRects mTouchButtons;
+
     // Sensors
     protected static SensorManager mSensorManager;
     protected static Display mDisplay;
@@ -987,6 +993,8 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
         requestFocus();
         setOnKeyListener(this);
         setOnTouchListener(this);
+
+        mTouchButtons = new KenLab3DTouchButtonsRects();
 
         mDisplay = ((WindowManager)context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
         mSensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
@@ -1202,31 +1210,84 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
     // Touch events
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        /* Ref: http://developer.android.com/training/gestures/multi.html */
-        final int touchDevId = event.getDeviceId();
-        final int pointerCount = event.getPointerCount();
-        int action = event.getActionMasked();
-        int pointerFingerId;
-        int mouseButton;
-        int i = -1;
-        float x,y,p;
-
-        // !!! FIXME: dump this SDK check after 2.0.4 ships and require API14.
-        if (event.getSource() == InputDevice.SOURCE_MOUSE && SDLActivity.mSeparateMouseAndTouch) {
-            if (Build.VERSION.SDK_INT < 14) {
-                mouseButton = 1;    // For Android==12 all mouse buttons are the left button
-            } else {
-                try {
-                    mouseButton = (Integer) event.getClass().getMethod("getButtonState").invoke(event);
-                } catch(Exception e) {
-                    mouseButton = 1;    // oh well.
-                }
+        if (KenLab3DSettings.s_TouchControls) {
+            int touchId = event.getPointerCount() - 1;
+            if (touchId < 0) {
+                return false;
             }
-            SDLActivity.onNativeMouse(mouseButton, action, event.getX(0), event.getY(0));
+
+            float touchX = event.getX(touchId) / getWidth();
+            float touchY = event.getY(touchId) / getHeight();
+
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                mTouchButtons.checkTouchButtons(touchX, touchY, touchId);
+                mTouchButtons.pressSingleTouchButtons();
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                mTouchButtons.checkTouchButtons(touchX, touchY, touchId);
+                mTouchButtons.pressMultiTouchButtons();
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                mTouchButtons.checkTouchButtons(touchX, touchY, touchId);
+                mTouchButtons.releaseMultiTouchButtons(touchId);
+                break;
+            case MotionEvent.ACTION_UP:
+                mTouchButtons.releaseAllButtons();
+                break;
+            default:
+                break;
+            }
         } else {
-            switch(action) {
-                case MotionEvent.ACTION_MOVE:
-                    for (i = 0; i < pointerCount; i++) {
+            /* Ref: http://developer.android.com/training/gestures/multi.html */
+            final int touchDevId = event.getDeviceId();
+            final int pointerCount = event.getPointerCount();
+            int action = event.getActionMasked();
+            int pointerFingerId;
+            int mouseButton;
+            int i = -1;
+            float x,y,p;
+
+            // !!! FIXME: dump this SDK check after 2.0.4 ships and require API14.
+            if (event.getSource() == InputDevice.SOURCE_MOUSE && SDLActivity.mSeparateMouseAndTouch) {
+                if (Build.VERSION.SDK_INT < 14) {
+                    mouseButton = 1;    // For Android==12 all mouse buttons are the left button
+                } else {
+                    try {
+                        mouseButton = (Integer) event.getClass().getMethod("getButtonState").invoke(event);
+                    } catch(Exception e) {
+                        mouseButton = 1;    // oh well.
+                    }
+                }
+                SDLActivity.onNativeMouse(mouseButton, action, event.getX(0), event.getY(0));
+            } else {
+                switch(action) {
+                    case MotionEvent.ACTION_MOVE:
+                        for (i = 0; i < pointerCount; i++) {
+                            pointerFingerId = event.getPointerId(i);
+                            x = event.getX(i) / mWidth;
+                            y = event.getY(i) / mHeight;
+                            p = event.getPressure(i);
+                            if (p > 1.0f) {
+                                // may be larger than 1.0f on some devices
+                                // see the documentation of getPressure(i)
+                                p = 1.0f;
+                            }
+                            SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
+                        }
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_DOWN:
+                        // Primary pointer up/down, the index is always zero
+                        i = 0;
+                    case MotionEvent.ACTION_POINTER_UP:
+                    case MotionEvent.ACTION_POINTER_DOWN:
+                        // Non primary pointer up/down
+                        if (i == -1) {
+                            i = event.getActionIndex();
+                        }
+
                         pointerFingerId = event.getPointerId(i);
                         x = event.getX(i) / mWidth;
                         y = event.getY(i) / mHeight;
@@ -1237,49 +1298,26 @@ class SDLSurface extends SurfaceView implements SurfaceHolder.Callback,
                             p = 1.0f;
                         }
                         SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
-                    }
-                    break;
+                        break;
 
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_DOWN:
-                    // Primary pointer up/down, the index is always zero
-                    i = 0;
-                case MotionEvent.ACTION_POINTER_UP:
-                case MotionEvent.ACTION_POINTER_DOWN:
-                    // Non primary pointer up/down
-                    if (i == -1) {
-                        i = event.getActionIndex();
-                    }
-
-                    pointerFingerId = event.getPointerId(i);
-                    x = event.getX(i) / mWidth;
-                    y = event.getY(i) / mHeight;
-                    p = event.getPressure(i);
-                    if (p > 1.0f) {
-                        // may be larger than 1.0f on some devices
-                        // see the documentation of getPressure(i)
-                        p = 1.0f;
-                    }
-                    SDLActivity.onNativeTouch(touchDevId, pointerFingerId, action, x, y, p);
-                    break;
-
-                case MotionEvent.ACTION_CANCEL:
-                    for (i = 0; i < pointerCount; i++) {
-                        pointerFingerId = event.getPointerId(i);
-                        x = event.getX(i) / mWidth;
-                        y = event.getY(i) / mHeight;
-                        p = event.getPressure(i);
-                        if (p > 1.0f) {
-                            // may be larger than 1.0f on some devices
-                            // see the documentation of getPressure(i)
-                            p = 1.0f;
+                    case MotionEvent.ACTION_CANCEL:
+                        for (i = 0; i < pointerCount; i++) {
+                            pointerFingerId = event.getPointerId(i);
+                            x = event.getX(i) / mWidth;
+                            y = event.getY(i) / mHeight;
+                            p = event.getPressure(i);
+                            if (p > 1.0f) {
+                                // may be larger than 1.0f on some devices
+                                // see the documentation of getPressure(i)
+                                p = 1.0f;
+                            }
+                            SDLActivity.onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
                         }
-                        SDLActivity.onNativeTouch(touchDevId, pointerFingerId, MotionEvent.ACTION_UP, x, y, p);
-                    }
-                    break;
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
             }
         }
 
