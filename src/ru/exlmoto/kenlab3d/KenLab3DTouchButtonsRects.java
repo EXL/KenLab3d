@@ -187,9 +187,9 @@ public class KenLab3DTouchButtonsRects {
 		if (KenLab3DLauncherActivity.g_isStateGame) {
 			initializedButtons.add(new KenLab3DButton("Space", 0.8079f, 0.6604f, 0.1569f, 0.2792f, KeyEvent.KEYCODE_SPACE));
 			initializedButtons.add(new KenLab3DButton("E", 0.5503f, 0.3583f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_E));
-			initializedButtons.add(new KenLab3DButton("Z", 0.5503f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_Z));
-			initializedButtons.add(new KenLab3DButton("X", 0.7025f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_X));
-			initializedButtons.add(new KenLab3DButton("C", 0.8548f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_C));
+			initializedButtons.add(new KenLab3DButton("Z", 0.5503f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_Z)); // 1
+			initializedButtons.add(new KenLab3DButton("X", 0.7025f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_X)); // 2
+			initializedButtons.add(new KenLab3DButton("C", 0.8548f, 0.0333f, 0.1218f, 0.2166f, KeyEvent.KEYCODE_C)); // 3
 		}
 	}
 }

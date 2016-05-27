@@ -50,11 +50,11 @@ public class KenLab3DLauncherActivity extends Activity  {
 		public static boolean s_TouchControls = true;
 		public static boolean s_VibrationHaptics = true;
 		public static boolean s_HiResTextures = true;
-		public static boolean s_Sound = true;
-		public static boolean s_Music = true;
 
 		// Access from JNI
 		public static int s_VibroDelay = 50;
+		public static boolean s_Sound = true;
+		public static boolean s_Music = true;
 	}
 	// END DEFAULT SETTINGS CLASS
 
@@ -154,6 +154,19 @@ public class KenLab3DLauncherActivity extends Activity  {
 				aboutDialog.setContentView(R.layout.about_layout);
 				aboutDialog.setCancelable(true);
 				aboutDialog.setTitle(R.string.app_name);
+
+				Button buttonAboutOk = (Button)aboutDialog.findViewById(R.id.buttonAboutOk);
+				buttonAboutOk.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View buttonView) {
+						if (aboutDialog != null) {
+							aboutDialog.cancel();
+						}
+					}
+
+				});
+
 				aboutDialog.show();
 			}
 		});
@@ -167,6 +180,19 @@ public class KenLab3DLauncherActivity extends Activity  {
 				rangeDialog.setContentView(R.layout.range_error_layout);
 				rangeDialog.setCancelable(true);
 				rangeDialog.setTitle(R.string.errorString);
+
+				Button buttonRangeOk = (Button)rangeDialog.findViewById(R.id.buttonRangeOk);
+				buttonRangeOk.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View buttonView) {
+						if (rangeDialog != null) {
+							rangeDialog.cancel();
+						}
+					}
+
+				});
+
 				rangeDialog.show();
 			}
 		});

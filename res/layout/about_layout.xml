@@ -42,5 +42,11 @@
             android:text="@string/aboutString"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
+        <Button
+            android:id="@+id/buttonAboutOk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/OK" />
+
     </LinearLayout>
 </ScrollView>

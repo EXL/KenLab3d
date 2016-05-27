@@ -12,4 +12,10 @@
         android:text="@string/errorRange"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
+    <Button
+        android:id="@+id/buttonRangeOk"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/OK" />
+
 </LinearLayout>

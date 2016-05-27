@@ -20,4 +20,5 @@
     <string name="errorString">Error!</string>
     <string name="soundString">Sound</string>
     <string name="musicString">Music</string>
+    <string name="OK">OK</string>
 </resources>
