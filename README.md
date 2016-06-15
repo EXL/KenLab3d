@@ -28,12 +28,12 @@ git clone https://github.com/EXL/KenLab3d KenLab3dAndroid
 
 ```sh
 cd ~/Deploy/KenLab3dAndroid/
-/opt/android/android-sdk-linux/tools/android update project -n Spout -p .
+/opt/android/android-sdk-linux/tools/android update project -n KenLab3D -p .
 /opt/android/android-ndk-r10d/ndk-build V=1
 /opt/android/apache-ant-1.9.4/bin/ant debug
 ```
 
-* Install Spout APK-package on your Android device via adb;
+* Install KenLab3D APK-package on your Android device via adb;
 
 ```sh
 cd ~/Deploy/KenLab3dAndroid/
