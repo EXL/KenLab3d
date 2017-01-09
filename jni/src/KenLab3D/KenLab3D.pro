@@ -11,14 +11,14 @@ TEMPLATE = app
 TARGET = KenLab3D
 
 #DEFINES += USE_OSS
-#DEFINES += OPENGLES
+DEFINES += OPENGLES
 
 QMAKE_CFLAGS_RELEASE += -O3
 
 sdl2 {
     DEFINES += USE_SDL2
     QMAKE_CFLAGS += $$system(sdl2-config --cflags)
-    LIBS += $$system(sdl2-config --libs) -lSDL2_image -lGL -lGLU
+    LIBS += $$system(sdl2-config --libs) -lSDL2_image -lGLESv1_CM -lEGL #-L/$${PWD} -lGLUES
 
     HEADERS += sdl2keyhelper.h
     SOURCES += sdl2keyhelper.c
@@ -33,3 +33,15 @@ DEPENDPATH += .
 # Input
 HEADERS += adlibemu.h lab3d.h
 SOURCES += adlibemu.c graphx.c init.c lab3d.c oldlab3d.c setup.c subs.c
+HEADERS += $${PWD}/../3rdparty/Glues/glues_error.h \
+           $${PWD}/../3rdparty/Glues/glues.h \
+           $${PWD}/../3rdparty/Glues/glues_mipmap.h \
+           $${PWD}/../3rdparty/Glues/glues_project.h \
+           $${PWD}/../3rdparty/Glues/glues_quad.h \
+           $${PWD}/../3rdparty/Glues/glues_registry.h \
+           $${PWD}/../3rdparty/Glues/glu.h
+SOURCES +=  $${PWD}/../3rdparty/Glues/glues_error.c \
+            $${PWD}/../3rdparty/Glues/glues_mipmap.c \
+            $${PWD}/../3rdparty/Glues/glues_project.c \
+            $${PWD}/../3rdparty/Glues/glues_quad.c \
+            $${PWD}/../3rdparty/Glues/glues_registry.c

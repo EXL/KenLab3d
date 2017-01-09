@@ -13,20 +13,20 @@
 
 #ifdef WIN32
 HRESULT CreateLink(LPCSTR lpszPathObj,
-		   LPSTR lpszPathLink, LPSTR lpszDesc,
-		   LPSTR lpszArgs) {
+           LPSTR lpszPathLink, LPSTR lpszDesc,
+           LPSTR lpszArgs) {
     HRESULT hres;
     IShellLink* psl;
     char p[MAX_PATH];
 
     CoInitialize(NULL);
     hres = CoCreateInstance(&CLSID_ShellLink, NULL,
-			    CLSCTX_INPROC_SERVER, &IID_IShellLink,
-			    (void *)&psl);
+                CLSCTX_INPROC_SERVER, &IID_IShellLink,
+                (void *)&psl);
     if (SUCCEEDED(hres)) {
         IPersistFile* ppf;
 
-	GetCurrentDirectory(MAX_PATH, p);
+    GetCurrentDirectory(MAX_PATH, p);
         psl->lpVtbl->SetWorkingDirectory(psl, p);
         hres=psl->lpVtbl->SetPath(psl, lpszPathObj);
 
@@ -35,18 +35,18 @@ HRESULT CreateLink(LPCSTR lpszPathObj,
         psl->lpVtbl->SetDescription(psl, lpszDesc);
 
         hres = psl->lpVtbl->QueryInterface(psl, &IID_IPersistFile,
-					   (void *)&ppf);
+                       (void *)&ppf);
 
         if (SUCCEEDED(hres)) {
             WORD wsz[MAX_PATH];
 
         TO_DEBUG_LOG("Trying to save shortcut...\n");
             MultiByteToWideChar(CP_ACP, 0, lpszPathLink, -1,
-				wsz, MAX_PATH);
+                wsz, MAX_PATH);
 
             hres = ppf->lpVtbl->Save(ppf, wsz, TRUE);
             ppf->lpVtbl->Release(ppf);
-	    if (SUCCEEDED(hres))
+        if (SUCCEEDED(hres))
         TO_DEBUG_LOG("Done.\n");
         }
         psl->lpVtbl->Release(psl);
@@ -64,8 +64,8 @@ void createshortcut(void) {
 
     TO_DEBUG_LOG("Getting desktop location.\n");
     if (SHGetSpecialFolderLocation(GetDesktopWindow(),
-				   CSIDL_DESKTOPDIRECTORY,&l)!=NOERROR)
-	return;
+                   CSIDL_DESKTOPDIRECTORY,&l)!=NOERROR)
+    return;
     TO_DEBUG_LOG("Converting...\n");
     if (SHGetPathFromIDList(l,p)!=TRUE) return;
     TO_DEBUG_LOG("Desktop location is %s.\n",p);
@@ -245,14 +245,14 @@ char inputdevicemenu[4][30]={
 /* Predefined resolutions for backward compatibility with early betas. */
 
 static int resx[19]={360,512,640,800,1024,1152,1280,1600,
-		     320,320,400,480,640,720,720,960,1920,1920,1280};
+             320,320,400,480,640,720,720,960,1920,1920,1280};
 static int resy[19]={240,384,480,600,768,864,1024,1200,
-		     200,240,300,360,400,480,576,720,1080,1200,960};
+             200,240,300,360,400,480,576,720,1080,1200,960};
 
 static char resolutiontypemenu[3][30]={
     "Fullscreen resolutions",
     /*    "Standard resolutions",
-	  "Non-standard resolutions",*/
+      "Non-standard resolutions",*/
     "Custom resolution",
     "Return to setup menu"
 };
@@ -317,7 +317,7 @@ char musicmenu[3][30]={
 char soundmenu[2][30]={
     "No sound",
 #ifndef ANDROID_NDK
-	"Digital sound effects",
+    "Digital sound effects",
 #else
     "See Android GUI Settings",
 #endif // !ANDROID_NDK
@@ -381,17 +381,17 @@ void selectionmenu(int alts,char titles[][30],int *value) {
     drawmenu(304,j,menu);
 
     for(i=0;i<alts;i++) {
-	strcpy(textbuf,titles[i]);
-	textprint(71,120-6*alts+12*i,lab3dversion?32:34);
+    strcpy(textbuf,titles[i]);
+    textprint(71,120-6*alts+12*i,lab3dversion?32:34);
     }
 
     finalisemenu();
 #endif // OPENGLES
 
     if (j>240)
-	i=getselection(28,97-6*alts,*value,alts);
+    i=getselection(28,97-6*alts,*value,alts);
     else
-	i=getselection(28,99-6*alts,*value,alts);
+    i=getselection(28,99-6*alts,*value,alts);
 
     if (i>=0) *value=i;
 
@@ -420,29 +420,29 @@ int resolutionmenu(int alts,int start,char titles[][30],int def) {
     char t[12];
 
     if (start<0) {
-	for(i=0;i<alts;i++) {
-	    if (def>=10000)
-		sprintf(t,"%dx%d",def/10000,def%10000);
-	    else
-		sprintf(t,"%dx%d",resx[def],resy[def]);
-	    if (!strcmp(t,titles[i]))
-		break;
-	}
-	if (i<alts)
-	    def=i;
-	else
-	    def=0;
+    for(i=0;i<alts;i++) {
+        if (def>=10000)
+        sprintf(t,"%dx%d",def/10000,def%10000);
+        else
+        sprintf(t,"%dx%d",resx[def],resy[def]);
+        if (!strcmp(t,titles[i]))
+        break;
+    }
+    if (i<alts)
+        def=i;
+    else
+        def=0;
     } else {
-	def-=start;
-	if (def<0) def=0;
-	if (def>=alts) def=0;
+    def-=start;
+    if (def<0) def=0;
+    if (def>=alts) def=0;
     }
 #ifndef OPENGLES
     drawmenu(304,j,menu);
 
     for(i=0;i<alts;i++) {
-	strcpy(textbuf,titles[i]);
-	textprint(71,120-6*alts+12*i,lab3dversion?32:34);
+    strcpy(textbuf,titles[i]);
+    textprint(71,120-6*alts+12*i,lab3dversion?32:34);
     }
 
     finalisemenu();
@@ -468,7 +468,7 @@ int getnumber(void) {
     K_INT16 i,j;
 
     for(j=0;j<12;j++)
-	textbuf[j] = 8;
+    textbuf[j] = 8;
     textbuf[12] = 0;
     textprint(94,145+1,(char)0);
     j = 0;
@@ -479,57 +479,57 @@ int getnumber(void) {
 #endif // !USE_SDL2
     while ((ch != 13) && (ch != 27))
     {
-	while ((ch=getkeypress()) == 0)
-	{
-	    textbuf[0] = 95;
-	    textbuf[1] = 0;
-	    textprint(94+(j<<3),145,(char)97);
-	    glFlush();
-	    SDL_Delay(10); /* Just to avoid soaking all CPU. */
-	    textbuf[0] = 8;
-	    textbuf[1] = 0;
-	    textprint(94+(j<<3),145,(char)0);
-	    glFlush();
-	    SDL_Delay(10); /* Just to avoid soaking all CPU. */
-	}
+    while ((ch=getkeypress()) == 0)
+    {
+        textbuf[0] = 95;
+        textbuf[1] = 0;
+        textprint(94+(j<<3),145,(char)97);
+        glFlush();
+        SDL_Delay(10); /* Just to avoid soaking all CPU. */
+        textbuf[0] = 8;
+        textbuf[1] = 0;
+        textprint(94+(j<<3),145,(char)0);
+        glFlush();
+        SDL_Delay(10); /* Just to avoid soaking all CPU. */
+    }
 #ifndef USE_SDL2
-	if (ch == SDLK_DELETE)
+    if (ch == SDLK_DELETE)
 #else
     if (ch == getOldAsciiKeyCode(SDLK_DELETE))
 #endif // !USE_SDL2
-	{
-	    buf[j] = ch;
-	    for(j=0;j<10;j++)
-		buf[j] = 0;
-	    for(j=0;j<12;j++)
-		textbuf[j] = 8;
-	    textbuf[12] = 0;
-	    textprint(94,145+1,(char)0);
-	    j = 0;
-	    ch = 0;
-	}
-	if ((ch == 8) && (j > 0))
-	{
-	    j--, buf[j] = 0;
-	    textbuf[0] = ch;
-	    textbuf[1] = 0;
-	    textprint(94+(j<<3),145+1,(char)0);
-	}
-	if ((ch >= 48) && (ch <= 57) && (j < 4))
-	{
-	    textbuf[0] = ch;
-	    textbuf[1] = 0;
-	    textprint(94+(j<<3),145+1,(char)97);
-	    buf[j] = ch;
-	    if ((ch != 32) || (j > 0))
-		j++;
-	}
+    {
+        buf[j] = ch;
+        for(j=0;j<10;j++)
+        buf[j] = 0;
+        for(j=0;j<12;j++)
+        textbuf[j] = 8;
+        textbuf[12] = 0;
+        textprint(94,145+1,(char)0);
+        j = 0;
+        ch = 0;
+    }
+    if ((ch == 8) && (j > 0))
+    {
+        j--, buf[j] = 0;
+        textbuf[0] = ch;
+        textbuf[1] = 0;
+        textprint(94+(j<<3),145+1,(char)0);
+    }
+    if ((ch >= 48) && (ch <= 57) && (j < 4))
+    {
+        textbuf[0] = ch;
+        textbuf[1] = 0;
+        textprint(94+(j<<3),145+1,(char)97);
+        buf[j] = ch;
+        if ((ch != 32) || (j > 0))
+        j++;
+    }
     }
 #ifndef USE_SDL2
     SDL_EnableUNICODE(0);
 #endif // !USE_SDL2
     for(i=0;i<256;i++)
-	keystatus[i] = 0;
+    keystatus[i] = 0;
     if (ch==27) return -1;
     return strtol(buf,NULL,10);
 }
@@ -543,13 +543,13 @@ void customresolution(void) {
     textprint(180-(strlen(textbuf)<<2),135+1,(char)161);
     x=getnumber();
     if (x>0) {
-	drawinputbox();
-	finalisemenu();
-	sprintf(&textbuf[0],"Enter screen height:");
-	textprint(180-(strlen(textbuf)<<2),135+1,(char)161);
-	y=getnumber();
-	if (y>0)
-	    resolutionnumber=x*10000+y;
+    drawinputbox();
+    finalisemenu();
+    sprintf(&textbuf[0],"Enter screen height:");
+    textprint(180-(strlen(textbuf)<<2),135+1,(char)161);
+    y=getnumber();
+    if (y>0)
+        resolutionnumber=x*10000+y;
     }
 }
 
@@ -585,62 +585,62 @@ void setupsetresolution(void) {
 #ifndef USE_SDL2
         modes=umodes=SDL_ListModes(NULL,SDL_FULLSCREEN);
 
-	    if ((modes==NULL)||(modes==(SDL_Rect **)-1))
-		return;
-	    m=0;
+        if ((modes==NULL)||(modes==(SDL_Rect **)-1))
+        return;
+        m=0;
 
-	    while(*modes) {
-		m++;
-		modes++;
-	    }
+        while(*modes) {
+        m++;
+        modes++;
+        }
 
-	    modes=malloc(sizeof(SDL_Rect *)*(m+1));
-	    for(i=0;i<=m;i++)
-		modes[i]=umodes[i];
+        modes=malloc(sizeof(SDL_Rect *)*(m+1));
+        for(i=0;i<=m;i++)
+        modes[i]=umodes[i];
 
-	    qsort(modes, m, sizeof(SDL_Rect *), modecompare);
+        qsort(modes, m, sizeof(SDL_Rect *), modecompare);
 
-	    i=0;
-	    do {
-		resolutionmenusize=0;
-		while(modes[i]&&(resolutionmenusize<10)) {
-		    if (modes[i]->w<10000&&
-			modes[i]->h<10000) {
-			detectedresolution[resolutionmenusize]=
-			    modes[i]->w*10000+modes[i]->h;
-			sprintf(resolutiondetectmenu[resolutionmenusize],
-				"%dx%d",
-				detectedresolution[resolutionmenusize]/10000,
-				detectedresolution[resolutionmenusize]%10000);
-			resolutionmenusize++;
-		    }
-		    i++;
-		}
-		if (modes[i]) {
-		    strcpy(resolutiondetectmenu[resolutionmenusize],"More...");
-		}
-		a=resolutionmenu(resolutionmenusize+(modes[i]!=0),
-				 -100,resolutiondetectmenu,
-				 resolutionnumber);
-		if (a<0) {free(modes); return;}
-		} while(a==resolutionmenusize);
-	    resolutionnumber=detectedresolution[a];
-	    free(modes);
+        i=0;
+        do {
+        resolutionmenusize=0;
+        while(modes[i]&&(resolutionmenusize<10)) {
+            if (modes[i]->w<10000&&
+            modes[i]->h<10000) {
+            detectedresolution[resolutionmenusize]=
+                modes[i]->w*10000+modes[i]->h;
+            sprintf(resolutiondetectmenu[resolutionmenusize],
+                "%dx%d",
+                detectedresolution[resolutionmenusize]/10000,
+                detectedresolution[resolutionmenusize]%10000);
+            resolutionmenusize++;
+            }
+            i++;
+        }
+        if (modes[i]) {
+            strcpy(resolutiondetectmenu[resolutionmenusize],"More...");
+        }
+        a=resolutionmenu(resolutionmenusize+(modes[i]!=0),
+                 -100,resolutiondetectmenu,
+                 resolutionnumber);
+        if (a<0) {free(modes); return;}
+        } while(a==resolutionmenusize);
+        resolutionnumber=detectedresolution[a];
+        free(modes);
 #endif // !USE_SDL2
-	    break;
-	    /*
-	case 1:
-	    a=resolutionmenu(8,0,resolutionstandardmenu,resolutionnumber);
-	    if (a>=0) resolutionnumber=a;
-	    break;
-	case 2:
-	    a=resolutionmenu(11,8,resolutionspecialmenu,resolutionnumber);
-	    if (a>=0) resolutionnumber=a+8;
-	    break;
-	    */
-	case 1:
-	    customresolution();
-	    break;
+        break;
+        /*
+    case 1:
+        a=resolutionmenu(8,0,resolutionstandardmenu,resolutionnumber);
+        if (a>=0) resolutionnumber=a;
+        break;
+    case 2:
+        a=resolutionmenu(11,8,resolutionspecialmenu,resolutionnumber);
+        if (a>=0) resolutionnumber=a+8;
+        break;
+        */
+    case 1:
+        customresolution();
+        break;
     }
 }
 
@@ -720,48 +720,48 @@ void setupsetkeys(void) {
     i=0;
     while(!quit) {
 #ifndef OPENGLES
-	drawmenu(360,240,menu);
+    drawmenu(360,240,menu);
 
-	for(j=0;j<numkeys;j++) {
-	    strcpy(textbuf,keynames[j]);
-	    textprint(31,13+12*j,lab3dversion?32:34);
-	    strncpy(textbuf,SDL_GetKeyName(newkeydefs[j]),11);
-	    textbuf[11]=0;
-	    textprint(261,13+12*j,lab3dversion?32:34);
-	}
+    for(j=0;j<numkeys;j++) {
+        strcpy(textbuf,keynames[j]);
+        textprint(31,13+12*j,lab3dversion?32:34);
+        strncpy(textbuf,SDL_GetKeyName(newkeydefs[j]),11);
+        textbuf[11]=0;
+        textprint(261,13+12*j,lab3dversion?32:34);
+    }
 
-	finalisemenu();
+    finalisemenu();
 #endif
-	i=getselection(-12,-9,i,numkeys);
-	if (i<0) quit=1;
-	else if (i>=numkeys) quit=1;
-	else {
-	    j=-1;
-	    while(j<0) {
-		while(SDL_PollEvent(&event))
-		{
-		    switch(event.type)
-		    {
-			case SDL_KEYDOWN:
-			    sk=event.key.keysym.sym;
+    i=getselection(-12,-9,i,numkeys);
+    if (i<0) quit=1;
+    else if (i>=numkeys) quit=1;
+    else {
+        j=-1;
+        while(j<0) {
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+            case SDL_KEYDOWN:
+                sk=event.key.keysym.sym;
 #ifdef USE_SDL2
                 sk=getOldAsciiKeyCode(sk);
 #ifdef ANDROID_NDK
                 sk=patchAndroidKeysDpadSDL2(sk);
 #endif // ANDROID_NDK
 #endif // USE_SDL2
-			    if (sk<SDLKEYS) {
-				j=sk;
-			    }
-			    break;
-			default:
-			    break;
-		    }
-		}
-		SDL_Delay(10);
-	    }
-	    newkeydefs[i]=j;
-	}
+                if (sk<SDLKEYS) {
+                j=sk;
+                }
+                break;
+            default:
+                break;
+            }
+        }
+        SDL_Delay(10);
+        }
+        newkeydefs[i]=j;
+    }
     }
 }
 void setupsetbuttons(void) {
@@ -771,51 +771,51 @@ void setupsetbuttons(void) {
     i=0;
     while(!quit) {
 #ifndef OPENGLES
-	drawmenu(360,240,menu);
+    drawmenu(360,240,menu);
 
-	for(j=0;j<numkeys;j++) {
-	    strcpy(textbuf,keynames[j]);
-	    textprint(31,13+12*j,lab3dversion?32:34);
-	    cb=buttondefs[j];
-	    if (cb==-1) {
-		strcpy(textbuf,"None");
-	    } else {
-		sprintf(textbuf,"Button %d",cb+1);
-	    }
-	    textbuf[11]=0;
-	    textprint(261,13+12*j,lab3dversion?32:34);
-	}
+    for(j=0;j<numkeys;j++) {
+        strcpy(textbuf,keynames[j]);
+        textprint(31,13+12*j,lab3dversion?32:34);
+        cb=buttondefs[j];
+        if (cb==-1) {
+        strcpy(textbuf,"None");
+        } else {
+        sprintf(textbuf,"Button %d",cb+1);
+        }
+        textbuf[11]=0;
+        textprint(261,13+12*j,lab3dversion?32:34);
+    }
 
-	finalisemenu();
+    finalisemenu();
 #endif
-	i=getselection(-12,-9,i,numkeys);
-	if (i<0) quit=1;
-	else if (i>=numkeys) quit=1;
-	else {
-	    j=-2;
-	    while(j<-1) {
-		while(SDL_PollEvent(&event))
-		{
-		    switch(event.type)
-		    {
-		    case SDL_JOYBUTTONDOWN:
-			sk=event.jbutton.button;
-			if (sk<numjoybuttons) {
-			    j=sk;
-			}
-			break;
+    i=getselection(-12,-9,i,numkeys);
+    if (i<0) quit=1;
+    else if (i>=numkeys) quit=1;
+    else {
+        j=-2;
+        while(j<-1) {
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+            case SDL_JOYBUTTONDOWN:
+            sk=event.jbutton.button;
+            if (sk<numjoybuttons) {
+                j=sk;
+            }
+            break;
             case SDL_KEYDOWN:
                 // TO_DEBUG_LOG("s.c2: Scancode: %d.\n", sk);
-			j=-1;
-			break;
-		    default:
-			break;
-		    }
-		}
-		SDL_Delay(10);
-	    }
-	    buttondefs[i]=j;
-	}
+            j=-1;
+            break;
+            default:
+            break;
+            }
+        }
+        SDL_Delay(10);
+        }
+        buttondefs[i]=j;
+    }
     }
 }
 #define AXIS_NOVALUE (~0)
@@ -825,54 +825,54 @@ void setupsetaxes(void) {
     SDL_Event event;
 
     for (i=0;i<numjoyaxes;i++) {
-	axisvalues[i]=AXIS_NOVALUE;
+    axisvalues[i]=AXIS_NOVALUE;
     }
 
     i=0;
     while(!quit) {
 #ifndef OPENGLES
-	drawmenu(360,240,menu);
+    drawmenu(360,240,menu);
 
-	for(j=0;j<numaxes;j++) {
-	    strcpy(textbuf,axisnames[j]);
-	    textprint(31,13+12*j,lab3dversion?32:34);
-	    cb=axisdefs[j];
-	    if (cb==0) {
-		strcpy(textbuf,"None");
-	    } else {
-		strncpy(textbuf,jaxisnames[abs(cb)-1],11);
-	    }
-	    textbuf[11]=0;
-	    if (cb < 0)
-		strcat(textbuf," INV");
-	    textbuf[11]=0;
-	    textprint(261,13+12*j,lab3dversion?32:34);
-	}
+    for(j=0;j<numaxes;j++) {
+        strcpy(textbuf,axisnames[j]);
+        textprint(31,13+12*j,lab3dversion?32:34);
+        cb=axisdefs[j];
+        if (cb==0) {
+        strcpy(textbuf,"None");
+        } else {
+        strncpy(textbuf,jaxisnames[abs(cb)-1],11);
+        }
+        textbuf[11]=0;
+        if (cb < 0)
+        strcat(textbuf," INV");
+        textbuf[11]=0;
+        textprint(261,13+12*j,lab3dversion?32:34);
+    }
 
-	finalisemenu();
+    finalisemenu();
 #else
         for(j=0;j<numaxes;j++);
 #endif
-	i=getselection(-12,-9,i,numaxes);
-	if (i<0) quit=1;
-	else if (i>=numaxes) quit=1;
-	else {
+    i=getselection(-12,-9,i,numaxes);
+    if (i<0) quit=1;
+    else if (i>=numaxes) quit=1;
+    else {
 #ifndef OPENGLES
-	    drawmenu(304,72,menu);
-	    strcpy(textbuf,"Move joystick in");
-	    textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+0*12,lab3dversion?32:34);
-	    strcpy(textbuf,axisinst[i]);
-	    textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+1*12,0);
-	    strcpy(textbuf,"direction, or press");
-	    textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+2*12,lab3dversion?32:34);
+        drawmenu(304,72,menu);
+        strcpy(textbuf,"Move joystick in");
+        textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+0*12,lab3dversion?32:34);
+        strcpy(textbuf,axisinst[i]);
+        textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+1*12,0);
+        strcpy(textbuf,"direction, or press");
+        textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+2*12,lab3dversion?32:34);
 
-	    strcpy(textbuf,"any key to delete");
-	    textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+3*12,lab3dversion?32:34);
-	    finalisemenu();
-	    glFlush();
+        strcpy(textbuf,"any key to delete");
+        textprint((360-(8*strlen(textbuf)))/2,((240-72)/2)+12+3*12,lab3dversion?32:34);
+        finalisemenu();
+        glFlush();
 #endif
-	    jdone=0;
-	    while(!jdone) {
+        jdone=0;
+        while(!jdone) {
 #ifdef OPENGLES
             drawmenu(304,72,menu);
             strcpy(textbuf,"Move joystick in");
@@ -887,41 +887,41 @@ void setupsetaxes(void) {
             finalisemenu();
             glFlush();
 #endif
-		while(SDL_PollEvent(&event))
-		{
-		    switch(event.type)
-		    {
-		    case SDL_JOYAXISMOTION:
-			sk=event.jaxis.axis;
-			if (sk<numjoyaxes) {
-			    if (axisvalues[sk]!=AXIS_NOVALUE) {
-				int diff=event.jaxis.value-axisvalues[sk];
-				if (diff>8192) {
-				    j=-sk-1;
-				    jdone=1;
-				}
-				if (diff<-8192) {
-				    j=sk+1;
-				    jdone=1;
-				}
-			    } else axisvalues[sk]=event.jaxis.value;
-			}
-			break;
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+            case SDL_JOYAXISMOTION:
+            sk=event.jaxis.axis;
+            if (sk<numjoyaxes) {
+                if (axisvalues[sk]!=AXIS_NOVALUE) {
+                int diff=event.jaxis.value-axisvalues[sk];
+                if (diff>8192) {
+                    j=-sk-1;
+                    jdone=1;
+                }
+                if (diff<-8192) {
+                    j=sk+1;
+                    jdone=1;
+                }
+                } else axisvalues[sk]=event.jaxis.value;
+            }
+            break;
             case SDL_KEYDOWN:
-			j=0;
-			jdone=1;
-			break;
-		    default:
-			break;
-		    }
-		}
-		SDL_Delay(10);
+            j=0;
+            jdone=1;
+            break;
+            default:
+            break;
+            }
+        }
+        SDL_Delay(10);
 #ifdef OPENGLES
         drawOnScreen();
 #endif
         }
-	    axisdefs[i]=j;
-	}
+        axisdefs[i]=j;
+    }
     }
 }
 void setupconfigureinput(void) {
@@ -930,30 +930,30 @@ void setupconfigureinput(void) {
 #endif // OPENGLES
     int a,quit=0;
     while (!quit) {
-	a=resolutionmenu(4,0,configureinputmenu,0);
-	switch(a) {
-	case 0:
+    a=resolutionmenu(4,0,configureinputmenu,0);
+    switch(a) {
+    case 0:
 #ifdef OPENGLES
     currentMenuState = eSetupKeys;
 #endif // OPENGLES
-	    setupsetkeys();
-	    break;
-	case 1:
+        setupsetkeys();
+        break;
+    case 1:
 #ifdef OPENGLES
     currentMenuState = eSetupJButtons;
 #endif // OPENGLES
-	    setupsetbuttons();
-	    break;
-	case 2:
+        setupsetbuttons();
+        break;
+    case 2:
 #ifdef OPENGLES
     currentMenuState = eSetupJAxes;
 #endif // OPENGLES
-	    setupsetaxes();
-	    break;
-	default:
-	    quit=1;
-	    break;
-	}
+        setupsetaxes();
+        break;
+    default:
+        quit=1;
+        break;
+    }
 #ifdef OPENGLES
     switch (currentMenuState) {
     case eSetupKeys:
@@ -973,11 +973,11 @@ void setupmenu(void) {
 
     while(!quit) {
 #ifndef OPENGLES
-	drawmenu(360,240,menu);
+    drawmenu(360,240,menu);
 
     int offs = 81;
 #ifndef USE_SDL2
-	strcpy(textbuf,"LAB3D/SDL setup menu");
+    strcpy(textbuf,"LAB3D/SDL setup menu");
 #else
 #ifndef ANDROID_NDK
     strcpy(textbuf,"LAB3D/SDL2 setup menu");
@@ -986,132 +986,132 @@ void setupmenu(void) {
     strcpy(textbuf,"Ken's Labyrinth (LAB3D/SDL2) setup menu");
 #endif // !ANDROID_NDK
 #endif // !USE_SDL2
-	textprint(offs,22,126);
+    textprint(offs,22,126);
 
-	strcpy(textbuf,"Input: ");
-	strcat(textbuf,inputdevicemenu[inputdevice]);
-	textprint(51,36,lab3dversion?32:34);
-	strcpy(textbuf,"Configure Input");
-	textprint(51,48,lab3dversion?32:34);
-	strcpy(textbuf,"Resolution: ");
-	if (resolutionnumber<8)
-	    strcat(textbuf,resolutionstandardmenu[resolutionnumber]);
-	else if (resolutionnumber<19)
-	    strcat(textbuf,resolutionspecialmenu[resolutionnumber-8]);
-	else sprintf(textbuf,"Resolution: %dx%d",resolutionnumber/10000,
-		     resolutionnumber%10000);
-	textprint(51,60,64);
-    	strcpy(textbuf,"Display type: ");
-	strcat(textbuf,fullscreenmenu[fullscr]);
-	textprint(51,72,64);
-    	strcpy(textbuf,"Filtering: ");
-	strcat(textbuf,filtermenu[nearest]);
-	textprint(51,84,64);
-    	strcpy(textbuf,"Music: ");
-	strcat(textbuf,musicmenu[music]);
-	textprint(51,96,96);
-    	strcpy(textbuf,"Effects: ");
-	strcat(textbuf,soundmenu[sound]);
-	textprint(51,108,96);
-    	strcpy(textbuf,"Sound channels: ");
-	strcat(textbuf,channelmenu[channel]);
-	textprint(51,120,96);
-    	strcpy(textbuf,"Music channels: ");
-	strcat(textbuf,channelmenu[musicchannel]);
-	textprint(51,132,96);
-    	strcpy(textbuf,"Cheats: ");
-	strcat(textbuf,cheatmenu[cheat]);
-	textprint(51,144,96);
-    	strcpy(textbuf,"Sound block size: ");
-	strcat(textbuf,soundblockmenu[soundblock]);
-	textprint(51,156,lab3dversion?32:34);
-    	strcpy(textbuf,"Texture colour depth: ");
-	strcat(textbuf,texturedepthmenu[texturedepth]);
-	textprint(51,168,lab3dversion?32:34);
-    	strcpy(textbuf,"View: ");
-	strcat(textbuf,scalingtypemenu[scaling]);
-	textprint(51,180,lab3dversion?32:34);
-    	strcpy(textbuf,"Exit setup");
-	textprint(51,192,lab3dversion?128:130);
+    strcpy(textbuf,"Input: ");
+    strcat(textbuf,inputdevicemenu[inputdevice]);
+    textprint(51,36,lab3dversion?32:34);
+    strcpy(textbuf,"Configure Input");
+    textprint(51,48,lab3dversion?32:34);
+    strcpy(textbuf,"Resolution: ");
+    if (resolutionnumber<8)
+        strcat(textbuf,resolutionstandardmenu[resolutionnumber]);
+    else if (resolutionnumber<19)
+        strcat(textbuf,resolutionspecialmenu[resolutionnumber-8]);
+    else sprintf(textbuf,"Resolution: %dx%d",resolutionnumber/10000,
+             resolutionnumber%10000);
+    textprint(51,60,64);
+        strcpy(textbuf,"Display type: ");
+    strcat(textbuf,fullscreenmenu[fullscr]);
+    textprint(51,72,64);
+        strcpy(textbuf,"Filtering: ");
+    strcat(textbuf,filtermenu[nearest]);
+    textprint(51,84,64);
+        strcpy(textbuf,"Music: ");
+    strcat(textbuf,musicmenu[music]);
+    textprint(51,96,96);
+        strcpy(textbuf,"Effects: ");
+    strcat(textbuf,soundmenu[sound]);
+    textprint(51,108,96);
+        strcpy(textbuf,"Sound channels: ");
+    strcat(textbuf,channelmenu[channel]);
+    textprint(51,120,96);
+        strcpy(textbuf,"Music channels: ");
+    strcat(textbuf,channelmenu[musicchannel]);
+    textprint(51,132,96);
+        strcpy(textbuf,"Cheats: ");
+    strcat(textbuf,cheatmenu[cheat]);
+    textprint(51,144,96);
+        strcpy(textbuf,"Sound block size: ");
+    strcat(textbuf,soundblockmenu[soundblock]);
+    textprint(51,156,lab3dversion?32:34);
+        strcpy(textbuf,"Texture colour depth: ");
+    strcat(textbuf,texturedepthmenu[texturedepth]);
+    textprint(51,168,lab3dversion?32:34);
+        strcpy(textbuf,"View: ");
+    strcat(textbuf,scalingtypemenu[scaling]);
+    textprint(51,180,lab3dversion?32:34);
+        strcpy(textbuf,"Exit setup");
+    textprint(51,192,lab3dversion?128:130);
 #ifdef WIN32
-    	strcpy(textbuf,"Create desktop shortcuts");
-	textprint(51,204,96);
+        strcpy(textbuf,"Create desktop shortcuts");
+    textprint(51,204,96);
 #endif
 
-	strcpy(textbuf,"Use cursor keys and Return to select.");
-	textprint(31,220,lab3dversion?32:34);
+    strcpy(textbuf,"Use cursor keys and Return to select.");
+    textprint(31,220,lab3dversion?32:34);
 
-	finalisemenu();
+    finalisemenu();
 #else
         currentMenuState = eSettingsMenu;
 #endif // !OPENGLES
 #ifdef WIN32
-	if ((sel = getselection(12,15,sel,15)) < 0)
+    if ((sel = getselection(12,15,sel,15)) < 0)
 #else
-	if ((sel = getselection(12,15,sel,14)) < 0)
+    if ((sel = getselection(12,15,sel,14)) < 0)
 #endif
-	    quit=1;
-	else {
-	    switch(sel) {
-		case 0:
-		    setupinputdevices();
-		    break;
-		case 1:
-		    setupconfigureinput();
-		    break;
-		case 2:
+        quit=1;
+    else {
+        switch(sel) {
+        case 0:
+            setupinputdevices();
+            break;
+        case 1:
+            setupconfigureinput();
+            break;
+        case 2:
 #ifndef ANDROID_NDK
-		    setupsetresolution();
+            setupsetresolution();
 #endif // !ANDROID_NDK
-		    break;
-		case 3:
+            break;
+        case 3:
 #ifndef ANDROID_NDK
-		    setupsetfullscreen();
+            setupsetfullscreen();
 #endif // !ANDROID_NDK
-		    break;
-		case 4:
-		    setupsetfiltering();
-		    break;
-		case 5:
+            break;
+        case 4:
+            setupsetfiltering();
+            break;
+        case 5:
 #ifndef ANDROID_NDK
-		    setupsetmusic();
+            setupsetmusic();
 #endif // !ANDROID_NDK
-		    break;
-		case 6:
+            break;
+        case 6:
 #ifndef ANDROID_NDK
-		    setupsetsound();
+            setupsetsound();
 #endif // !ANDROID_NDK
-		    break;
-		case 7:
-		    setupsetsoundchannels();
-		    break;
-		case 8:
-		    setupsetmusicchannels();
-		    break;
-		case 9:
-		    setupcheatmenu();
-		    break;
-		case 10:
-		    setupsoundblockmenu();
-		    break;
-		case 11:
+            break;
+        case 7:
+            setupsetsoundchannels();
+            break;
+        case 8:
+            setupsetmusicchannels();
+            break;
+        case 9:
+            setupcheatmenu();
+            break;
+        case 10:
+            setupsoundblockmenu();
+            break;
+        case 11:
 #ifndef ANDROID_NDK
-		    setuptexturedepthmenu();
+            setuptexturedepthmenu();
 #endif // !ANDROID_NDK
-		    break;
-		case 12:
-		    setupscalingmodemenu();
-		    break;
+            break;
+        case 12:
+            setupscalingmodemenu();
+            break;
 #ifdef WIN32
-		case 14:
-		    createshortcut();
-		    break;
+        case 14:
+            createshortcut();
+            break;
 #endif
-		case 13:
-		    quit=1;
-		    break;
-	    }
-	}
+        case 13:
+            quit=1;
+            break;
+        }
+    }
     }
 #ifdef OPENGLES
     currentMenuState = eNoMenu;
@@ -1122,13 +1122,13 @@ void configure(void) {
     int div1,div2;
 
     if (resolutionnumber<19) {
-	screenwidth=resx[resolutionnumber];
-	screenheight=resy[resolutionnumber];
+    screenwidth=resx[resolutionnumber];
+    screenheight=resy[resolutionnumber];
     } else {
-	/* Encoding chosen to be human-readable. Backwards compatibility
-	   kludge. */
-	screenwidth=resolutionnumber/10000;
-	screenheight=resolutionnumber%10000;
+    /* Encoding chosen to be human-readable. Backwards compatibility
+       kludge. */
+    screenwidth=resolutionnumber/10000;
+    screenheight=resolutionnumber%10000;
     }
     fullscreen=fullscr;
     fullfilter=nearest==2?GL_NEAREST:GL_LINEAR_MIPMAP_LINEAR;
@@ -1138,15 +1138,15 @@ void configure(void) {
 
     speechstatus = sound?2:0;
     switch(music) {
-	case 2:
-	    musicsource=1;
-	    break;
-	case 1:
-	    musicsource=2;
-	    break;
-	default:
-	    musicsource=-1;
-	    break;
+    case 2:
+        musicsource=1;
+        break;
+    case 1:
+        musicsource=2;
+        break;
+    default:
+        musicsource=-1;
+        break;
     }
 
 #ifdef ANDROID_NDK
@@ -1168,31 +1168,31 @@ void configure(void) {
     joystat = ((3-inputdevice)>>1);
     cheatenable=cheat;
     if (channel||musicchannel)
-	channels=2;
+    channels=2;
     else
-	channels=1;
+    channels=1;
 
     soundpan=channel;
     musicpan=musicchannel;
 
     soundblocksize=/* channels* */
-	((musicsource==2)?SOUNDBLOCKSIZE44KHZ:SOUNDBLOCKSIZE11KHZ);
+    ((musicsource==2)?SOUNDBLOCKSIZE44KHZ:SOUNDBLOCKSIZE11KHZ);
     if (soundblock>0) {
-	soundblocksize>>=4;
-	soundblocksize<<=soundblock;
+    soundblocksize>>=4;
+    soundblocksize<<=soundblock;
     }
     soundtimer=0;
 
 #ifndef OPENGLES
     switch(texturedepth) {
-	case 1:
-	    colourformat=GL_RGBA8;
-	    break;
-	case 2:
-	    colourformat=GL_RGBA4;
-	    break;
-	default:
-	    colourformat=GL_RGBA;
+    case 1:
+        colourformat=GL_RGBA8;
+        break;
+    case 2:
+        colourformat=GL_RGBA4;
+        break;
+    default:
+        colourformat=GL_RGBA;
     }
 #else
     colourformat = GL_RGBA;
@@ -1200,43 +1200,43 @@ void configure(void) {
     aspw=1.0;
     asph=1.0;
     switch(scaling) {
-	case 1:
-	case 3:
-	    div1=screenwidth/320;
-	    div2=screenheight/200;
+    case 1:
+    case 3:
+        div1=screenwidth/320;
+        div2=screenheight/200;
 
-	    if (div2<div1) div1=div2;
-	    if (div1<1) {
+        if (div2<div1) div1=div2;
+        if (div1<1) {
             TO_DEBUG_LOG(
-		        "Warning: resolution must be 320x200 or more"
-		        " for integer scaling.\n");
-	        virtualscreenwidth=360;
-	        virtualscreenheight=240;
-	    } else {
-	        virtualscreenwidth=screenwidth/div1;
-	        virtualscreenheight=screenheight/div1;
+                "Warning: resolution must be 320x200 or more"
+                " for integer scaling.\n");
+            virtualscreenwidth=360;
+            virtualscreenheight=240;
+        } else {
+            virtualscreenwidth=screenwidth/div1;
+            virtualscreenheight=screenheight/div1;
             }
             if (scaling==3) {
-	        if (screenwidth*3>screenheight*4)
-		    aspw=((((double)screenwidth*3.0))/(((double)screenheight)*4.0));
-		else
-		    asph=((((double)screenheight)*4.0))/(((double)screenwidth*3.0));
-    	    }
+            if (screenwidth*3>screenheight*4)
+            aspw=((((double)screenwidth*3.0))/(((double)screenheight)*4.0));
+        else
+            asph=((((double)screenheight)*4.0))/(((double)screenwidth*3.0));
+            }
             break;
-	case 0:
-	    virtualscreenwidth=360;
-	    virtualscreenheight=240;
+    case 0:
+        virtualscreenwidth=360;
+        virtualscreenheight=240;
             break;
-	default:
-	    if (screenwidth*3>screenheight*4) {
-		aspw=((((double)screenwidth*3.0))/(((double)screenheight)*4.0));
-	        virtualscreenwidth=360.0*aspw;
-	        virtualscreenheight=240;
-    	    } else {
-		asph=((((double)screenheight)*4.0))/(((double)screenwidth*3.0));
-	        virtualscreenwidth=360;
-	        virtualscreenheight=240.0*asph;
-    	    }
+    default:
+        if (screenwidth*3>screenheight*4) {
+        aspw=((((double)screenwidth*3.0))/(((double)screenheight)*4.0));
+            virtualscreenwidth=360.0*aspw;
+            virtualscreenheight=240;
+            } else {
+        asph=((((double)screenheight)*4.0))/(((double)screenwidth*3.0));
+            virtualscreenwidth=360;
+            virtualscreenheight=240.0*asph;
+            }
     }
 }
 
@@ -1264,50 +1264,50 @@ void loadsettings(void) {
     i=0;
 
     for(i=0;i<numkeys;i++)
-	newkeydefs[i]=newdefaultkey[i];
+    newkeydefs[i]=newdefaultkey[i];
 
     for(i=0;i<numkeys;i++)
-	buttondefs[i]=newdefaultbutton[i];
+    buttondefs[i]=newdefaultbutton[i];
 
     for(i=0;i<numaxes;i++)
-	axisdefs[i]=newdefaultaxis[i];
+    axisdefs[i]=newdefaultaxis[i];
 
     if (lab3dversion) {
-	newkeydefs[16]=SDLK_l;
-	newkeydefs[13]=SDLK_s;
+    newkeydefs[16]=SDLK_l;
+    newkeydefs[13]=SDLK_s;
     }
 
     if (file==NULL)
-	setup();
+    setup();
     i=fscanf(file,"%d",&versflag);
     if (versflag==-1) {
-	i=fscanf(file,"%d",&version);
-	i=fscanf(file,"%d",&inputdevice);
+    i=fscanf(file,"%d",&version);
+    i=fscanf(file,"%d",&inputdevice);
     } else {
-	version=0;
-	inputdevice=versflag;
+    version=0;
+    inputdevice=versflag;
     }
     //printf("%d %d\n",versflag,version);
     i=fscanf(file,"%d %d %d %d %d",&resolutionnumber,&fullscr,
-	     &nearest,&music,&sound); /* Non-existent set to defaults. */
+         &nearest,&music,&sound); /* Non-existent set to defaults. */
     if (i==5) {
-	for(i=0;i<numkeys;i++)
-	    if (fscanf(file,"%d\n",newkeydefs+i)!=1) break;
+    for(i=0;i<numkeys;i++)
+        if (fscanf(file,"%d\n",newkeydefs+i)!=1) break;
 
-	if (version>0) {
-	    for(i=0;i<numkeys;i++)
-		if (fscanf(file,"%d\n",buttondefs+i)!=1) break;
-	    for(i=0;i<numaxes;i++)
-		if (fscanf(file,"%d\n",axisdefs+i)!=1) break;
-	}
+    if (version>0) {
+        for(i=0;i<numkeys;i++)
+        if (fscanf(file,"%d\n",buttondefs+i)!=1) break;
+        for(i=0;i<numaxes;i++)
+        if (fscanf(file,"%d\n",axisdefs+i)!=1) break;
+    }
     }
     if (i>0) {
-	i=fscanf(file,"%d %d\n",&soundvolume,&musicvolume);
+    i=fscanf(file,"%d %d\n",&soundvolume,&musicvolume);
     } else i=0;
 
 
     if (i==2) {
-	i=fscanf(file,"%d\n",&cheat);
+    i=fscanf(file,"%d\n",&cheat);
     } else i=0;
 
     if (i) i=fscanf(file,"%d\n",&channel);
@@ -1340,13 +1340,13 @@ void savesettings(void) {
     if (file==NULL) return;
     fprintf(file,"-1 1\n");
     fprintf(file,"%d %d %d %d %d %d\n",inputdevice,resolutionnumber,fullscr,
-	    nearest,music,sound);
+        nearest,music,sound);
     for(i=0;i<numkeys;i++)
-	fprintf(file,"%d\n",newkeydefs[i]);
+    fprintf(file,"%d\n",newkeydefs[i]);
     for(i=0;i<numkeys;i++)
-	fprintf(file,"%d\n",buttondefs[i]);
+    fprintf(file,"%d\n",buttondefs[i]);
     for(i=0;i<numaxes;i++)
-	fprintf(file,"%d\n",axisdefs[i]);
+    fprintf(file,"%d\n",axisdefs[i]);
     fprintf(file,"%d %d\n",soundvolume,musicvolume);
     fprintf(file,"%d\n",cheat);
     fprintf(file,"%d\n",channel);
@@ -1380,7 +1380,7 @@ void setup(void) {
     /* Display accuracy not important in setup... */
 
     SDL_Init(SDL_INIT_TIMER|SDL_INIT_VIDEO/*|SDL_INIT_NOPARACHUTE*/|
-	     SDL_INIT_JOYSTICK);
+         SDL_INIT_JOYSTICK);
     SDL_JoystickOpen(0);
     SDL_JoystickEventState(1);
 
@@ -1424,11 +1424,11 @@ void setup(void) {
 
 
     if ((screen=SDL_SetVideoMode(screenwidth, screenheight, 32,
-				 SDL_OPENGL))==
-	NULL) {
+                 SDL_OPENGL))==
+    NULL) {
     TO_DEBUG_LOG("Video mode set failed.\n");
-	SDL_Quit();
-	exit(-1);
+    SDL_Quit();
+    exit(-1);
     }
 
     SDL_SetGamma(1.0,1.0,1.0); /* Zap gamma correction. */
@@ -1446,13 +1446,13 @@ void setup(void) {
     }
 
     // Create GL Context
-    if ((glContext=SDL_GL_CreateContext(globalWindow))==NULL) {
-        TO_DEBUG_LOG("Can't create GL Context: %s.\n", SDL_GetError());
-        SDL_GL_DeleteContext(glContext);
-        SDL_DestroyWindow(globalWindow);
-        SDL_Quit();
-        exit(-1);
-    }
+//    if ((glContext=SDL_GL_CreateContext(globalWindow))==NULL) {
+//        TO_DEBUG_LOG("Can't create GL Context: %s.\n", SDL_GetError());
+//        SDL_GL_DeleteContext(glContext);
+//        SDL_DestroyWindow(globalWindow);
+//        SDL_Quit();
+//        exit(-1);
+//    }
 
 #ifndef ANDROID_NDK
     // Calculate gamma ramp
@@ -1481,15 +1481,15 @@ void setup(void) {
     largescreentexture=0;
 
     if (largescreentexture) {
-	/* One large 512x512 texture. */
+    /* One large 512x512 texture. */
 
-	screenbufferwidth=screenbufferheight=512;
+    screenbufferwidth=screenbufferheight=512;
     } else {
-	/* 6*11 matrix of 64x64 tiles with 1 pixel wide borders on shared
-	   edges. */
+    /* 6*11 matrix of 64x64 tiles with 1 pixel wide borders on shared
+       edges. */
 
-	screenbufferwidth=374;
-	screenbufferheight=746;
+    screenbufferwidth=374;
+    screenbufferheight=746;
     }
 
     screenbuffer=malloc(screenbufferwidth*screenbufferheight);
@@ -1507,8 +1507,8 @@ void setup(void) {
 
     if (screenbuffer==NULL) {
     TO_DEBUG_LOG("Insufficient memory.\n");
-	SDL_Quit();
-	exit(-1);
+    SDL_Quit();
+    exit(-1);
     }
 
     TO_DEBUG_LOG("Loading configuration file...\n");
@@ -1525,11 +1525,11 @@ void setup(void) {
 
     TO_DEBUG_LOG("Allocating memory...\n");
     if (((lzwbuf = malloc(12304-8200)) == NULL)||
-	((lzwbuf2=malloc(8200))==NULL))
+    ((lzwbuf2=malloc(8200))==NULL))
     {
     TO_DEBUG_LOG("Error #3: Memory allocation failed.\n");
-	SDL_Quit();
-	exit(-1);
+    SDL_Quit();
+    exit(-1);
     }
 
     convwalls = numwalls;
@@ -1537,79 +1537,79 @@ void setup(void) {
     if ((pic = malloc((numwalls-initialwalls)<<12)) == NULL)
     {
     TO_DEBUG_LOG(
-		"Error #4: This computer does not have enough memory.\n");
-	SDL_Quit();
-	exit(-1);
+        "Error #4: This computer does not have enough memory.\n");
+    SDL_Quit();
+    exit(-1);
     }
     walcounter = initialwalls;
     if (convwalls > initialwalls)
     {
     v = (char *)pic;
-	for(i=0;i<convwalls-initialwalls;i++)
-	{
+    for(i=0;i<convwalls-initialwalls;i++)
+    {
         walseg[walcounter] = (unsigned char *)v;
-	    walcounter++;
-	    v += 4096;
-	}
+        walcounter++;
+        v += 4096;
+    }
     }
     l = 0;
     for(i=0;i<240;i++)
     {
-	times90[i] = l;
-	l += 90;
+    times90[i] = l;
+    l += 90;
     }
     less64inc[0] = 16384;
     for(i=1;i<64;i++)
-	less64inc[i] = 16384 / i;
+    less64inc[i] = 16384 / i;
     for(i=0;i<256;i++)
-	keystatus[i] = 0;
+    keystatus[i] = 0;
 
     if (largescreentexture) {
-	glGenTextures(1,&screenbuffertexture);
+    glGenTextures(1,&screenbuffertexture);
     } else {
-	glGenTextures(72,screenbuffertextures);
+    glGenTextures(72,screenbuffertextures);
     }
 
     saidwelcome = 0;
     TO_DEBUG_LOG("Loading intro pictures...\n");
 
     if (lab3dversion) {
-	kgif(-1);
-	k=0;
-	for(i=0;i<16;i++)
-	    for(j=1;j<17;j++)
-	    {
-		spritepalette[k++] = (opaldef[i][0]*j)/17;
-		spritepalette[k++] = (opaldef[i][1]*j)/17;
-		spritepalette[k++] = (opaldef[i][2]*j)/17;
-	    }
+    kgif(-1);
+    k=0;
+    for(i=0;i<16;i++)
+        for(j=1;j<17;j++)
+        {
+        spritepalette[k++] = (opaldef[i][0]*j)/17;
+        spritepalette[k++] = (opaldef[i][1]*j)/17;
+        spritepalette[k++] = (opaldef[i][2]*j)/17;
+        }
     TO_DEBUG_LOG("Loading old graphics...\n");
-	loadwalls(0);
-	fade(63);
-	k=0;
-	for(i=0;i<16;i++)
-	    for(j=1;j<17;j++)
-	    {
-		palette[k++] = (opaldef[i][0]*j)/17;
-		palette[k++] = (opaldef[i][1]*j)/17;
-		palette[k++] = (opaldef[i][2]*j)/17;
-	    }
-	settransferpalette();
-	strcpy(keynames[16], "LOAD game");
-	strcpy(keynames[13], "SAVE game");
+    loadwalls(0);
+    fade(63);
+    k=0;
+    for(i=0;i<16;i++)
+        for(j=1;j<17;j++)
+        {
+        palette[k++] = (opaldef[i][0]*j)/17;
+        palette[k++] = (opaldef[i][1]*j)/17;
+        palette[k++] = (opaldef[i][2]*j)/17;
+        }
+    settransferpalette();
+    strcpy(keynames[16], "LOAD game");
+    strcpy(keynames[13], "SAVE game");
 
     } else {
-	/* The ingame palette is stored in this GIF! */
-	kgif(1);
-	memcpy(spritepalette,palette,768);
+    /* The ingame palette is stored in this GIF! */
+    kgif(1);
+    memcpy(spritepalette,palette,768);
 
-	kgif(0);
-	settransferpalette();
+    kgif(0);
+    settransferpalette();
     TO_DEBUG_LOG("Loading graphics...\n");
-	loadwalls(0);
+    loadwalls(0);
 
-	kgif(1);
-	fade(63);
+    kgif(1);
+    fade(63);
     }
 #ifndef OPENGLES
     glDrawBuffer(GL_FRONT);
@@ -1631,8 +1631,8 @@ void setup(void) {
     gammaRamp = NULL;
 #endif // !ANDROID_NDK
     TO_DEBUG_LOG("Delete GL contex.\n");
-    SDL_GL_DeleteContext(glContext);
-    glContext = NULL;
+    //SDL_GL_DeleteContext(glContext);
+    //glContext = NULL;
     TO_DEBUG_LOG("Destroy SDL Window.\n");
     SDL_DestroyWindow(globalWindow);
     globalWindow = NULL;

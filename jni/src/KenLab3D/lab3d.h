@@ -33,7 +33,12 @@
 #include "sdl2keyhelper.h"
 
 SDL_Window *globalWindow;
-SDL_GLContext *glContext;
+//SDL_GLContext *glContext;
+#include <GLES/egl.h>
+extern EGLDisplay  glDisplay;
+extern EGLSurface  glSurface;
+extern EGLConfig   glConfig;
+extern EGLContext  glContext;
 
 extern Uint16 *gammaRamp;
 #else
@@ -53,7 +58,7 @@ extern Uint16 *gammaRamp;
 #include <GLES/gl.h>
 #ifndef ANDROID_NDK
 #include <GLES/egl.h>
-#include <GLES/glues.h>
+#include "../3rdparty/Glues/glues.h"
 #else
 #include <glues.h>
 #endif // !ANDROID_NDK
@@ -295,13 +300,13 @@ EXTERN const char *globalAndroidRWdir;
 
 #ifdef MAIN
 EXTERN unsigned char bultype[26] =
-	{0,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,2,2,2,2,2,2,2,1,2,1};
+    {0,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,2,2,2,2,2,2,2,1,2,1};
 EXTERN unsigned char paldef[16][3] =
 {
-	{0,30,63},{28,34,60},{0,50,20},{41,52,28},{63,63,25},{63,63,63},
-	{63,20,20},{63,0,63},
-	{63,48,27},{63,40,25},{63,48,48},{45,63,45},{55,55,63},{63,40,63},
-	{63,30,20},{55,25,30}
+    {0,30,63},{28,34,60},{0,50,20},{41,52,28},{63,63,25},{63,63,63},
+    {63,20,20},{63,0,63},
+    {63,48,27},{63,40,25},{63,48,48},{45,63,45},{55,55,63},{63,40,63},
+    {63,30,20},{55,25,30}
 };
 
 EXTERN unsigned char opaldef[16][3] =
@@ -314,23 +319,23 @@ EXTERN unsigned char opaldef[16][3] =
 
 EXTERN K_UINT16 pcfreq[63] =
 {
-	0,
-	65,69,73,78,82,87,92,98,104,110,117,123,
-	131,139,147,156,165,175,185,196,208,220,233,247,
-	262,277,294,311,330,349,370,392,415,440,466,494,
-	523,554,587,622,659,698,740,784,831,880,932,988,
-	1047,1109,1175,1245,1319,1397,1480,1568,1661,1760,1864,1976,
-	2094
+    0,
+    65,69,73,78,82,87,92,98,104,110,117,123,
+    131,139,147,156,165,175,185,196,208,220,233,247,
+    262,277,294,311,330,349,370,392,415,440,466,494,
+    523,554,587,622,659,698,740,784,831,880,932,988,
+    1047,1109,1175,1245,1319,1397,1480,1568,1661,1760,1864,1976,
+    2094
 };
 EXTERN K_UINT16 adlibfreq[63] =
 {
-	0,
-	2390,2411,2434,2456,2480,2506,2533,2562,2592,2625,2659,2695,
-	3414,3435,3458,3480,3504,3530,3557,3586,3616,3649,3683,3719,
-	4438,4459,4482,4504,4528,4554,4581,4610,4640,4673,4707,4743,
-	5462,5483,5506,5528,5552,5578,5605,5634,5664,5697,5731,5767,
-	6486,6507,6530,6552,6576,6602,6629,6658,6688,6721,6755,6791,
-	7510
+    0,
+    2390,2411,2434,2456,2480,2506,2533,2562,2592,2625,2659,2695,
+    3414,3435,3458,3480,3504,3530,3557,3586,3616,3649,3683,3719,
+    4438,4459,4482,4504,4528,4554,4581,4610,4640,4673,4707,4743,
+    5462,5483,5506,5528,5552,5578,5605,5634,5664,5697,5731,5767,
+    6486,6507,6530,6552,6576,6602,6629,6658,6688,6721,6755,6791,
+    7510
 };
 EXTERN K_UINT16 firstime = 1, quitgame = 0;
 EXTERN K_INT16 midiinst = 0, cheatenable = 0, capturecount = 0;
@@ -472,9 +477,9 @@ void picrot(K_UINT16, K_UINT16, K_INT16, K_INT16);
 void spridraw(K_INT16, K_INT16, K_INT16, K_INT16);
 void pictur(K_INT16, K_INT16, K_INT16, K_INT16, K_INT16);
 void doordraw(K_UINT16 x,K_UINT16 y,K_INT16 walnume,K_UINT16 posxs,
-	      K_UINT16 posys);
+          K_UINT16 posys);
 void statusbardraw(K_UINT16, K_UINT16, K_UINT16, K_UINT16, K_UINT16,
-		   K_UINT16, K_INT16);
+           K_UINT16, K_INT16);
 void loadboard();
 void loadtables();
 K_INT16 ksay(K_UINT16);
@@ -492,9 +497,9 @@ void outdata(unsigned char, unsigned char, unsigned char);
 void musicon();
 void musicoff();
 void setinst(unsigned char, K_INT16, unsigned char, unsigned char,
-	     unsigned char, unsigned char, unsigned char, unsigned char,
-	     unsigned char, unsigned char,
-	     unsigned char, unsigned char, unsigned char);
+         unsigned char, unsigned char, unsigned char, unsigned char,
+         unsigned char, unsigned char,
+         unsigned char, unsigned char, unsigned char);
 void setmidiinsts();
 void checkhitwall(K_UINT16, K_UINT16, K_UINT16, K_UINT16);
 void fade(K_INT16);
@@ -536,7 +541,7 @@ void PollInputs();
 void checkGLStatus(char *file, int line);
 void floorsprite(K_UINT16 x, K_UINT16 y, K_INT16 walnume);
 void flatsprite(K_UINT16 x, K_UINT16 y,K_INT16 ang,K_INT16 playerang,
-		K_INT16 walnume);
+        K_INT16 walnume);
 #ifdef MAIN
 
 /* SDL to PC key mapping table... */
@@ -695,8 +700,8 @@ void AudioCallback(void *userdata, Uint8 *stream, int len);
 void TextureConvert(unsigned char *from, unsigned char *to, K_INT16 type);
 Uint16 getkeypress();
 void drawtooverlay(K_UINT16 picx, K_UINT16 picy, K_UINT16 w,
-		   K_UINT16 h, K_UINT16 x, K_UINT16 y, K_INT16 walnum,
-		   unsigned char coloff);
+           K_UINT16 h, K_UINT16 x, K_UINT16 y, K_INT16 walnum,
+           unsigned char coloff);
 void wipeoverlay(K_UINT16 x,K_UINT16 y,K_UINT16 w, K_UINT16 h);
 void settransferpalette();
 void setdarkenedpalette();
