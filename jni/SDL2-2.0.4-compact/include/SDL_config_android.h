@@ -114,14 +114,14 @@
 
 /* Enable various input drivers */
 #define SDL_JOYSTICK_ANDROID    1
-#define SDL_HAPTIC_DUMMY    1
+#define SDL_HAPTIC_DUMMY    0
 
 /* Enable various shared object loading systems */
 #define SDL_LOADSO_DLOPEN   1
 
 /* Enable various threading systems */
 #define SDL_THREAD_PTHREAD  1
-#define SDL_THREAD_PTHREAD_RECURSIVE_MUTEX  1
+#define SDL_THREAD_PTHREAD_RECURSIVE_MUTEX  0
 
 /* Enable various timer systems */
 #define SDL_TIMER_UNIX  1
@@ -137,7 +137,7 @@
 #define SDL_VIDEO_RENDER_OGL_ES2    0
 
 /* Enable system power support */
-#define SDL_POWER_ANDROID 1
+#define SDL_POWER_ANDROID 0
 
 /* Enable the filesystem driver */
 #define SDL_FILESYSTEM_ANDROID   1

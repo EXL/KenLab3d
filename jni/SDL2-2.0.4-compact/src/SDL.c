@@ -31,7 +31,7 @@
 #include "SDL_revision.h"
 #include "SDL_assert_c.h"
 #include "events/SDL_events_c.h"
-#include "haptic/SDL_haptic_c.h"
+// #include "haptic/SDL_haptic_c.h"
 #include "joystick/SDL_joystick_c.h"
 
 /* Initialization/Cleanup routines */
@@ -225,9 +225,9 @@ SDL_InitSubSystem(Uint32 flags)
     if ((flags & SDL_INIT_HAPTIC)){
 #if !SDL_HAPTIC_DISABLED
         if (SDL_PrivateShouldInitSubsystem(SDL_INIT_HAPTIC)) {
-            if (SDL_HapticInit() < 0) {
-                return (-1);
-            }
+//             if (SDL_HapticInit() < 0) {
+//                 return (-1);
+//             }
         }
         SDL_PrivateSubsystemRefCountIncr(SDL_INIT_HAPTIC);
 #else
@@ -273,7 +273,7 @@ SDL_QuitSubSystem(Uint32 flags)
 #if !SDL_HAPTIC_DISABLED
     if ((flags & SDL_INIT_HAPTIC)) {
         if (SDL_PrivateShouldQuitSubsystem(SDL_INIT_HAPTIC)) {
-            SDL_HapticQuit();
+//             SDL_HapticQuit();
         }
         SDL_PrivateSubsystemRefCountDecr(SDL_INIT_HAPTIC);
     }
