@@ -54,7 +54,7 @@ public class KenLab3DTouchButtonsRects {
 		// Useful for DEBUG
 		private String m_buttonName;
 
-		public KenLab3DButton(String buttonName, 
+		public KenLab3DButton(String buttonName,
 				float x, float y, float width, float height,
 				int keyCode) {
 			m_buttonName = buttonName;
@@ -66,9 +66,9 @@ public class KenLab3DTouchButtonsRects {
 		}
 
 		public boolean checkButtonRect(float touchX, float touchY) {
-			return (touchX > m_x0 && 
-					touchX < m_x1 && 
-					touchY > m_y0 && 
+			return (touchX > m_x0 &&
+					touchX < m_x1 &&
+					touchY > m_y0 &&
 					touchY < m_y1);
 		}
 
@@ -84,6 +84,8 @@ public class KenLab3DTouchButtonsRects {
 
 		public void release() {
 			m_buttonPushed = false;
+
+			m_buttonTouchId = -1;
 
 			SDLActivity.onNativeKeyUp(m_buttonCode);
 		}
@@ -106,7 +108,7 @@ public class KenLab3DTouchButtonsRects {
 		}
 	}
 
-	public KenLab3DTouchButtonsRects() { 
+	public KenLab3DTouchButtonsRects() {
 		initButtonsRects();
 	}
 
@@ -162,16 +164,16 @@ public class KenLab3DTouchButtonsRects {
 		**     |                     +--------+ <- btn_w, btn_h |
 		**     |                                                |
 		**     +------------------------------------------------+
-		**     
+		**
 		**     btn_x and btn_y is coordinates of start point of button on an overlay
 		**     btn_w and btn_h is coordinates of end point of button on an overlay
-		**     
+		**
 		**     float x = btn_x / overlay_width;
 		**     float y = btn_y / overlay_height;
 		**     float width = btn_w / overlay_width;
 		**     float height = btn_h / overlay_height;
-		**     
-		**     Example for 854x480 overlay: 
+		**
+		**     Example for 854x480 overlay:
 		**     float x = 125.0 / 854.0;
 		**     float y = 455.0 / 480.0;
 		**     float width = 200.0 / 854.0;
