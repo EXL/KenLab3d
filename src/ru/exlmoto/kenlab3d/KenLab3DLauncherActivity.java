@@ -27,12 +27,14 @@ package ru.exlmoto.kenlab3d;
 import java.io.File;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -70,8 +72,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 	private EditText editVibrateDelay;
 
-	private Dialog aboutDialog;
-	private Dialog rangeDialog;
+	private AlertDialog aboutDialog;
+	private AlertDialog rangeDialog;
 	private ImageView coverArt;
 
 	private SharedPreferences settingsStorage = null;
@@ -146,56 +148,26 @@ public class KenLab3DLauncherActivity extends Activity  {
 		}
 	}
 
-	private void showAboutDialog() {
-		this.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				aboutDialog.setContentView(R.layout.about_layout);
-				aboutDialog.setCancelable(true);
-				aboutDialog.setTitle(R.string.app_name);
-
-				Button buttonAboutOk = (Button)aboutDialog.findViewById(R.id.buttonAboutOk);
-				buttonAboutOk.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View buttonView) {
-						if (aboutDialog != null) {
-							aboutDialog.cancel();
-						}
-					}
-
-				});
-
-				aboutDialog.show();
-			}
-		});
+	private void initAboutDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setCancelable(false);
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.about_layout, null);
+		builder.setView(dialogView);
+		builder.setTitle(R.string.app_name);
+		builder.setPositiveButton(R.string.OK, null);
+		aboutDialog = builder.create();
 	}
 
-	private void showErrorVibroRangeDialog() {
-		this.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-				rangeDialog.setContentView(R.layout.range_error_layout);
-				rangeDialog.setCancelable(true);
-				rangeDialog.setTitle(R.string.errorString);
-
-				Button buttonRangeOk = (Button)rangeDialog.findViewById(R.id.buttonRangeOk);
-				buttonRangeOk.setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View buttonView) {
-						if (rangeDialog != null) {
-							rangeDialog.cancel();
-						}
-					}
-
-				});
-
-				rangeDialog.show();
-			}
-		});
+	private void initRangeDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setCancelable(false);
+		LayoutInflater inflater = this.getLayoutInflater();
+		View dialogView = inflater.inflate(R.layout.range_error_layout, null);
+		builder.setView(dialogView);
+		builder.setTitle(R.string.errorString);
+		builder.setPositiveButton(R.string.OK, null);
+		rangeDialog = builder.create();
 	}
 
 	@Override
@@ -203,8 +175,8 @@ public class KenLab3DLauncherActivity extends Activity  {
 		super.onCreate(savedInstanceState);
 		KenLab3DActivity.toDebugLog("Start KenLab3DLauncher");
 
-		aboutDialog = new Dialog(this);
-		rangeDialog = new Dialog(this);
+		initAboutDialog();
+		initRangeDialog();
 
 		settingsIniFile = new File(getFilesDir().getAbsolutePath() + "/settings.ini");
 
@@ -296,7 +268,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 			@Override
 			public void onClick(View buttonView) {
-				showAboutDialog();
+				showDialog(aboutDialog);
 			}
 
 		});
@@ -327,7 +299,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 				int value = _toParse.compareTo("") == 0 ? 50 : Integer.parseInt(_toParse);
 
 				if (value < 30 || value > 300) {
-					showErrorVibroRangeDialog();
+					showDialog(rangeDialog);
 				} else {
 					writeSettings();
 
@@ -340,13 +312,24 @@ public class KenLab3DLauncherActivity extends Activity  {
 		});
 	}
 
+	// Prevent dialog dismiss when orientation changes
+	// http://stackoverflow.com/a/27311231/2467443
+	private static void doKeepDialog(AlertDialog dialog) {
+		WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+		lp.copyFrom(dialog.getWindow().getAttributes());
+		lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+		lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+		dialog.getWindow().setAttributes(lp);
+	}
+
+	private void showDialog(AlertDialog dialog) {
+		dialog.show();
+		doKeepDialog(dialog);
+	}
+
 	@Override
 	protected void onDestroy() {
 		writeSettings();
-
-		aboutDialog.dismiss();
-		rangeDialog.dismiss();
-
 		super.onDestroy();
 	}
 }
