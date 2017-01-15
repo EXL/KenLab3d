@@ -39,8 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/image_top_dimens"
             android:autoLink="web"
-            android:text="@string/aboutString"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="@string/aboutString" />
 
     </LinearLayout>
 </ScrollView>
