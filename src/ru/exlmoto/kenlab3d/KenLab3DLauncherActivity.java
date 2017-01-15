@@ -268,7 +268,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 			@Override
 			public void onClick(View buttonView) {
-				showDialog(aboutDialog);
+				showMyDialog(aboutDialog);
 			}
 
 		});
@@ -299,7 +299,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 				int value = _toParse.compareTo("") == 0 ? 50 : Integer.parseInt(_toParse);
 
 				if (value < 30 || value > 300) {
-					showDialog(rangeDialog);
+					showMyDialog(rangeDialog);
 				} else {
 					writeSettings();
 
@@ -322,7 +322,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 		dialog.getWindow().setAttributes(lp);
 	}
 
-	private void showDialog(AlertDialog dialog) {
+	private void showMyDialog(AlertDialog dialog) {
 		dialog.show();
 		doKeepDialog(dialog);
 	}
