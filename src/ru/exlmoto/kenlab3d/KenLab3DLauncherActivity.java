@@ -150,7 +150,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 	private void initAboutDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setCancelable(false);
+		// builder.setCancelable(false);
 		LayoutInflater inflater = this.getLayoutInflater();
 		View dialogView = inflater.inflate(R.layout.about_layout, null);
 		builder.setView(dialogView);
@@ -161,7 +161,7 @@ public class KenLab3DLauncherActivity extends Activity  {
 
 	private void initRangeDialog() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setCancelable(false);
+		// builder.setCancelable(false);
 		LayoutInflater inflater = this.getLayoutInflater();
 		View dialogView = inflater.inflate(R.layout.range_error_layout, null);
 		builder.setView(dialogView);
