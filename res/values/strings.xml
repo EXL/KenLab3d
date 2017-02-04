@@ -12,7 +12,7 @@
     <string name="toastFileDeleted">File \&quot;settings.ini\&quot; was deleted. Please setup the game again.</string>
     <string name="toastFileNotFound">File \&quot;settings.ini\&quot; not found.</string>
     <string name="aboutIconDesc">Ken\'s Labyrinth Android Icon</string>
-    <string name="versionString">v1.1 | 23-JAN-2017</string>
+    <string name="versionString">v1.1 | 04-FEB-2017</string>
     <string name="aboutString">© 1992–1993 Ken Silverman\n\nLAB3D/SDL conversion:\n© 2002–2004 Jan Lönnberg\nhttp://icculus.org/LAB3D\n\nLAB3D-SDL-enhanced:\n© 2011–2015 Jared Stafford\nhttp://jspenguin.org/software/lab3d_sdl\n\nOpenGL ES port:\n© 2014 Scott \&quot;Pickle\&quot; Smith\nhttps://github.com/Pickle/Lab3dGLES\n\nAndroid port:\n© 2015-2016 Serg \&quot;EXL\&quot; Koles\nhttp://exlmoto.ru/kenlab3d-droid\n\nGithub repository:\nhttps://github.com/EXL/KenLab3d</string>
     <string name="msec">ms</string>
     <string name="defaultVibro">50</string>
