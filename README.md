@@ -24,6 +24,13 @@ cd ~/Deploy/
 git clone https://github.com/EXL/KenLab3d KenLab3dAndroid
 ```
 
+* Edit "project.properties" file and set the installed Android API SDK version here, for example:
+
+```sh
+# Project target.
+target=android-23
+```
+
 * Build the APK-package into deploy directory;
 
 ```sh
