@@ -1406,7 +1406,7 @@ void loadwalls(int replace)
 
     char path[256];
 #ifndef ANDROID_NDK
-    snprintf(path, sizeof(path), "%s/wallparams.ini", globalDataDir);
+    snprintf(path, sizeof(path), "%s/wallparams_pc.ini", globalDataDir);
 #else
     snprintf(path, sizeof(path), "%s/wallparams.ini", globalAndroidRWdir);
 #endif // !ANDROID_NDK
