@@ -17,37 +17,241 @@ set(SOURCES ${PROJECT_NAME}/sdl2keyhelper.c
             ${PROJECT_NAME}/setup.c
             ${PROJECT_NAME}/androidutils.c)
 
-add_definitions(-DANDROID_NDK -DOPENGLES -DUSE_SDL2)
+add_definitions(-DANDROID_NDK -DOPENGLES -DUSE_SDL2 -DGL_GLEXT_PROTOTYPES)
 
 # 3rd Party Libraries
-set(GLUES_DIR "Glues")
-set(LODEPNG_DIR "LodePNG")
-set(SDL2_DIR "SDL2-2.0.4-compact")
+## Glues
+set(GLUES "Glues")
+set(GLUES_HEADERS ${GLUES}/glues_error.h
+                ${GLUES}/glues.h
+                ${GLUES}/glues_mipmap.h
+                ${GLUES}/glues_project.h
+                ${GLUES}/glues_quad.h
+                ${GLUES}/glues_registry.h
+                ${GLUES}/glu.h)
+set(GLUES_SOURCES ${GLUES}/glues_error.c
+                ${GLUES}/glues_mipmap.c
+                ${GLUES}/glues_project.c
+                ${GLUES}/glues_quad.c
+                ${GLUES}/glues_registry.c)
+add_library(${GLUES} STATIC ${GLUES_SOURCES} ${GLUES_HEADERS})
 
-set(GLUES_OUT_DIR "${GLUES_DIR}/outputs")
-set(LODEPNG_OUT_DIR "${LODEPNG_DIR}/outputs")
-set(SDL2_OUT_DIR "${SDL2_DIR}/outputs")
+## LodePNG
+set(LODEPNG "LodePNG")
+set(LODEPNG_HEADERS ${LODEPNG}/lodepng.h)
+set(LODEPNG_SOURCES ${LODEPNG}/lodepng.c)
+add_library(${LODEPNG} STATIC ${LODEPNG_SOURCES} ${LODEPNG_HEADERS})
 
-file(MAKE_DIRECTORY ${GLUES_OUT_DIR})
-file(MAKE_DIRECTORY ${LODEPNG_OUT_DIR})
-file(MAKE_DIRECTORY ${SDL2_OUT_DIR})
+## SDL2
+set(SDL2 "SDL2")
+set(SDL2_HEADERS ${SDL2}/src/events/scancodes_linux.h
+            ${SDL2}/src/events/SDL_sysevents.h
+            ${SDL2}/src/events/SDL_clipboardevents_c.h
+            ${SDL2}/src/events/SDL_touch_c.h
+            ${SDL2}/src/events/SDL_events_c.h
+            ${SDL2}/src/events/blank_cursor.h
+            ${SDL2}/src/events/SDL_dropevents_c.h
+            ${SDL2}/src/events/SDL_gesture_c.h
+            ${SDL2}/src/events/SDL_windowevents_c.h
+            ${SDL2}/src/events/default_cursor.h
+            ${SDL2}/src/events/SDL_keyboard_c.h
+            ${SDL2}/src/events/SDL_mouse_c.h
+            ${SDL2}/src/SDL_assert_c.h
+            ${SDL2}/src/thread/SDL_thread_c.h
+            ${SDL2}/src/thread/pthread/SDL_sysmutex_c.h
+            ${SDL2}/src/thread/pthread/SDL_systhread_c.h
+            ${SDL2}/src/thread/SDL_systhread.h
+            ${SDL2}/src/dynapi/SDL_dynapi_procs.h
+            ${SDL2}/src/dynapi/SDL_dynapi.h
+            ${SDL2}/src/dynapi/SDL_dynapi_overrides.h
+            ${SDL2}/src/SDL_internal.h
+            ${SDL2}/src/video/SDL_sysvideo.h
+            ${SDL2}/src/video/SDL_rect_c.h
+            ${SDL2}/src/video/SDL_RLEaccel_c.h
+            ${SDL2}/src/video/SDL_pixels_c.h
+            ${SDL2}/src/video/SDL_shape_internals.h
+            ${SDL2}/src/video/SDL_blit.h
+            ${SDL2}/src/video/SDL_blit_slow.h
+            ${SDL2}/src/video/SDL_blit_auto.h
+            ${SDL2}/src/video/android/SDL_androidmessagebox.h
+            ${SDL2}/src/video/android/SDL_androidwindow.h
+            ${SDL2}/src/video/android/SDL_androidclipboard.h
+            ${SDL2}/src/video/android/SDL_androidtouch.h
+            ${SDL2}/src/video/android/SDL_androidevents.h
+            ${SDL2}/src/video/android/SDL_androidvideo.h
+            ${SDL2}/src/video/android/SDL_androidmouse.h
+            ${SDL2}/src/video/android/SDL_androidkeyboard.h
+            ${SDL2}/src/video/SDL_egl_c.h
+            ${SDL2}/src/video/SDL_blit_copy.h
+            ${SDL2}/src/libm/math_private.h
+            ${SDL2}/src/libm/math_libm.h
+            ${SDL2}/src/audio/SDL_wave.h
+            ${SDL2}/src/audio/SDL_audio_c.h
+            ${SDL2}/src/audio/SDL_audiodev_c.h
+            ${SDL2}/src/audio/SDL_audiomem.h
+            ${SDL2}/src/audio/android/SDL_androidaudio.h
+            ${SDL2}/src/audio/SDL_sysaudio.h
+            ${SDL2}/src/core/android/SDL_android.h
+            ${SDL2}/src/timer/SDL_timer_c.h
+            ${SDL2}/src/joystick/SDL_joystick_c.h
+            ${SDL2}/src/joystick/SDL_sysjoystick.h
+            ${SDL2}/src/joystick/SDL_gamecontrollerdb.h
+            ${SDL2}/src/joystick/android/SDL_sysjoystick_c.h
+            ${SDL2}/src/SDL_error_c.h
+            ${SDL2}/src/render/SDL_sysrender.h
+            ${SDL2}/src/render/SDL_yuv_sw_c.h
+            ${SDL2}/src/render/software/SDL_blendpoint.h
+            ${SDL2}/src/render/software/SDL_drawline.h
+            ${SDL2}/src/render/software/SDL_blendfillrect.h
+            ${SDL2}/src/render/software/SDL_render_sw_c.h
+            ${SDL2}/src/render/software/SDL_rotate.h
+            ${SDL2}/src/render/software/SDL_draw.h
+            ${SDL2}/src/render/software/SDL_drawpoint.h
+            ${SDL2}/src/render/software/SDL_blendline.h
+            ${SDL2}/src/render/opengles/SDL_glesfuncs.h
+            ${SDL2}/include/SDL_platform.h
+            ${SDL2}/include/SDL_gesture.h
+            ${SDL2}/include/close_code.h
+            ${SDL2}/include/SDL_keycode.h
+            ${SDL2}/include/SDL.h
+            ${SDL2}/include/SDL_error.h
+            ${SDL2}/include/SDL_revision.h
+            ${SDL2}/include/SDL_filesystem.h
+            ${SDL2}/include/SDL_surface.h
+            ${SDL2}/include/SDL_audio.h
+            ${SDL2}/include/SDL_types.h
+            ${SDL2}/include/SDL_assert.h
+            ${SDL2}/include/SDL_events.h
+            ${SDL2}/include/SDL_stdinc.h
+            ${SDL2}/include/SDL_messagebox.h
+            ${SDL2}/include/SDL_loadso.h
+            ${SDL2}/include/SDL_blendmode.h
+            ${SDL2}/include/SDL_atomic.h
+            ${SDL2}/include/SDL_opengles.h
+            ${SDL2}/include/SDL_copying.h
+            ${SDL2}/include/SDL_name.h
+            ${SDL2}/include/SDL_rect.h
+            ${SDL2}/include/begin_code.h
+            ${SDL2}/include/SDL_cpuinfo.h
+            ${SDL2}/include/SDL_touch.h
+            ${SDL2}/include/SDL_mutex.h
+            ${SDL2}/include/SDL_power.h
+            ${SDL2}/include/SDL_pixels.h
+            ${SDL2}/include/SDL_config.h
+            ${SDL2}/include/SDL_scancode.h
+            ${SDL2}/include/SDL_egl.h
+            ${SDL2}/include/SDL_version.h
+            ${SDL2}/include/SDL_config_android.h
+            ${SDL2}/include/SDL_bits.h
+            ${SDL2}/include/SDL_endian.h
+            ${SDL2}/include/SDL_quit.h
+            ${SDL2}/include/SDL_mouse.h
+            ${SDL2}/include/SDL_hints.h
+            ${SDL2}/include/SDL_log.h
+            ${SDL2}/include/SDL_haptic.h
+            ${SDL2}/include/SDL_main.h
+            ${SDL2}/include/SDL_system.h
+            ${SDL2}/include/SDL_syswm.h
+            ${SDL2}/include/SDL_opengl_glext.h
+            ${SDL2}/include/SDL_joystick.h
+            ${SDL2}/include/SDL_render.h
+            ${SDL2}/include/SDL_clipboard.h
+            ${SDL2}/include/SDL_keyboard.h
+            ${SDL2}/include/SDL_thread.h
+            ${SDL2}/include/SDL_video.h
+            ${SDL2}/include/SDL_gamecontroller.h
+            ${SDL2}/include/SDL_opengl.h
+            ${SDL2}/include/SDL_timer.h
+            ${SDL2}/include/SDL_shape.h
+            ${SDL2}/include/SDL_rwops.h)
+set(SOURCES ${SDL2}/src/SDL_assert.c
+            ${SDL2}/src/events/SDL_gesture.c
+            ${SDL2}/src/events/SDL_keyboard.c
+            ${SDL2}/src/events/SDL_mouse.c
+            ${SDL2}/src/events/SDL_events.c
+            ${SDL2}/src/events/SDL_touch.c
+            ${SDL2}/src/events/SDL_quit.c
+            ${SDL2}/src/events/SDL_clipboardevents.c
+            ${SDL2}/src/events/SDL_windowevents.c
+            ${SDL2}/src/events/SDL_dropevents.c
+            ${SDL2}/src/loadso/dlopen/SDL_sysloadso.c
+            ${SDL2}/src/atomic/SDL_atomic.c
+            ${SDL2}/src/atomic/SDL_spinlock.c
+            ${SDL2}/src/filesystem/android/SDL_sysfilesystem.c
+            ${SDL2}/src/thread/pthread/SDL_syscond.c
+            ${SDL2}/src/thread/pthread/SDL_systhread.c
+            ${SDL2}/src/thread/pthread/SDL_syssem.c
+            ${SDL2}/src/thread/pthread/SDL_sysmutex.c
+            ${SDL2}/src/thread/pthread/SDL_systls.c
+            ${SDL2}/src/thread/SDL_thread.c
+            ${SDL2}/src/SDL_log.c
+            ${SDL2}/src/dynapi/SDL_dynapi.c
+            ${SDL2}/src/SDL_hints.c
+            ${SDL2}/src/video/SDL_blit.c
+            ${SDL2}/src/video/SDL_clipboard.c
+            ${SDL2}/src/video/SDL_egl.c
+            ${SDL2}/src/video/SDL_blit_auto.c
+            ${SDL2}/src/video/SDL_blit_N.c
+            ${SDL2}/src/video/SDL_blit_1.c
+            ${SDL2}/src/video/SDL_pixels.c
+            ${SDL2}/src/video/SDL_bmp.c
+            ${SDL2}/src/video/SDL_blit_copy.c
+            ${SDL2}/src/video/SDL_RLEaccel.c
+            ${SDL2}/src/video/SDL_blit_slow.c
+            ${SDL2}/src/video/SDL_shape.c
+            ${SDL2}/src/video/SDL_blit_0.c
+            ${SDL2}/src/video/SDL_surface.c
+            ${SDL2}/src/video/SDL_stretch.c
+            ${SDL2}/src/video/SDL_video.c
+            ${SDL2}/src/video/SDL_fillrect.c
+            ${SDL2}/src/video/SDL_blit_A.c
+            ${SDL2}/src/video/android/SDL_androidkeyboard.c
+            ${SDL2}/src/video/android/SDL_androidvideo.c
+            ${SDL2}/src/video/android/SDL_androidevents.c
+            ${SDL2}/src/video/android/SDL_androidmouse.c
+            ${SDL2}/src/video/android/SDL_androidgl.c
+            ${SDL2}/src/video/android/SDL_androidmessagebox.c
+            ${SDL2}/src/video/android/SDL_androidwindow.c
+            ${SDL2}/src/video/android/SDL_androidtouch.c
+            ${SDL2}/src/video/android/SDL_androidclipboard.c
+            ${SDL2}/src/video/SDL_rect.c
+            ${SDL2}/src/SDL_error.c
+            ${SDL2}/src/audio/SDL_mixer.c
+            ${SDL2}/src/audio/SDL_audio.c
+            ${SDL2}/src/audio/SDL_audiotypecvt.c
+            ${SDL2}/src/audio/SDL_audiodev.c
+            ${SDL2}/src/audio/SDL_wave.c
+            ${SDL2}/src/audio/SDL_audiocvt.c
+            ${SDL2}/src/audio/android/SDL_androidaudio.c
+            ${SDL2}/src/core/android/SDL_android.c
+            ${SDL2}/src/timer/unix/SDL_systimer.c
+            ${SDL2}/src/timer/SDL_timer.c
+            ${SDL2}/src/SDL.c
+            ${SDL2}/src/stdlib/SDL_iconv.c
+            ${SDL2}/src/stdlib/SDL_malloc.c
+            ${SDL2}/src/stdlib/SDL_string.c
+            ${SDL2}/src/stdlib/SDL_stdlib.c
+            ${SDL2}/src/stdlib/SDL_getenv.c
+            ${SDL2}/src/stdlib/SDL_qsort.c
+            ${SDL2}/src/joystick/SDL_gamecontroller.c
+            ${SDL2}/src/joystick/SDL_joystick.c
+            ${SDL2}/src/joystick/android/SDL_sysjoystick.c
+            ${SDL2}/src/cpuinfo/SDL_cpuinfo.c
+            ${SDL2}/src/render/SDL_render.c
+            ${SDL2}/src/render/software/SDL_blendpoint.c
+            ${SDL2}/src/render/software/SDL_drawpoint.c
+            ${SDL2}/src/render/software/SDL_blendfillrect.c
+            ${SDL2}/src/render/software/SDL_drawline.c
+            ${SDL2}/src/render/software/SDL_render_sw.c
+            ${SDL2}/src/render/software/SDL_blendline.c
+            ${SDL2}/src/render/software/SDL_rotate.c
+            ${SDL2}/src/render/opengles/SDL_render_gles.c
+            ${SDL2}/src/render/SDL_yuv_sw.c
+            ${SDL2}/src/file/SDL_rwops.c)
+add_library(${SDL2} SHARED ${SDL2_SOURCES} ${SDL2_HEADERS})
+target_link_libraries(${SDL2} dl GLESv1_CM GLESv2 log android)
 
-add_subdirectory(${GLUES_DIR} ${GLUES_OUT_DIR})
-add_subdirectory(${LODEPNG_DIR} ${LODEPNG_OUT_DIR})
-add_subdirectory(${SDL2_DIR} ${SDL2_OUT_DIR})
-
-add_library(lib_Glues STATIC IMPORTED)
-add_library(lib_LodePNG STATIC IMPORTED)
-add_library(lib_SDL2 SHARED IMPORTED)
-
-set_target_properties(lib_Glues PROPERTIES IMPORTED_LOCATION
-                        ${GLUES_OUT_DIR}/${ANDROID_ABI}/libGlues.a)
-set_target_properties(lib_LodePNG PROPERTIES IMPORTED_LOCATION
-                        ${LODEPNG_OUT_DIR}/${ANDROID_ABI}/libLodePNG.a)
-set_target_properties(lib_SDL2 PROPERTIES IMPORTED_LOCATION
-                        ${SDL2_OUT_DIR}/${ANDROID_ABI}/libSDL2.so)
-include_directories(${INCLUDE_DIRECTORIES} ${GLUES_DIR} ${LODEPNG_DIR} ${SDL2_DIR}/include)
+include_directories(${INCLUDE_DIRECTORIES} ${GLUES} ${LODEPNG} ${SDL2}/include)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
-target_link_libraries(${PROJECT_NAME} lib_SDL2 lib_Glues lib_LodePNG log GLESv1_CM)
-
+target_link_libraries(${PROJECT_NAME} ${SDL2} ${LODEPNG} ${GLUES} log GLESv1_CM)
