@@ -164,7 +164,7 @@ set(SDL2_HEADERS ${SDL2}/src/events/scancodes_linux.h
             ${SDL2}/include/SDL_timer.h
             ${SDL2}/include/SDL_shape.h
             ${SDL2}/include/SDL_rwops.h)
-set(SOURCES ${SDL2}/src/SDL_assert.c
+set(SDL2_SOURCES ${SDL2}/src/SDL_assert.c
             ${SDL2}/src/events/SDL_gesture.c
             ${SDL2}/src/events/SDL_keyboard.c
             ${SDL2}/src/events/SDL_mouse.c
@@ -252,6 +252,8 @@ add_library(${SDL2} SHARED ${SDL2_SOURCES} ${SDL2_HEADERS})
 target_link_libraries(${SDL2} dl GLESv1_CM GLESv2 log android)
 
 include_directories(${INCLUDE_DIRECTORIES} ${GLUES} ${LODEPNG} ${SDL2}/include)
+
+set(${SOURCES} ${SOURCES} ${SDL2}/src/main/android/SDL_android_main.c)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} ${SDL2} ${LODEPNG} ${GLUES} log GLESv1_CM)

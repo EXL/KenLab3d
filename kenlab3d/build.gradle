@@ -9,6 +9,10 @@ android {
         minSdkVersion 10
         targetSdkVersion 14
 
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
+
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_PLATFORM_LEVEL=9 -DANDROID=ON"
