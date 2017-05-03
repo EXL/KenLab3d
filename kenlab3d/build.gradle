@@ -8,12 +8,26 @@ android {
         applicationId "ru.exlmoto.kenlab3d"
         minSdkVersion 10
         targetSdkVersion 14
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_PLATFORM_LEVEL=9 -DANDROID=ON"
+                cFlags "-O3", "-ffast-math", "-fomit-frame-pointer"
+                cppFlags "-O3", "-frtti", "-ffast-math", "-fomit-frame-pointer"
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'src/main/cpp/CMakeLists.txt'
         }
     }
 }
