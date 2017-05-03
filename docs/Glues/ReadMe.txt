@@ -1,4 +1,3 @@
-
 GLU ES version 1.4
 
 This port is based on original GLU 1.3 and has original libutil and libtess
