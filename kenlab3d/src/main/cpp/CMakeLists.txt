@@ -7,18 +7,15 @@ option(SDL2_DESKTOP "Enable Android Build instead Desktop" ON)
 include_directories(${PROJECT_NAME})
 
 set(HEADERS ${PROJECT_NAME}/adlibemu.h
-            ${PROJECT_NAME}/lab3d.h
-            ${PROJECT_NAME}/sdl2keyhelper.h)
+            ${PROJECT_NAME}/lab3d.h)
 
-set(SOURCES ${PROJECT_NAME}/sdl2keyhelper.c
-            ${PROJECT_NAME}/graphx.c
+set(SOURCES ${PROJECT_NAME}/graphx.c
             ${PROJECT_NAME}/init.c
             ${PROJECT_NAME}/subs.c
             ${PROJECT_NAME}/oldlab3d.c
             ${PROJECT_NAME}/lab3d.c
             ${PROJECT_NAME}/adlibemu.c
-            ${PROJECT_NAME}/setup.c
-            ${PROJECT_NAME}/androidutils.c)
+            ${PROJECT_NAME}/setup.c)
 
 if(ANDROID)
     add_definitions(-DANDROID_NDK -DOPENGLES -DUSE_SDL2 -DGL_GLEXT_PROTOTYPES)
@@ -255,8 +252,10 @@ if(ANDROID)
     target_link_libraries(${SDL2} dl GLESv1_CM GLESv2 log android)
 
     include_directories(${INCLUDE_DIRECTORIES} ${GLUES} ${LODEPNG} ${SDL2}/include)
-    set(${HEADERS} ${HEADERS} ${PROJECT_NAME}/sdl2keyhelper.h)
-    set(${SOURCES} ${SOURCES} ${PROJECT_NAME}/sdl2keyhelper.c ${SDL2}/src/main/android/SDL_android_main.c)
+    set(HEADERS ${HEADERS} ${PROJECT_NAME}/sdl2keyhelper.h)
+    set(SOURCES ${SOURCES} ${PROJECT_NAME}/sdl2keyhelper.c
+            ${PROJECT_NAME}/androidutils.c
+            ${SDL2}/src/main/android/SDL_android_main.c)
     add_library(${PROJECT_NAME} SHARED ${SOURCES} ${HEADERS})
     target_link_libraries(${PROJECT_NAME} ${SDL2} ${LODEPNG} ${GLUES} log GLESv1_CM)
 else()
@@ -265,16 +264,17 @@ else()
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
     if(SDL2_DESKTOP)
         message(STATUS "Build w/ using SDL2 libraries!")
+        set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
         set(TARGET_NAME "KenLab3D-SDL2")
         find_package(OpenGL REQUIRED)
         find_package(SDL2 REQUIRED)
         find_package(SDL2_image REQUIRED)
         add_definitions(-DUSE_SDL2)
-        set(${HEADERS} ${HEADERS} ${PROJECT_NAME}/sdl2keyhelper.h)
-        set(${SOURCES} ${SOURCES} ${PROJECT_NAME}/sdl2keyhelper.c)
         include_directories(${INCLUDE_DIRECTORIES} ${OPENGL_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
+        set(HEADERS ${HEADERS} ${PROJECT_NAME}/sdl2keyhelper.h)
+        set(SOURCES ${SOURCES} ${PROJECT_NAME}/sdl2keyhelper.c)
         add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
-        target_link_libraries(${TARGET_NAME} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${OPENGL_LIBRARIES})
+        target_link_libraries(${TARGET_NAME} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${OPENGL_LIBRARIES} m)
     else()
         message(STATUS "Build w/ using SDL libraries!")
         set(TARGET_NAME "KenLab3D-SDL")
@@ -282,7 +282,7 @@ else()
         find_package(SDL REQUIRED)
         find_package(SDL_image REQUIRED)
         add_executable(${TARGET_NAME} ${SOURCES} ${HEADERS})
-        target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY} ${SDL_IMAGE_LIBRARY} ${OPENGL_LIBRARIES})
+        target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY} ${SDL_IMAGE_LIBRARY} ${OPENGL_LIBRARIES} m)
     endif()
     add_custom_target(finalMessage ALL
     	${CMAKE_COMMAND} -E cmake_echo_color --green "Output directory: ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}, executable: ${TARGET_NAME}."
