@@ -176,7 +176,7 @@ else()
         target_link_libraries(${TARGET_NAME} ${SDL_LIBRARY} ${SDL_IMAGE_LIBRARY} ${OPENGL_LIBRARIES} m)
     endif()
     add_custom_target(finalMessage ALL
-    	${CMAKE_COMMAND} -E cmake_echo_color --green "Output directory: ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}, executable: ${TARGET_NAME}."
-    	COMMENT "Final Message")
+        ${CMAKE_COMMAND} -E cmake_echo_color --green "Output directory: ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}, executable: ${TARGET_NAME}."
+        COMMENT "Final Message")
     add_dependencies(finalMessage ${TARGET_NAME})
 endif()
