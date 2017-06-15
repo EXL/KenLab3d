@@ -11,6 +11,10 @@ This is my port of Ken's Labyrinth on Android OS with using SDL2 library and ren
 
 [Ken's Labyrinth port on Motorola Droid 4 video on YouTube](http://youtu.be/vnNax1uNLfo)
 
+## Download
+
+You can download APK-package for Android OS from the [releases](https://github.com/EXL/KenLab3d/releases) section.
+
 ## Build instructions
 
 For example, GNU/Linux:
