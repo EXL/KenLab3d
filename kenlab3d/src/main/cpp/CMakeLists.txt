@@ -25,8 +25,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 project("KenLab3D")
 
-option(ANDROID "Enable Android Build instead Desktop" ON)
-option(SDL2_DESKTOP "Enable Android Build instead Desktop" ON)
+option(ANDROID "Enable Android Build instead of Desktop" ON)
 
 include_directories(${PROJECT_NAME})
 
@@ -151,6 +150,7 @@ if(ANDROID)
     add_library(${PROJECT_NAME} SHARED ${SOURCES})
     target_link_libraries(${PROJECT_NAME} ${SDL2} ${LODEPNG} ${GLUES} log GLESv1_CM)
 else()
+    option(SDL2_DESKTOP "Enable SDL2 Build instead of SDL" ON)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3")
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../assets/KenLabData/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE})
